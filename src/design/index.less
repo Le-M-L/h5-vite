@@ -1,0 +1,22 @@
+html {
+  overflow: hidden;
+  -webkit-text-size-adjust: 100%;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: visible !important;
+  overflow-x: hidden !important;
+  font-family: 'PingFangSC-Regular', ' PingFang SC', 'Roboto' !important;
+
+  &.color-weak {
+    filter: invert(80%);
+  }
+
+  &.gray-mode {
+    filter: grayscale(100%);
+    filter: progid:dximagetransform.microsoft.basicimage(grayscale=1);
+  }
+}
