@@ -1,5 +1,6 @@
 <template>
-  <div :class="prefixCls">
+  <div :class="prefixCls" class="p-0.5" >
+    <span>事件处置</span>
     <Button @click="handleClick"> 点击 </Button>
   </div>
 </template>
@@ -8,8 +9,6 @@
 import { ref } from 'vue';
 import { Field, CellGroup, Button } from 'vant';
 import { useDesign } from '@/hooks/web/useDesign';
-import { useMessage } from '@/hooks/web/useMessage';
-import { defHttp } from '@/utils/http/axios';
 export default {
   components: {
     Field,
@@ -18,11 +17,8 @@ export default {
   setup() {
     const value = ref('');
     const { prefixCls } = useDesign('login');
-    const { createMessage, notification, createConfirm, createAlertDialog } = useMessage()
     const handleClick = () => {
-     createConfirm({
-       content:'<div class="ddd" >666</div>'
-     })
+    
     };
     return {
       prefixCls,
@@ -34,8 +30,12 @@ export default {
 </script>
 
 <style lang="less">
-.dd {
+.DD-login {
   color: #ccc;
-  font-size: 2rem;
+  >span{
+    color: #333;
+    font-size: 18px;
+    font-weight: 500;
+  }
 }
 </style>

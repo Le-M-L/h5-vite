@@ -6,7 +6,7 @@ import legacy from '@vitejs/plugin-legacy';
 // setup 扩展
 import vueSetupExtend from 'vite-plugin-vue-setup-extend';
 // css库
-import WindiCSS from 'vite-plugin-windicss';
+// import WindiCSS from 'vite-plugin-windicss';
 // 针对 index.html，提供压缩和基于 ejs 模板功能的 vite 插件。
 import { configHtmlPlugin } from './html';
 // mock 模拟数据
@@ -41,7 +41,7 @@ export function createVitePlugins(viteEnv, isBuild) {
     // support name
     vueSetupExtend(),
     // vite-plugin-windicss
-    WindiCSS(),
+    // WindiCSS(),
   ];
 
   // 是否兼容低版本浏览器

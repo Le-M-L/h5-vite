@@ -1,11 +1,13 @@
 import '@/design/index.less';
 
-import 'virtual:windi-base.css';
-import 'virtual:windi-components.css';
-import 'virtual:windi-utilities.css';
+// import "virtual:windi.css";
+// 使用上面的css 就不需要下面三个
+// import 'virtual:windi-base.css';
+// import 'virtual:windi-components.css';
+// import 'virtual:windi-utilities.css';
 
 // import 'virtual:svg-icons-register';
-// import "virtual:windi.css";
+
 
 import App from './App.vue';
 import { createApp } from 'vue';

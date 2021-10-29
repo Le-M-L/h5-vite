@@ -9,6 +9,8 @@ import { Persistent } from '@/utils/cache/persistent';
 import projectSetting from '@/utils/settings/projectSetting';
 import { getCommonStoragePrefix, getStorageShortName } from '@/utils/env';
 
+import './flexible'
+
 // 最初的项目配置
 export function initAppConfigStore() {
     const appStore = useAppStore();
