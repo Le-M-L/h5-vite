@@ -1,8 +1,12 @@
 import { defineStore } from 'pinia';
 import { store } from '@/store';
+import { router } from '@/router';
 import { ROLES_KEY, TOKEN_KEY, USER_INFO_KEY } from '@/enums/cacheEnum';
 import { getAuthCache, setAuthCache } from '@/utils/auth';
 import { doLogout, getUserInfo, loginApi } from '@/api/sys/user';
+import { usePermissionStore } from '@/store/modules/permission';
+import { PAGE_NOT_FOUND_ROUTE } from '@/router/routes/basic';
+import { PageEnum } from '@/enums/pageEnum';
 
 export const useUserStore = defineStore({
   id: 'app-user',
@@ -19,18 +23,23 @@ export const useUserStore = defineStore({
     lastUpdateTime: 0,
   }),
   getters: {
+    // 获取用户信息
     getUserInfo() {
       return this.userInfo || getAuthCache(USER_INFO_KEY) || {};
     },
+    // 获取token
     getToken() {
       return this.token || getAuthCache(TOKEN_KEY);
     },
+    // 获取角色列表
     getRoleList() {
       return this.roleList.length > 0 ? this.roleList : getAuthCache(ROLES_KEY);
     },
+    // 获取储存过期时间
     getSessionTimeout() {
       return !!this.sessionTimeout;
     },
+    // 获取最后更新时间
     getLastUpdateTime() {
       return this.lastUpdateTime;
     },
@@ -68,10 +77,12 @@ export const useUserStore = defineStore({
       try {
         const { goHome = true, mode, ...loginParams } = params;
         const data = await loginApi(loginParams, mode);
-        const { token } = data;
-
+        const { token , userInfo} = data;
+        userInfo.homePath = '/mobile/multiportMenu/index'
         // save token
         this.setToken(token);
+        // save userInfo
+        this.setUserInfo(userInfo);
         return this.afterLoginAction(goHome);
       } catch (error) {
         return Promise.reject(error);
@@ -80,18 +91,40 @@ export const useUserStore = defineStore({
     // 登录之后操作
     async afterLoginAction(goHome) {
       if (!this.getToken) return null;
-      const userInfo = await getUserInfo();
-      const { roles = [] } = userInfo;
-      if (isArray(roles)) {
-        const roleList = roles.map((item) => item.value);
-        this.setRoleList(roleList);
-      } else {
-        userInfo.roles = [];
-        this.setRoleList([]);
+      const userInfo = this.getUserInfo();
+
+      const sessionTimeout = this.sessionTimeout;
+      if (sessionTimeout) {
+        this.setSessionTimeout(false);
+      }else {
+        const permissionStore = usePermissionStore();
+        // 如果没有完成异步路由更新 则重新获取路由
+        if (!permissionStore.isDynamicAddedRoute) {
+          const routes = await permissionStore.buildRoutesAction();
+          routes.forEach((route) => {
+            router.addRoute(route);
+          });
+          router.addRoute(PAGE_NOT_FOUND_ROUTE);
+          permissionStore.setDynamicAddedRoute(true);
+        }
+        goHome && (await router.replace(userInfo?.homePath || PageEnum.BASE_HOME));
       }
-      this.setUserInfo(userInfo);
       return userInfo;
     },
+    // async getUserInfoAction() {
+    //   if (!this.getToken) return null;
+    //   const userInfo = await getUserInfo();
+    //   const { roles = [] } = userInfo;
+    //   if (isArray(roles)) {
+    //     const roleList = roles.map((item) => item.value);
+    //     this.setRoleList(roleList);
+    //   } else {
+    //     userInfo.roles = [];
+    //     this.setRoleList([]);
+    //   }
+    //   this.setUserInfo(userInfo);
+    //   return userInfo;
+    // },
     // 退出登录 -- 直接退出
     async logout(goLogin = false) {
       if (this.getToken) {

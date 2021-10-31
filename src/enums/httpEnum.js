@@ -2,7 +2,7 @@
  * @description: Request result set
  */
 export const ResultEnum = {
-  SUCCESS: '0000',
+  SUCCESS: 200,
   ERROR: 1,
   TIMEOUT: 401,
   TYPE: 'success',

@@ -1,5 +1,5 @@
 <template>
-  <AppProvider>
+  <AppProvider  >
     <RouterView />
   </AppProvider>
 </template>
@@ -10,6 +10,3 @@ import { useTitle } from '@/hooks/web/useTitle';
 
 useTitle();
 </script>
-
-<style>
-</style>

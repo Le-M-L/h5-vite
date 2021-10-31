@@ -39,6 +39,10 @@ export default ({ command, mode }) => {
           find: /^@\//,
           replacement: pathResolve('src') + '/',
         },
+        {
+          find: /^@comps\//,
+          replacement: pathResolve('src') + '/components/',
+        },
       ],
     },
     server: {

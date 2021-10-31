@@ -4,14 +4,14 @@ import { defHttp } from '@/utils/http/axios';
 
 
 const Api = {
-  Login: '/login',
+  Login: 'sys/mLogin',
   Logout: '/logout',
   GetUserInfo: '/getUserInfo',
   GetPermCode: '/getPermCode',
 };
 
 /**
- * @description: user login api
+ * @description: 用户登陆 api
  */
 export function loginApi(params, mode = 'modal') {
   return defHttp.post(

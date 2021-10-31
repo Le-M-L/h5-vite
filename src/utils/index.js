@@ -40,3 +40,36 @@ export function deepMerge(src = {}, target = {}) {
   }
   return src;
 }
+
+
+export function getRawRoute(route) {
+  if (!route) return route;
+  const { matched, ...opt } = route;
+  return {
+    ...opt,
+    matched: matched
+      ? matched.map((item) => ({
+          meta: item.meta,
+          name: item.name,
+          path: item.path,
+        }))
+      : undefined,
+  };
+}
+
+/**
+ * @description:  设置ui挂载节点
+ */
+ export function getPopupContainer(node) {
+  return node?.parentNode ?? document.body;
+}
+
+export function openWindow(url, opt) {
+  const { target = '__blank', noopener = true, noreferrer = true } = opt || {};
+  const feature = [];
+
+  noopener && feature.push('noopener=yes');
+  noreferrer && feature.push('noreferrer=yes');
+
+  window.open(url, target, feature.join(','));
+}

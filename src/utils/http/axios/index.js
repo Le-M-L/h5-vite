@@ -130,7 +130,7 @@ const transform = {
     const token = getToken();
     if (token && config?.requestOptions?.withToken !== false) {
       // jwt token
-      config.headers.Authorization = options.authenticationScheme
+      config.headers['X-Access-Token'] = options.authenticationScheme
         ? `${options.authenticationScheme} ${token}`
         : token;
     }

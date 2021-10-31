@@ -1,3 +1,7 @@
+@import 'var/index.less';
+@import 'public.less';
+
+
 html {
   overflow: hidden;
   -webkit-text-size-adjust: 100%;
@@ -10,6 +14,7 @@ body {
   overflow: visible !important;
   overflow-x: hidden !important;
   font-family: 'PingFang SC', 'Roboto' !important;
+  font-size: 14px;
   &.color-weak {
     filter: invert(80%);
   }
@@ -18,4 +23,13 @@ body {
     filter: grayscale(100%);
     filter: progid:dximagetransform.microsoft.basicimage(grayscale=1);
   }
+}
+
+a:focus,
+a:active,
+button,
+div,
+svg,
+span {
+  outline: none !important;
 }

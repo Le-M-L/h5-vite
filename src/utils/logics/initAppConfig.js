@@ -6,7 +6,7 @@ import { deepMerge } from '@/utils';
 // 缓存
 import { Persistent } from '@/utils/cache/persistent';
 // 项目最初配置
-import projectSetting from '@/utils/settings/projectSetting';
+import projectSetting from '@/settings/projectSetting';
 import { getCommonStoragePrefix, getStorageShortName } from '@/utils/env';
 
 import './flexible'
