@@ -1,18 +1,18 @@
 <template>
-  <div class="basiceNine" >
+  <div class="basiceNine">
     <BasicForm />
   </div>
 </template>
 
 <script>
-import { BasicForm } from "@comps/Form"
+import { BasicForm } from '@comp/Form';
 export default {
-  components:{BasicForm}
-}
+  components: { BasicForm },
+};
 </script>
 
 <style>
-.basiceNine{
+.basiceNine {
   height: 200vh;
 }
 </style>

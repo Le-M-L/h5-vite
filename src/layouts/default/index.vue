@@ -28,14 +28,8 @@ export default {
   min-height: 100%;
   background-color: @content-bg;
   flex-direction: column;
-
-  > .ant-layout {
+  >div{
     min-height: 100%;
-  }
-
-  &-main {
-    width: 100%;
-    margin-left: 1px;
   }
 }
 </style>

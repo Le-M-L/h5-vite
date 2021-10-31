@@ -40,7 +40,7 @@ export default ({ command, mode }) => {
           replacement: pathResolve('src') + '/',
         },
         {
-          find: /^@comps\//,
+          find: /^@comp\//,
           replacement: pathResolve('src') + '/components/',
         },
       ],

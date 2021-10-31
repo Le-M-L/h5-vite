@@ -15,6 +15,7 @@ import { initAppConfigStore } from '@/utils/logics/initAppConfig';
 import { setupStore } from '@/store';
 import { router, setupRouter } from '@/router';
 import { setupRouterGuard } from '@/router/guard';
+import { registerGlobComp } from '@comp/registerGlobComp';
 
 // 只在生产环境中启用按需导入。
 if (import.meta.env.DEV) {
@@ -30,6 +31,9 @@ async function bootstrap() {
 
   // 初始化系统内部配置
   initAppConfigStore();
+
+  // 注册全局组件
+  registerGlobComp(app);
 
   // 配置路由
   setupRouter(app);
