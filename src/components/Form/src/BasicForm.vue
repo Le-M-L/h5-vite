@@ -1,21 +1,19 @@
 <template>
-  <Form v-bind="getBindValue">
+  <Form v-bind="getBindValue" :class="getFormClass" ref="formElRef">
     <CellGroup v-bind="getRow">
       <slot name="formHeader"></slot>
       <template v-for="schema in getSchema" :key="schema.field">
-        <!-- <FormItem
-          :tableAction="tableAction"
+        <FormItem
           :formActionType="formActionType"
           :schema="schema"
           :formProps="getProps"
-          :allDefaultValues="defaultValueRef"
           :formModel="formModel"
           :setFormModel="setFormModel"
         >
           <template #[item]="data" v-for="item in Object.keys($slots)">
             <slot :name="item" v-bind="data || {}"></slot>
           </template>
-        </FormItem> -->
+        </FormItem>
       </template>
     </CellGroup>
     <van-button round block type="primary" native-type="submit"> 提交 </van-button>
@@ -23,11 +21,12 @@
 </template>
 
 <script>
-import { ref, unref, computed } from 'vue';
+import { ref, reactive, unref, computed, onMounted } from 'vue';
 import FormItem from './components/FormItem.vue';
 import { dateUtil } from '@/utils/dateUtil';
 import { dateItemType } from './helper';
 import { basicProps } from './props';
+import { useDesign } from '@/hooks/web/useDesign';
 import { CellGroup, Cell, Field, Form } from 'vant';
 export default {
   components: {
@@ -38,12 +37,25 @@ export default {
   props: basicProps,
   emits: ['advanced-change', 'reset', 'submit', 'register'],
   setup(props, { attrs, emit }) {
+    const formModel = reactive({});
+
     const propsRef = ref({});
     const schemaRef = ref(null);
-
+    const { prefixCls } = useDesign('basic-form');
+    const formElRef = ref(null);
     // 获取表单的基本配置
     const getProps = computed(() => {
       return { ...props, ...unref(propsRef) };
+    });
+
+    // 获取最外层的form class
+    const getFormClass = computed(() => {
+      return [
+        prefixCls,
+        {
+          [`${prefixCls}--compact`]: unref(getProps).compact,
+        },
+      ];
     });
 
     // 为整个表单获取统一的行样式和行配置
@@ -75,6 +87,7 @@ export default {
           }
         }
       }
+      // 操作按钮
       if (unref(getProps).showAdvancedButton) {
         return schemas.filter((schema) => schema.component !== 'Divider');
       } else {
@@ -82,10 +95,44 @@ export default {
       }
     });
 
+    // 使用表单方法
+    const { validateFields } = useFormEvents({
+      emit,
+      getProps,
+      formModel,
+      getSchema,
+      defaultValueRef,
+      formElRef,
+      schemaRef,
+      // handleFormValues,
+    });
+
+    function setFormModel(key, value) {
+      formModel[key] = value;
+      //字段校验规则
+      const { validateTrigger } = unref(getBindValue);
+      if (!validateTrigger || validateTrigger === 'change') {
+        validateFields([key]).catch((_) => {});
+      }
+    }
+
+    onMounted(() => {
+      console.log(formElRef);
+    });
+
+    // form 的操作
+    const formActionType = {};
+
     return {
       getRow,
+      getProps,
       getSchema,
+      formModel,
+      setFormModel,
       getBindValue,
+      getFormClass,
+      formActionType,
+      formElRef,
     };
   },
 };

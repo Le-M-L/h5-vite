@@ -1,6 +1,6 @@
 import '@/design/index.less';
 
-// import "virtual:windi.css";
+import "virtual:windi.css";
 // 使用上面的css 就不需要下面三个
 // import 'virtual:windi-base.css';
 // import 'virtual:windi-components.css';
