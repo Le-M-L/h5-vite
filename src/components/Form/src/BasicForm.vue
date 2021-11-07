@@ -1,22 +1,22 @@
 <template>
-  <Form @submit="onSubmit">
-    <CellGroup v-bind="getRow" >
-      <van-field
-        v-model="username"
-        name="用户名"
-        label="用户名"
-        placeholder="用户名"
-        :rules="[{ required: true, message: '请填写用户名' }]"
-      />
-
-      <van-field
-        v-model="password"
-        type="password"
-        name="密码"
-        label="密码"
-        placeholder="密码"
-        :rules="[{ required: true, message: '请填写密码' }]"
-      />
+  <Form v-bind="getBindValue">
+    <CellGroup v-bind="getRow">
+      <slot name="formHeader"></slot>
+      <template v-for="schema in getSchema" :key="schema.field">
+        <!-- <FormItem
+          :tableAction="tableAction"
+          :formActionType="formActionType"
+          :schema="schema"
+          :formProps="getProps"
+          :allDefaultValues="defaultValueRef"
+          :formModel="formModel"
+          :setFormModel="setFormModel"
+        >
+          <template #[item]="data" v-for="item in Object.keys($slots)">
+            <slot :name="item" v-bind="data || {}"></slot>
+          </template>
+        </FormItem> -->
+      </template>
     </CellGroup>
     <van-button round block type="primary" native-type="submit"> 提交 </van-button>
   </Form>
@@ -24,22 +24,22 @@
 
 <script>
 import { ref, unref, computed } from 'vue';
+import FormItem from './components/FormItem.vue';
+import { dateUtil } from '@/utils/dateUtil';
+import { dateItemType } from './helper';
+import { basicProps } from './props';
 import { CellGroup, Cell, Field, Form } from 'vant';
 export default {
   components: {
     Form,
     CellGroup,
-    Cell,
-    [Field.name]: Field,
+    FormItem,
   },
-  setup(props) {
-    const username = ref('');
-    const password = ref('');
-    const onSubmit = (values) => {
-      console.log('submit', values);
-    };
-
+  props: basicProps,
+  emits: ['advanced-change', 'reset', 'submit', 'register'],
+  setup(props, { attrs, emit }) {
     const propsRef = ref({});
+    const schemaRef = ref(null);
 
     // 获取表单的基本配置
     const getProps = computed(() => {
@@ -55,11 +55,37 @@ export default {
       };
     });
 
+    // props
+    const getBindValue = computed(() => ({ ...attrs, ...props, ...unref(getProps) }));
+
+    const getSchema = computed(() => {
+      const schemas = unref(schemaRef) || unref(getProps).schemas;
+      for (const schema of schemas) {
+        const { defaultValue, component } = schema;
+        // 操作时间类型
+        if (defaultValue && dateItemType.includes(component)) {
+          if (!Array.isArray(defaultValue)) {
+            schema.defaultValue = dateUtil(defaultValue);
+          } else {
+            const def = [];
+            defaultValue.forEach((item) => {
+              def.push(dateUtil(item));
+            });
+            schema.defaultValue = def;
+          }
+        }
+      }
+      if (unref(getProps).showAdvancedButton) {
+        return schemas.filter((schema) => schema.component !== 'Divider');
+      } else {
+        return schemas;
+      }
+    });
+
     return {
-      onSubmit,
-      username,
-      password,
       getRow,
+      getSchema,
+      getBindValue,
     };
   },
 };

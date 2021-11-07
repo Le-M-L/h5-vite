@@ -24,6 +24,13 @@
     "@types/lodash" "^4.14.165"
     lodash "^4.17.15"
 
+"@antfu/utils@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.nlark.com/@antfu/utils/download/@antfu/utils-0.3.0.tgz#6306c43b52a883bd8e973e3ed8dd64248418bcc4"
+  integrity sha1-YwbEO1Kog72Olz4+2N1kJIQYvMQ=
+  dependencies:
+    "@types/throttle-debounce" "^2.1.0"
+
 "@babel/code-frame@^7.14.5", "@babel/code-frame@^7.15.8":
   version "7.15.8"
   resolved "https://registry.npmmirror.com/@babel/code-frame/download/@babel/code-frame-7.15.8.tgz?cache=0&sync_timestamp=1633554059214&other_urls=https%3A%2F%2Fregistry.npmmirror.com%2F%40babel%2Fcode-frame%2Fdownload%2F%40babel%2Fcode-frame-7.15.8.tgz#45990c47adadb00c03677baa89221f7cc23d2503"
@@ -476,6 +483,11 @@
   dependencies:
     "@types/node" "*"
 
+"@types/throttle-debounce@^2.1.0":
+  version "2.1.0"
+  resolved "https://registry.nlark.com/@types/throttle-debounce/download/@types/throttle-debounce-2.1.0.tgz#1c3df624bfc4b62f992d3012b84c56d41eab3776"
+  integrity sha1-HD32JL/Eti+ZLTASuExW1B6rN3Y=
+
 "@vant/icons@^1.7.1":
   version "1.7.1"
   resolved "https://registry.nlark.com/@vant/icons/download/@vant/icons-1.7.1.tgz?cache=0&sync_timestamp=1631954457671&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40vant%2Ficons%2Fdownload%2F%40vant%2Ficons-1.7.1.tgz#49ae420302b5581e54e6894891e5a05bc76e9f87"
@@ -657,6 +669,28 @@
   integrity sha1-mqKWfSCGPPMlOv0IouboSmHSyJs=
   dependencies:
     vue-demi "*"
+
+"@windicss/config@1.4.12":
+  version "1.4.12"
+  resolved "https://registry.npmmirror.com/@windicss/config/download/@windicss/config-1.4.12.tgz#32842fe009b64176b004c83a93c5189066042c33"
+  integrity sha1-MoQv4Am2QXawBMg6k8UYkGYELDM=
+  dependencies:
+    debug "^4.3.2"
+    jiti "^1.12.9"
+    windicss "^3.1.9"
+
+"@windicss/plugin-utils@1.4.12":
+  version "1.4.12"
+  resolved "https://registry.npmmirror.com/@windicss/plugin-utils/download/@windicss/plugin-utils-1.4.12.tgz#9929369018c8660ee2f218c47cfa4b83f5174c59"
+  integrity sha1-mSk2kBjIZg7i8hjEfPpLg/UXTFk=
+  dependencies:
+    "@antfu/utils" "^0.3.0"
+    "@windicss/config" "1.4.12"
+    debug "^4.3.2"
+    fast-glob "^3.2.7"
+    magic-string "^0.25.7"
+    micromatch "^4.0.4"
+    windicss "^3.1.9"
 
 ansi-regex@^2.0.0:
   version "2.1.1"
@@ -2909,6 +2943,11 @@ jake@^10.6.1:
     filelist "^1.0.1"
     minimatch "^3.0.4"
 
+jiti@^1.12.9:
+  version "1.12.9"
+  resolved "https://registry.npmmirror.com/jiti/download/jiti-1.12.9.tgz?cache=0&sync_timestamp=1634567255332&other_urls=https%3A%2F%2Fregistry.npmmirror.com%2Fjiti%2Fdownload%2Fjiti-1.12.9.tgz#2ce45b265cfc8dc91ebd70a5204807cf915291bc"
+  integrity sha1-LORbJlz8jckevXClIEgHz5FSkbw=
+
 jpegtran-bin@^5.0.0:
   version "5.0.2"
   resolved "https://registry.npm.taobao.org/jpegtran-bin/download/jpegtran-bin-5.0.2.tgz#5870fd7e68317bd203a1c94572bd06ae7732cac3"
@@ -4831,6 +4870,16 @@ vite-plugin-vue-setup-extend@^0.1.0:
     "@vue/compiler-sfc" "^3.2.6"
     magic-string "^0.25.7"
 
+vite-plugin-windicss@^1.4.12:
+  version "1.4.12"
+  resolved "https://registry.npmmirror.com/vite-plugin-windicss/download/vite-plugin-windicss-1.4.12.tgz#a301fd554425042b5fdaec562bd11a5a0fcbf178"
+  integrity sha1-owH9VUQlBCtf2uxWK9EaWg/L8Xg=
+  dependencies:
+    "@windicss/plugin-utils" "1.4.12"
+    chalk "^4.1.2"
+    debug "^4.3.2"
+    windicss "^3.1.9"
+
 vite@^2.6.4:
   version "2.6.12"
   resolved "https://registry.npmmirror.com/vite/download/vite-2.6.12.tgz?cache=0&sync_timestamp=1635296720601&other_urls=https%3A%2F%2Fregistry.npmmirror.com%2Fvite%2Fdownload%2Fvite-2.6.12.tgz#17d819ca6766f59a7609a50ab8a2d2cdc05f1523"
@@ -4900,6 +4949,11 @@ which@^2.0.1:
   integrity sha1-fGqN0KY2oDJ+ELWckobu6T8/UbE=
   dependencies:
     isexe "^2.0.0"
+
+windicss@^3.1.9:
+  version "3.2.0"
+  resolved "https://registry.npmmirror.com/windicss/download/windicss-3.2.0.tgz#d779cface09afafa4c31e41f9c229db3d66b5807"
+  integrity sha1-13nPrOCa+vpMMeQfnCKds9ZrWAc=
 
 wrap-ansi@^7.0.0:
   version "7.0.0"

@@ -91,6 +91,7 @@ export const useUserStore = defineStore({
     // 登录之后操作
     async afterLoginAction(goHome) {
       if (!this.getToken) return null;
+      console.log(this);
       const userInfo = this.getUserInfo();
 
       const sessionTimeout = this.sessionTimeout;
