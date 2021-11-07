@@ -3,6 +3,9 @@ import { isArray, isFunction, isObject, isString } from '@/utils/is';
 import { dateItemType, handleInputNumberValue } from '../helper';
 import { dateUtil } from '@/utils/dateUtil';
 import { cloneDeep, uniqBy } from 'lodash-es';
+import { deepMerge } from '@/utils';
+import { error } from '@/utils/log';
+
 export function useFormEvents({
   emit,
   getProps,
@@ -95,19 +98,98 @@ export function useFormEvents({
     schemaRef.value = schemaList;
   }
 
-   /**
+  /**
    * @description: 根据字段名进行删除
    */
-    function _removeSchemaByFiled(field, schemaList) {
-        if (isString(field)) {
-          const index = schemaList.findIndex((schema) => schema.field === field);
-          if (index !== -1) {
-            delete formModel[field];
-            schemaList.splice(index, 1);
-          }
-        }
+  function _removeSchemaByFiled(field, schemaList) {
+    if (isString(field)) {
+      const index = schemaList.findIndex((schema) => schema.field === field);
+      if (index !== -1) {
+        delete formModel[field];
+        schemaList.splice(index, 1);
       }
+    }
+  }
 
+  /**
+   * @description 插入某个字段之后，如果不是插入最后一个字段
+   */
+
+  async function appendSchemaByField(schema, prefixField, first = false) {
+    const schemaList = cloneDeep(unref(getSchema));
+    const index = schemaList.findIndex((schema) => schema.field === prefixField);
+    const hasInList = schemaList.some((item) => item.field === prefixField || schema.field);
+    if (!hasInList) return;
+
+    if (!prefixField || index === -1 || first) {
+      first ? schemaList.unshift(schema) : schemaList.push(schema);
+      schemaRef.value = schemaList;
+      return;
+    }
+    if (index !== -1) {
+      schemaList.splice(index + 1, 0, schema);
+    }
+    schemaRef.value = schemaList;
+  }
+
+  async function resetSchema(data) {
+    let updateData = [];
+    if (isObject(data)) {
+      updateData.push(data);
+    }
+    if (isArray(data)) {
+      updateData = [...data];
+    }
+    const hasField = updateData.every(
+      (item) => item.component === 'Divider' || (Reflect.has(item, 'field') && item.field),
+    );
+    if (!hasField) {
+      error('需要更新的表单架构数组的所有子级都必须包含“field”字段');
+      return;
+    }
+    schemaRef.value = updateData;
+  }
+
+  /**
+   * @description 更新Schema
+   */
+  async function updateSchema(data) {
+    let updateData = [];
+    if (isObject(data)) {
+      updateData.push(data);
+    }
+    if (isArray(data)) {
+      updateData = [...data];
+    }
+    const hasField = updateData.every((item) => Reflect.has(item, 'field') && item.field);
+
+    if (!hasField) {
+      error('需要更新的表单架构数组的所有子级都必须包含“field”字段');
+
+      return;
+    }
+
+    const schema = [];
+    updateData.forEach((item) => {
+      unref(getSchema).forEach((val) => {
+        if (val.field === item.field) {
+          const newSchema = deepMerge(val, item);
+          schema.push(newSchema);
+        } else {
+          schema.push(val);
+        }
+      });
+    });
+    schemaRef.value = uniqBy(schema, 'field');
+  }
+  /**
+   * @description 获取字段内容 value
+   */
+  function getFieldsValue() {
+    const formEl = unref(formElRef);
+    if (!formEl) return {};
+    return handleFormValues(toRaw(unref(formModel)));
+  }
 
   /**
    * @description: Is it time
@@ -119,9 +201,62 @@ export function useFormEvents({
   }
 
   /**
-   * @description: 触发表单校验
+   * @description: 验证表单
+   * @param { string | string[] }
    */
   async function validate(nameList) {
     return unref(formElRef)?.validate(nameList);
   }
+
+  /**
+   * @description 移除表单项的校验结果
+   * @param { string ｜ string[] } name 表单字段名
+   */
+  async function clearValidate(name) {
+    await unref(formElRef)?.resetValidation(name);
+  }
+
+  /**
+   * @description 滚动到对应字段位置
+   * @param { string } name
+   * @param { boolean } options
+   */
+  async function scrollToField(name, options) {
+    await unref(formElRef)?.scrollToField(name, options);
+  }
+
+  /**
+   * @description: 表单提交
+   */
+  async function handleSubmit(e) {
+    e && e.preventDefault();
+    const { submitFunc } = unref(getProps);
+    if (submitFunc && isFunction(submitFunc)) {
+      await submitFunc();
+      return;
+    }
+    const formEl = unref(formElRef);
+    if (!formEl) return;
+    try {
+      const values = await validate();
+      const res = handleFormValues(values);
+      emit('submit', res);
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  return {
+    handleSubmit,
+    clearValidate,
+    validate,
+    getFieldsValue,
+    updateSchema,
+    resetSchema,
+    appendSchemaByField,
+    removeSchemaByFiled,
+    resetFields,
+    setFieldsValue,
+    scrollToField,
+  };
 }

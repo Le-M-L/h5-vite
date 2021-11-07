@@ -7,6 +7,7 @@
           :formActionType="formActionType"
           :schema="schema"
           :formProps="getProps"
+          :allDefaultValues="defaultValueRef"
           :formModel="formModel"
           :setFormModel="setFormModel"
         >
@@ -28,6 +29,9 @@ import { dateItemType } from './helper';
 import { basicProps } from './props';
 import { useDesign } from '@/hooks/web/useDesign';
 import { CellGroup, Cell, Field, Form } from 'vant';
+import { useFormEvents } from './hooks/useFormEvents';
+import { useFormValues } from './hooks/useFormValues';
+
 export default {
   components: {
     Form,
@@ -42,6 +46,8 @@ export default {
     const propsRef = ref({});
     const schemaRef = ref(null);
     const { prefixCls } = useDesign('basic-form');
+    const defaultValueRef = ref({});
+
     const formElRef = ref(null);
     // 获取表单的基本配置
     const getProps = computed(() => {
@@ -133,6 +139,7 @@ export default {
       getFormClass,
       formActionType,
       formElRef,
+      defaultValueRef,
     };
   },
 };

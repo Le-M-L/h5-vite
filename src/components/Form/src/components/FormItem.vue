@@ -1,4 +1,4 @@
-<script>
+<script lang="jsx" >
 export default {
   name: 'BasicFormItem',
   inheritAttrs: false,
@@ -16,6 +16,13 @@ export default {
         default: () => ({}),
       },
   },
+  setup(){
+
+    return () => {
+      
+      return (<div>111</div>)
+    }
+  }
 };
 </script>
 
