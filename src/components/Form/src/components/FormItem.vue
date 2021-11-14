@@ -1,8 +1,8 @@
 <script lang="jsx" >
   import {  computed, unref, toRefs } from 'vue';
-  import { Field, Col, Divider } from 'vant';
+  import { Field, Col, Divider,Button } from 'vant';
   import { componentMap } from '../componentMap';
-  // import { BasicHelp } from '@/components/Basic';
+  import { BasicHelp } from '@/components/Basic';
   import { isBoolean, isFunction, isNull } from '@/utils/is';
   import { getSlot } from '@/utils/helper/jsxHelper';
   import { createPlaceholderMessage, setComponentRuleType } from '../helper';
@@ -284,14 +284,16 @@
         const getHelpMessage = isFunction(helpMessage)
           ? helpMessage(unref(getValues))
           : helpMessage;
+
         if (!getHelpMessage || (Array.isArray(getHelpMessage) && getHelpMessage.length === 0)) {
           return renderLabel;
         }
+
         return (
           <span>
             {renderLabel}
             {
-              // <BasicHelp placement="top" class="mx-1" text={getHelpMessage} {...helpComponentProps} />
+              <BasicHelp placement="top" class="mx-1" text={getHelpMessage} {...helpComponentProps} />
             }
           </span>
         );
@@ -326,15 +328,19 @@
               colon={colon}
               class={{ 'suffix-item': showSuffix }}
               {...(itemProps)}
-              label={renderLabelHelpMessage()}
               rules={handleRules()}
               labelCol={labelCol}
               wrapperCol={wrapperCol}
             >
-              <div style="display:flex">
+            {{
+              label: () => renderLabelHelpMessage(),
+              input: () =>  <div style="display:flex">
                 <div style="flex:1;">{getContent()}</div>
                 {showSuffix && <span class="suffix">{getSuffix}</span>}
-              </div>
+              </div>,
+              button: () => <Button size="small" type="primary">发送验证码</Button>
+            }}
+              
             </Field>
           );
         }

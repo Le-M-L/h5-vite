@@ -18,6 +18,9 @@ export default {
         defaultValue: '0', //默认值
         component: 'Input', //组件
         field:'test',
+        label:'测试',
+        helpMessage:'666',
+        colon:true
       },
     ];
 
