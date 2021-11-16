@@ -87,15 +87,18 @@ export default {
       return (
           <>
             <span onClick={handleShow} >
-            {getSlot(slots) || <Icon name="info-o" />}
-             
-          </span>
+                {getSlot(slots) || <Icon name="info-o" />}
+              </span>
 
-         <Dialog.Component class={prefixCls} v-model={[show.value, 'show']} onClose={onClose} onCancel={onCancel} show-cancel-button>
-
+         <Dialog.Component 
+              class={prefixCls} 
+              v-model={[show.value, 'show']} 
+              onClose={onClose} 
+              onCancel={onCancel}
+               >
             {{
               title: () => <span class={`${prefixCls}-title`} >{props.title}</span>,
-              default: () => <p class={`${prefixCls}-content`} >{123}</p>,
+              default: () => <div class={`${prefixCls}-content`} >{renderContent()}</div>,
             }}
           </Dialog.Component>
           </>
@@ -105,32 +108,15 @@ export default {
 };
 </script>
 <style lang="less">
-
 @prefix-cls: ~'@{namespace}-basic-help';
 
 .@{prefix-cls} {
-
-  &-title{
+  &-title {
     font-size: 18px;
     font-weight: 600;
   }
-  &-content{
+  &-content {
     padding: 16px 16px 24px;
   }
-  // display: inline-block;
-  // margin-left: 6px;
-  // font-size: 14px;
-  // color: @text-color-help-dark;
-  // cursor: pointer;
-
-  // &:hover {
-  //   color: @primary-color;
-  // }
-
-  // &__wrap {
-  //   p {
-  //     margin-bottom: 0;
-  //   }
-  // }
 }
 </style>

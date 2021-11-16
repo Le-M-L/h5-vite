@@ -128,7 +128,6 @@ export default {
 
     // form 的操作
     const formActionType = {};
-
     return {
       getRow,
       getProps,

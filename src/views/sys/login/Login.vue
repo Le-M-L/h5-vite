@@ -20,7 +20,7 @@ export default {
     const value = ref('');
     const form = reactive({
       username: 'admin',
-      password: 'dingdang123456?',
+      password: 'admin123456?',
     });
     const { prefixCls } = useDesign('login');
     const userStore = useUserStoreWithOut()

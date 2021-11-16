@@ -1,6 +1,6 @@
 <script lang="jsx" >
   import {  computed, unref, toRefs } from 'vue';
-  import { Field, Col, Divider,Button } from 'vant';
+  import { Field, Col, Divider,Button, Icon } from 'vant';
   import { componentMap } from '../componentMap';
   import { BasicHelp } from '@/components/Basic';
   import { isBoolean, isFunction, isNull } from '@/utils/is';
@@ -60,6 +60,7 @@
           schema: schema,
         };
       });
+      console.log(getValues)
 
       const getComponentsProps = computed(() => {
         const { schema, tableAction, formModel, formActionType } = props;
@@ -254,13 +255,13 @@
         const bindValue = {
           [valueField || (isCheck ? 'checked' : 'value')]: props.formModel[field],
         };
-
+        console.log(bindValue)
         const compAttr = {
           ...propsData,
           ...on,
           ...bindValue,
         };
-
+        console.log(compAttr)
         if (!renderComponentContent) {
           return <Comp {...compAttr} />;
         }
@@ -336,9 +337,12 @@
               label: () => renderLabelHelpMessage(),
               input: () =>  <div style="display:flex">
                 <div style="flex:1;">{getContent()}</div>
-                {showSuffix && <span class="suffix">{getSuffix}</span>}
               </div>,
-              button: () => <Button size="small" type="primary">发送验证码</Button>
+              // button: () => <Button size="small" type="primary">发送验证码</Button>,
+              // "right-icon": () => <Icon name="arrow" />,
+              // "left-icon": () => <Icon name="arrow" />,
+              // 'error-message': () => '错误',
+              // extra: () => "???"
             }}
               
             </Field>

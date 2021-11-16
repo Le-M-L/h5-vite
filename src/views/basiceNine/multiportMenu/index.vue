@@ -1,9 +1,7 @@
 <template>
   <div class="basiceNine">
     <BasicForm :schemas="schemas">
-      <template #formHeader>
-        <div> 123 </div>
-      </template>
+     
     </BasicForm>
   </div>
 </template>
@@ -17,10 +15,19 @@ export default {
       {
         defaultValue: '0', //默认值
         component: 'Input', //组件
-        field:'test',
+        field:'test123',
         label:'测试',
-        helpMessage:'666',
-        colon:true
+        helpMessage: '666',
+        colon:true,
+        slot:'test'
+      },
+      {
+        component: 'Switch', //组件
+        field:'test1235',
+        label:'测试',
+        helpMessage: '666',
+        colon:true,
+        defaultValue:true,
       },
     ];
 

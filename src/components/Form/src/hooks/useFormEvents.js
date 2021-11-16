@@ -204,6 +204,14 @@ export function useFormEvents({
    * @description: 验证表单
    * @param { string | string[] }
    */
+   async function validateFields(nameList) {
+    return unref(formElRef)?.validate(nameList);
+  }
+
+  /**
+   * @description: 验证表单
+   * @param { string | string[] }
+   */
   async function validate(nameList) {
     return unref(formElRef)?.validate(nameList);
   }
@@ -250,6 +258,7 @@ export function useFormEvents({
     handleSubmit,
     clearValidate,
     validate,
+    validateFields,
     getFieldsValue,
     updateSchema,
     resetSchema,
