@@ -23,7 +23,7 @@ export function useRuleFormItem(
   const innerState = reactive({
     value: props[key],
   });
-
+  console.log(innerState.value);
   const defaultState = readonly(innerState);
 
   const setState = (val) => {

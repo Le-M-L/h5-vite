@@ -94,7 +94,6 @@ export function createPermissionGuard(router) {
     }
 
     const routes = await permissionStore.buildRoutesAction();
-   console.log(routes)
     routes.forEach((route) => {
       router.addRoute(route);
     });

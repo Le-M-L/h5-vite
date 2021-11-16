@@ -8,7 +8,6 @@ import { removeTabChangeListener } from '@/utils/logics/mitt/routeChange';
 export function createStateGuard(router) {
   router.afterEach((to) => {
     // 只需进入登录页面并清除身份验证信息
-    console.log(to.path,PageEnum.BASE_LOGIN)
     if (to.path === PageEnum.BASE_LOGIN) {
       // const tabStore = useMultipleTabStore();
       const userStore = useUserStore();

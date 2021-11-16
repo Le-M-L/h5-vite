@@ -48,6 +48,8 @@
 
       const getValues = computed(() => {
         const { allDefaultValues, formModel, schema } = props;
+        console.log(formModel)
+
         const { mergeDynamicData } = props.formProps;
         return {
           field: schema.field,
@@ -60,7 +62,6 @@
           schema: schema,
         };
       });
-      console.log(getValues)
 
       const getComponentsProps = computed(() => {
         const { schema, tableAction, formModel, formActionType } = props;
@@ -253,16 +254,15 @@
         propsData.formValues = unref(getValues);
 
         const bindValue = {
-          [valueField || (isCheck ? 'checked' : 'value')]: props.formModel[field],
+          [valueField || 'modelValue']: props.formModel[field],
         };
-        console.log(bindValue)
         const compAttr = {
           ...propsData,
           ...on,
           ...bindValue,
         };
-        console.log(compAttr)
         if (!renderComponentContent) {
+
           return <Comp {...compAttr} />;
         }
         const compSlot = isFunction(renderComponentContent)

@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { ref, reactive, unref, computed, onMounted } from 'vue';
+import { ref, reactive, unref, computed, onMounted, watch } from 'vue';
 import FormItem from './components/FormItem.vue';
 import { dateUtil } from '@/utils/dateUtil';
 import { dateItemType } from './helper';
@@ -47,6 +47,7 @@ export default {
     const schemaRef = ref(null);
     const { prefixCls } = useDesign('basic-form');
     const defaultValueRef = ref({});
+      const isInitedDefaultRef = ref(false);
 
     const formElRef = ref(null);
     // 获取表单的基本配置
@@ -101,6 +102,13 @@ export default {
       }
     });
 
+     const { handleFormValues, initDefault } = useFormValues({
+        getProps,
+        defaultValueRef,
+        getSchema,
+        formModel,
+      });
+
     // 使用表单方法
     const { validateFields } = useFormEvents({
       emit,
@@ -110,7 +118,7 @@ export default {
       defaultValueRef,
       formElRef,
       schemaRef,
-      // handleFormValues,
+      handleFormValues,
     });
 
     function setFormModel(key, value) {
@@ -123,8 +131,27 @@ export default {
     }
 
     onMounted(() => {
-      console.log(formElRef);
+      initDefault();
+      // console.log(formElRef);
     });
+
+     watch(
+        () => getSchema.value,
+        (schema) => {
+          // nextTick(() => {
+          //   //  Solve the problem of modal adaptive height calculation when the form is placed in the modal
+          //   modalFn?.redoModalHeight?.();
+          // });
+          if (unref(isInitedDefaultRef)) {
+            return;
+          }
+          if (schema?.length) {
+            initDefault();
+            isInitedDefaultRef.value = true;
+          }
+        },
+      );
+
 
     // form 的操作
     const formActionType = {};
