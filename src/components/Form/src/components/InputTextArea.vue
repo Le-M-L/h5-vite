@@ -13,7 +13,7 @@ export default {
     Field,
   },
   props: {
-    value: {
+    modelValue: {
       type: [ String ,Number],
     },
   },

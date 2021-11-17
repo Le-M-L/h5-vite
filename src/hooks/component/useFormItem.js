@@ -7,13 +7,14 @@ import {
   unref,
   nextTick,
   toRaw,
+  watch
 } from 'vue';
 
 import { isEqual } from 'lodash-es';
 
 export function useRuleFormItem(
   props,
-  key= 'value',
+  key= 'modelValue',
   changeEvent = 'change',
   emitData,
 ) {
@@ -23,7 +24,7 @@ export function useRuleFormItem(
   const innerState = reactive({
     value: props[key],
   });
-  console.log(innerState.value);
+  
   const defaultState = readonly(innerState);
 
   const setState = (val) => {

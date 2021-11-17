@@ -28,7 +28,7 @@ import { dateUtil } from '@/utils/dateUtil';
 import { dateItemType } from './helper';
 import { basicProps } from './props';
 import { useDesign } from '@/hooks/web/useDesign';
-import { CellGroup, Cell, Field, Form } from 'vant';
+import { CellGroup, Form } from 'vant';
 import { useFormEvents } from './hooks/useFormEvents';
 import { useFormValues } from './hooks/useFormValues';
 

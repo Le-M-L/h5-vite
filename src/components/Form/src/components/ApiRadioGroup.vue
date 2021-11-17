@@ -35,7 +35,7 @@ export default {
       type: [Object, String],
       default: () => ({}),
     },
-    value: {
+    modelValue: {
       type: [String, Number, Boolean],
     },
     isBtn: {
@@ -47,7 +47,7 @@ export default {
     },
     resultField: {
       type: String,
-      default: '',
+      default: 'result',
     },
     labelField: {
       type: String,
@@ -68,6 +68,7 @@ export default {
     const emitData = ref([]);
     const attrs = useAttrs();
     const loading = ref(false);
+     const isFirstLoad = ref(true);
     const [state] = useRuleFormItem(props);
 
     const getOptions = computed(() => {

@@ -1,43 +1,40 @@
 <template>
-  <CheckboxGroup v-bind="attrs" v-model="state" @change="handleChange">
-    <template v-for="item in getOptions" :key="`${item.value}`">
-      <Checkbox :name="item.value" :disabled="item.disabled">
-        {{ item.label }}
-        <!-- 自定义图标 -->
-        <!-- <template #icon="props">
-         
-        </template> -->
-      </Checkbox>
-    </template>
-  </CheckboxGroup>
+  <Field is-link readonly v-bind="attrs" v-model="state" @click="showPicker = true" />
+  <Popup v-model:show="showPicker" round position="bottom">
+    <Picker
+      ref="picker"
+      :columns="getOptions"
+      :loading="loading"
+      @confirm="handleConfirm"
+      @change="handleChange"
+      @cancel="handleCancel"
+    />
+  </Popup>
 </template>
 
 <script>
-import { computed, ref, watchEffect, watch, unref } from 'vue';
-import { Checkbox, CheckboxGroup } from 'vant';
+import { computed, ref, unref, watch, watchEffect } from 'vue';
+import { Picker, Popup, Field } from 'vant';
 import { isFunction } from '@/utils/is';
 import { get, omit } from 'lodash-es';
 import { useAttrs } from '@/hooks/core/useAttrs';
 import { useRuleFormItem } from '@/hooks/component/useFormItem';
 
 export default {
-  name: 'ApiCheckboxGroup',
+  name: 'ApiSelect',
+  inheritAttrs: false,
   components: {
-    CheckboxGroup,
-    Checkbox,
+    Picker,
+    Field,
+    Popup,
   },
   props: {
     api: {
       type: Function,
       default: null,
     },
-    params: {
-      type: [Object, String],
-      default: () => ({}),
-    },
     modelValue: {
-      type: Array,
-      default: () => [],
+      type: [Array, Object, String, Number],
     },
     numberToString: {
       type: Boolean,
@@ -48,26 +45,32 @@ export default {
     },
     labelField: {
       type: String,
-      default: 'label',
+      default: 'text',
     },
     valueField: {
       type: String,
-      default: 'value',
+      default: 'values',
+    },
+    childrenField: {
+      type: String,
+      default: 'children',
     },
     immediate: {
       type: Boolean,
       default: true,
     },
   },
-  emits: ['options-change', 'change'],
+  emits: ['options-change', 'change', 'cancel'],
   setup(props, { emit }) {
+    const attrs = useAttrs();
+    const picker = ref(null);
+    const loading = ref(false);
+    const isFirstLoad = ref(true);
     const options = ref([]);
     const emitData = ref([]);
-    const attrs = useAttrs();
-    const loading = ref(false);
-     const isFirstLoad = ref(true);
-    const [state] = useRuleFormItem(props);
-    
+    const showPicker = ref(false);
+    // Embedded in the form, just use the hook binding to perform form verification
+    const [state] = useRuleFormItem(props, 'modelValue', 'change', emitData);
     const getOptions = computed(() => {
       const { labelField, valueField, numberToString } = props;
 
@@ -75,7 +78,7 @@ export default {
         if (next) {
           const value = next[valueField];
           prev.push({
-            label: next[labelField],
+            text: next[labelField],
             value: numberToString ? `${value}` : value,
             ...omit(next, [labelField, valueField]),
           });
@@ -87,6 +90,7 @@ export default {
     watchEffect(() => {
       props.immediate && fetch();
     });
+    console.log(state)
 
     watch(
       () => props.params,
@@ -108,6 +112,7 @@ export default {
           emitChange();
           return;
         }
+        // 当返回值是一个对象时 可以设置resultField 取指定值
         if (props.resultField) {
           options.value = get(res, props.resultField) || [];
         }
@@ -119,15 +124,41 @@ export default {
       }
     }
 
+    function handleChange(...args) {
+      //  emitData.value = args;
+      // emit('change', ...args);
+    }
+
     function emitChange() {
       emit('options-change', unref(getOptions));
     }
 
-    function handleChange(_, ...args) {
-      console.log(_, args);
-      emitData.value = args;
-    }
-    return { state, getOptions, attrs, loading, handleChange };
+    const handleConfirm = (...args) => {
+      const [e] = args;
+      // state.value = e.text;
+      showPicker.value = false;
+      emit('change', ...args);
+      // emitData.value = args;
+      // setState(e.value)
+    };
+ 
+
+    const handleCancel = () => {
+      showPicker.value = false;
+    };
+
+    return {
+      getOptions,
+      options,
+      loading,
+      picker,
+      state,
+      attrs,
+      showPicker,
+      handleConfirm,
+      handleChange,
+      handleCancel,
+    };
   },
 };
 </script>

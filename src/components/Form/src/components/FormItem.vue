@@ -3,7 +3,7 @@
   import { Field, Col, Divider,Button, Icon } from 'vant';
   import { componentMap } from '../componentMap';
   import { BasicHelp } from '@/components/Basic';
-  import { isBoolean, isFunction, isNull } from '@/utils/is';
+  import { isBoolean, isFunction, isNull, isObject } from '@/utils/is';
   import { getSlot } from '@/utils/helper/jsxHelper';
   import { createPlaceholderMessage, setComponentRuleType } from '../helper';
   import { upperFirst, cloneDeep } from 'lodash-es';
@@ -218,7 +218,7 @@
           valueField,
         } = props.schema;
 
-        const isCheck = component && ['Switch', 'Checkbox'].includes(component);
+        const isSelect = component && ['ApiSelect'].includes(component);
 
         const eventKey = `on${upperFirst(changeEvent)}`;
 
@@ -228,8 +228,7 @@
             if (propsData[eventKey]) {
               propsData[eventKey](...args);
             }
-            const target = e ? e.target : null;
-            const value = target ? (isCheck ? target.checked : target.value) : e;
+            const value =  isSelect ?isObject(e) ? e.value : e: e;
             props.setFormModel(field, value);
           },
         };

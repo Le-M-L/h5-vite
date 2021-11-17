@@ -5,6 +5,7 @@ import ApiRadioGroup from './components/ApiRadioGroup.vue';
 import ApiCheckboxGroup from './components/ApiCheckboxGroup.vue';
 import InputNumber from './components/InputNumber.vue';
 import InputTextArea from './components/InputTextArea.vue';
+import ApiSelect from './components/ApiSelect.vue';
 
 
 const componentMap = new Map();
@@ -18,6 +19,7 @@ componentMap.set('Slider', Slider);
 componentMap.set('Divider', Divider);
 componentMap.set('ApiRadioGroup', ApiRadioGroup);
 componentMap.set('ApiCheckboxGroup', ApiCheckboxGroup);
+componentMap.set('ApiSelect', ApiSelect);
 componentMap.set('InputNumber', InputNumber);
 componentMap.set('InputTextArea', InputTextArea);
 

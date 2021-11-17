@@ -1,5 +1,7 @@
 <template>
   <div class="basiceNine">
+    <input type="file" multiple />
+    <button @click="handleBtn">点击</button>
     <Switch v-model="value" />
     <ApiRadioGroup />
     <BasicForm :schemas="schemas"> </BasicForm>
@@ -118,12 +120,27 @@ export default {
         component: 'InputTextArea',
         label: '基础字段',
       },
+      {
+        field: 'ApiSelect',
+        component: 'ApiSelect',
+        label: '基础字段',
+        componentProps: {
+          api: optionsListApi,
+          // use name as label
+          labelField: 'name',
+          // use id as value
+          valueField: 'id',
+        },
+        defaultValue:'1'
+      },
     ];
+    const handleBtn = () => {};
     const value = ref(false);
 
     return {
       schemas,
       value,
+      handleBtn,
     };
   },
 };
