@@ -15,8 +15,10 @@ export default {
   props: {
     modelValue: {
       type: [ String ,Number],
+      default:null
     },
   },
+  emits: ['change'],
   setup(props) {
     const attrs = useAttrs();
     const [state] = useRuleFormItem(props);

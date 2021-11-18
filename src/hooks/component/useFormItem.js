@@ -40,8 +40,8 @@ export function useRuleFormItem(
       return innerState.value;
     },
     set(value) {
+    
       if (isEqual(value, defaultState.value)) return;
-
       innerState.value = value ;
       nextTick(() => {
         emit?.(changeEvent, value, ...(toRaw(unref(emitData)) || []));

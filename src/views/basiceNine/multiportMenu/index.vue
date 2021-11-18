@@ -1,6 +1,5 @@
 <template>
   <div class="basiceNine">
-    <input type="file" multiple />
     <button @click="handleBtn">点击</button>
     <Switch v-model="value" />
     <ApiRadioGroup />

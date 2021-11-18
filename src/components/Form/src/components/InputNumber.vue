@@ -14,13 +14,14 @@ export default {
   },
   props: {
     modelValue: {
-      type: Number,
+      type: [Number, String],
     },
   },
+  emits: ['change'],
   setup(props) {
     const attrs = useAttrs();
     const [state] = useRuleFormItem(props);
-    
+
     return { state, attrs };
   },
 };
