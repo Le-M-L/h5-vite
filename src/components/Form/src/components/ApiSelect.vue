@@ -1,5 +1,5 @@
 <template>
-  <Field is-link readonly v-bind="attrs" v-model="state" @click="showPicker = true" />
+  <Field is-link readonly v-bind="attrs" v-model="getText" @click="showPicker = true" />
   <Popup v-model:show="showPicker" round position="bottom">
     <Picker
       ref="picker"
@@ -69,7 +69,7 @@ export default {
     const options = ref([]);
     const emitData = ref([]);
     const showPicker = ref(false);
-    // Embedded in the form, just use the hook binding to perform form verification
+    // 嵌入表单中，只需使用钩子绑定来执行表单验证  
     const [state] = useRuleFormItem(props, 'modelValue', 'change', emitData);
     const getOptions = computed(() => {
       const { labelField, valueField, numberToString } = props;
@@ -87,10 +87,14 @@ export default {
       }, []);
     });
 
+    const getText = computed(() => {
+       let value = unref(state)
+       return unref(getOptions).find(item => item.value == value)?.text ?? value;
+    })
+
     watchEffect(() => {
       props.immediate && fetch();
     });
-    console.log(state)
 
     watch(
       () => props.params,
@@ -134,12 +138,9 @@ export default {
     }
 
     const handleConfirm = (...args) => {
-      const [e] = args;
-      // state.value = e.text;
       showPicker.value = false;
       emit('change', ...args);
       // emitData.value = args;
-      // setState(e.value)
     };
  
 
@@ -152,7 +153,7 @@ export default {
       options,
       loading,
       picker,
-      state,
+      getText,
       attrs,
       showPicker,
       handleConfirm,
