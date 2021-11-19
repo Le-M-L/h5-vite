@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { useMessage } from '@/hooks/web/useMessage';
-// import router from '/@/router';
-// import { PageEnum } from '/@/config/enums/pageEnum';
+// import router from '@/router';
+// import { PageEnum } from '@/config/enums/pageEnum';
 import { useUserStoreWithOut } from '@/store/modules/user';
 import projectSetting from '@/settings/projectSetting';
 import { SessionTimeoutProcessingEnum } from '@/enums/appEnum';

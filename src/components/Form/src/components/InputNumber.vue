@@ -1,5 +1,5 @@
 <template>
-  <Field v-bind="attrs" v-model="state" type="textarea"  />
+  <Field v-model="state"  v-bind="attrs" type="textarea"  />
 </template>
 
 <script>

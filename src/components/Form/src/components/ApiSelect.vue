@@ -1,6 +1,6 @@
 <template>
-  <Field is-link readonly v-bind="attrs" v-model="getText" @click="showPicker = true" />
-  <Popup v-model:show="showPicker" round position="bottom">
+  <Field is-link readonly v-model="getText" @click="show = true" />
+  <Popup v-model:show="show" round position="bottom">
     <Picker
       ref="picker"
       :columns="getOptions"
@@ -8,6 +8,7 @@
       @confirm="handleConfirm"
       @change="handleChange"
       @cancel="handleCancel"
+      v-bind="attrs"
     />
   </Popup>
 </template>
@@ -60,17 +61,16 @@ export default {
       default: true,
     },
   },
-  emits: ['options-change', 'change', 'cancel'],
+  emits: ['options-change', 'change'],
   setup(props, { emit }) {
     const attrs = useAttrs();
     const picker = ref(null);
     const loading = ref(false);
     const isFirstLoad = ref(true);
     const options = ref([]);
-    const emitData = ref([]);
-    const showPicker = ref(false);
+    const show = ref(false);
     // 嵌入表单中，只需使用钩子绑定来执行表单验证  
-    const [state] = useRuleFormItem(props, 'modelValue', 'change', emitData);
+    const [state] = useRuleFormItem(props);
     const getOptions = computed(() => {
       const { labelField, valueField, numberToString } = props;
 
@@ -129,7 +129,6 @@ export default {
     }
 
     function handleChange(...args) {
-      //  emitData.value = args;
       // emit('change', ...args);
     }
 
@@ -138,14 +137,13 @@ export default {
     }
 
     const handleConfirm = (...args) => {
-      showPicker.value = false;
+      show.value = false;
       emit('change', ...args);
-      // emitData.value = args;
     };
  
 
     const handleCancel = () => {
-      showPicker.value = false;
+      show.value = false;
     };
 
     return {
@@ -155,7 +153,7 @@ export default {
       picker,
       getText,
       attrs,
-      showPicker,
+      show,
       handleConfirm,
       handleChange,
       handleCancel,

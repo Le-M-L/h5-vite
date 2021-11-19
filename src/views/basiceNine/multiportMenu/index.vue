@@ -1,7 +1,5 @@
 <template>
   <div class="basiceNine">
-    <button @click="handleBtn">点击</button>
-    <Switch v-model="value" />
     <ApiRadioGroup />
     <BasicForm :schemas="schemas"> </BasicForm>
   </div>
@@ -9,9 +7,8 @@
 
 <script>
 import { ref } from 'vue';
-import { Switch, Radio } from 'vant';
-import { BasicForm } from '@comp/Form';
-import ApiRadioGroup from '@comp/Form/src/components/ApiRadioGroup.vue';
+import { BasicForm } from '@/components/Form';
+import ApiRadioGroup from '@/components/Form/src/components/ApiRadioGroup.vue';
 
 function optionsListApi(params) {
   return new Promise((r) => {
@@ -31,7 +28,7 @@ function optionsListApi(params) {
 }
 
 export default {
-  components: { BasicForm, Switch, Radio, ApiRadioGroup },
+  components: { BasicForm,  ApiRadioGroup },
   setup() {
     const schemas = [
       {
@@ -59,7 +56,7 @@ export default {
       },
       {
         component: 'ApiRadioGroup', //评分
-        field: 'field2',
+        field: 'field244',
         label: '测试',
         colon: true,
         componentProps: {
@@ -132,14 +129,24 @@ export default {
         },
         defaultValue:'1'
       },
+      {
+        field: 'DatetimePicker',
+        component: 'DatetimePicker',
+        label: '基础字段',
+        defaultValue:'2020-01-01',
+        componentProps:{
+          // title:'请选择日期'
+        }
+      },
+      {
+        field: 'Upload',
+        component: 'Upload',
+        label: '基础字段',
+      },
     ];
-    const handleBtn = () => {};
-    const value = ref(false);
 
     return {
       schemas,
-      value,
-      handleBtn,
     };
   },
 };

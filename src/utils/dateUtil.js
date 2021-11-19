@@ -3,12 +3,13 @@
  */
 import dayjs from 'dayjs';
 const DATE_TIME_FORMAT = 'YYYY-MM-DD HH:mm';
-const DATE_FORMAT = 'YYYY-MM-DD ';
-
+const DATE_FORMAT = 'YYYY-MM-DD';
+// 年月日 时分
 export function formatToDateTime(date = undefined, format = DATE_TIME_FORMAT) {
   return dayjs(date).format(format);
 }
 
+// 年月日
 export function formatToDate(date = undefined, format = DATE_FORMAT) {
   return dayjs(date).format(format);
 }

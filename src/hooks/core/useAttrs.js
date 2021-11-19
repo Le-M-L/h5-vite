@@ -14,7 +14,7 @@ export function useAttrs(params = {}) {
   const attrs = shallowRef({});
   const allExcludeKeys = excludeKeys.concat(excludeDefaultKeys ? DEFAULT_EXCLUDE_KEYS : []);
 
-  // Since attrs are not reactive, make it reactive instead of doing in `onUpdated` hook for better performance
+  // 因为attrs不是响应式的，所以让它响应式而不是在' onUpdated '钩子中执行以获得更好的性能  
   instance.attrs = reactive(instance.attrs);
 
   watchEffect(() => {

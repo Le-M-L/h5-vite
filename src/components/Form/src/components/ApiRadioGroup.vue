@@ -1,5 +1,5 @@
 <template>
-  <RadioGroup v-bind="attrs" v-model="state" @change="handleChange">
+  <RadioGroup  v-model="state" @change="handleChange" v-bind="attrs">
     <template v-for="item in getOptions" :key="`${item.value}`">
       <Radio :name="item.value" :disabled="item.disabled">
         {{ item.label }}

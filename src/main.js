@@ -15,7 +15,7 @@ import { initAppConfigStore } from '@/utils/logics/initAppConfig';
 import { setupStore } from '@/store';
 import { router, setupRouter } from '@/router';
 import { setupRouterGuard } from '@/router/guard';
-import { registerGlobComp } from '@comp/registerGlobComp';
+import { registerGlobComp } from '@/components/registerGlobComp';
 
 // 只在生产环境中启用按需导入。
 if (import.meta.env.DEV) {
