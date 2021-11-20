@@ -6,7 +6,7 @@ import ApiCheckboxGroup from './components/ApiCheckboxGroup.vue';
 import InputNumber from './components/InputNumber.vue';
 import InputTextArea from './components/InputTextArea.vue';
 import ApiSelect from './components/ApiSelect.vue';
-import DatetimePicker from './components/DatetimePicker.vue';
+import DatePicker from './components/DatePicker.vue';
 import { BasicUpload } from '@/components/Upload';
 
 const componentMap = new Map();
@@ -17,7 +17,7 @@ componentMap.set('Switch', Switch);
 componentMap.set('Rate', Rate);
 componentMap.set('Slider', Slider);
 componentMap.set('Divider', Divider);
-componentMap.set('DatetimePicker', DatetimePicker);
+componentMap.set('DatePicker', DatePicker);
 componentMap.set('ApiRadioGroup', ApiRadioGroup);
 componentMap.set('ApiCheckboxGroup', ApiCheckboxGroup);
 componentMap.set('ApiSelect', ApiSelect);

@@ -1,18 +1,18 @@
 <template>
   <Field is-link readonly v-model="state" @click="show = true" />
   <Popup v-model:show="show" round position="bottom">
-    <DatetimePicker v-bind="getBindValue" @confirm="handleConfirm" @cancel="handleCancel" />
+    <DatetimePicker v-bind="getBindValue" @confirm="handleConfirm" @cancel="handleCancel"  />
   </Popup>
 </template>
 
 <script>
-import { ref, unref, computed } from 'vue';
+import { ref,  computed } from 'vue';
 import { DatetimePicker, Popup, Field } from 'vant';
 import { omit } from 'lodash-es';
 import { useRuleFormItem } from '@/hooks/component/useFormItem';
 import { dateUtil } from '@/utils/dateUtil';
 export default {
-  name: 'DatetimePicker',
+  name: 'DatePicker',
   inheritAttrs: false,
   components: {
     DatetimePicker,
@@ -29,26 +29,26 @@ export default {
       default: 'YYYY-MM-DD',
     },
     // 日期选项格式化
-    // formatter: {
-    //   type: Function,
-    //   default: (type, value) => {
-    //     switch (type) {
-    //       case 'year': // 年
-    //         break;
-    //       case 'month': // 月
-    //         break;
-    //       case 'day': // 时
-    //         break;
-    //       case 'hour': // 分
-    //         break;
-    //       case 'minute': // 秒
-    //         break;
-    //       default:
-    //         break;
-    //     }
-    //     return value;
-    //   },
-    // },
+    formatter: {
+      type: Function,
+      default: (type, value) => {
+        switch (type) {
+          case 'year': // 年
+            break;
+          case 'month': // 月
+            break;
+          case 'day': // 时
+            break;
+          case 'hour': // 分
+            break;
+          case 'minute': // 秒
+            break;
+          default:
+            break;
+        }
+        return value;
+      },
+    },
   },
   emits: ['change'],
   setup(props, { emit, attrs }) {
@@ -58,11 +58,14 @@ export default {
 
     const getBindValue = computed(() => {
       let bindValue = {
-        ...omit(attrs, 'modelValue'),
+        type:'date',
+        ...attrs,
         ...props,
       };
       return omit(bindValue, 'modelValue');
     });
+
+    console.log(getBindValue)
 
     const handleConfirm = (date) => {
       show.value = false;

@@ -130,8 +130,8 @@ export default {
         defaultValue:'1'
       },
       {
-        field: 'DatetimePicker',
-        component: 'DatetimePicker',
+        field: 'DatePicker',
+        component: 'DatePicker',
         label: '基础字段',
         defaultValue:'2020-01-01',
         componentProps:{
