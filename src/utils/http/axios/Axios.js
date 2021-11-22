@@ -126,6 +126,10 @@ export class DAxios {
       formData.append(customFilename, params.file);
     }
 
+    if(params.biz){
+      formData.append('biz', params.biz);
+    }
+
     if (params.data) {
       Object.keys(params.data).forEach((key) => {
         if (!params.data) return;
@@ -206,7 +210,6 @@ export class DAxios {
     conf.requestOptions = opt;
 
     conf = this.supportFormData(conf);
-
     return new Promise((resolve, reject) => {
       this.#axiosInstance
         .request(conf)

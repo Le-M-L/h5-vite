@@ -15,14 +15,15 @@ export const useGlobSetting = () => {
       `VITE_GLOB_APP_SHORT_NAME Variables can only be characters/underscores, please modify in the environment variables and re-running.`,
     );
   }
-
-  // Take global configuration
+  console.log(VITE_GLOB_API_URL)
+  // 采取全局配置
   const glob = {
     title: VITE_GLOB_APP_TITLE,
     apiUrl: VITE_GLOB_API_URL,
     shortName: VITE_GLOB_APP_SHORT_NAME,
     urlPrefix: VITE_GLOB_API_URL_PREFIX,
     uploadUrl: VITE_GLOB_UPLOAD_URL,
+    staticDomainURL:VITE_GLOB_API_URL + '/sys/common/static', // 静态文件路径
   };
   return glob;
 };

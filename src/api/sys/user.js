@@ -4,7 +4,7 @@ import { defHttp } from '@/utils/http/axios';
 
 
 const Api = {
-  Login: 'sys/mLogin',
+  Login: '/sys/mLogin',
   Logout: '/logout',
   GetUserInfo: '/getUserInfo',
   GetPermCode: '/getPermCode',

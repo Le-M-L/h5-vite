@@ -6,9 +6,8 @@
 </template>
 
 <script>
-import { ref,  computed } from 'vue';
+import { ref,  computed, unref } from 'vue';
 import { DatetimePicker, Popup, Field } from 'vant';
-import { omit } from 'lodash-es';
 import { useRuleFormItem } from '@/hooks/component/useFormItem';
 import { dateUtil } from '@/utils/dateUtil';
 export default {
@@ -61,11 +60,11 @@ export default {
         type:'date',
         ...attrs,
         ...props,
+        modelValue: new Date(unref(state))
       };
-      return omit(bindValue, 'modelValue');
+      return bindValue;
     });
 
-    console.log(getBindValue)
 
     const handleConfirm = (date) => {
       show.value = false;

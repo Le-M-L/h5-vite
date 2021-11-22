@@ -33,7 +33,6 @@ function createAlertDialog(options) {
 function createConfirm(options) {
   return Dialog.confirm(createModalOptions(options))
 }
-
 /**
  * @description: message
  */

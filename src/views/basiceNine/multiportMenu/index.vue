@@ -1,5 +1,8 @@
 <template>
   <div class="basiceNine">
+    <input type="file" @change="handleChange" />
+    <img  :src="imgRrc" alt="" />
+
     <ApiRadioGroup />
     <BasicForm :schemas="schemas"> </BasicForm>
   </div>
@@ -9,6 +12,7 @@
 import { ref } from 'vue';
 import { BasicForm } from '@/components/Form';
 import ApiRadioGroup from '@/components/Form/src/components/ApiRadioGroup.vue';
+  import { uploadApi } from '@/api/sys/upload';
 
 function optionsListApi(params) {
   return new Promise((r) => {
@@ -28,7 +32,7 @@ function optionsListApi(params) {
 }
 
 export default {
-  components: { BasicForm,  ApiRadioGroup },
+  components: { BasicForm, ApiRadioGroup },
   setup() {
     const schemas = [
       {
@@ -127,26 +131,53 @@ export default {
           // use id as value
           valueField: 'id',
         },
-        defaultValue:'1'
+        defaultValue: '1',
       },
       {
         field: 'DatePicker',
         component: 'DatePicker',
         label: '基础字段',
-        defaultValue:'2020-01-01',
-        componentProps:{
+        defaultValue: '2020-01-01',
+        componentProps: {
           // title:'请选择日期'
-        }
+        },
       },
       {
         field: 'Upload',
         component: 'Upload',
         label: '基础字段',
+        componentProps: {
+          maxCount: 3,
+          multiple: true,
+          onDelete:(file) => {
+            console.log(file)
+          },
+          api:uploadApi
+          // onChange:(file) => {
+          //   console.log(file)
+          // }
+        },
+        defaultValue:['temp/bg_1637582014087.png']
       },
     ];
 
+    const imgRrc = ref('');
+      const reader = new FileReader();
+      console.log(reader.readyState)
+
+
+    const handleChange = ({ target: { files } }) => {
+      reader.readAsText(files[0]);
+      console.log(reader.readyState)
+      reader.onload = () => {
+        // imgRrc.value = reader.result;
+        console.log(reader.readyState)
+      };
+    };
     return {
       schemas,
+      handleChange,
+      imgRrc,
     };
   },
 };

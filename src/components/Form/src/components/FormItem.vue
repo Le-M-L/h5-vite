@@ -261,7 +261,6 @@
           ...bindValue,
         };
         if (!renderComponentContent) {
-
           return <Comp {...compAttr} />;
         }
         const compSlot = isFunction(renderComponentContent)
