@@ -1,6 +1,9 @@
 
+import { useGlobSetting } from '@/hooks/setting';
 import { isObject } from '@/utils/is';
-
+import { buildUUID } from '@/utils/uuid';
+import { UploadResultStatus } from '@/components/Upload/src/typing';
+const { staticDomainURL } = useGlobSetting()
 
 /**
  * Add the object as a parameter to the URL
@@ -72,4 +75,42 @@ export function openWindow(url, opt) {
   noreferrer && feature.push('noreferrer=yes');
 
   window.open(url, target, feature.join(','));
+}
+
+
+export function getFileAccessHttpUrl(avatar,subStr) {
+  if(!subStr) subStr = 'http'
+  try {
+    if(avatar && avatar.startsWith(subStr)){
+      return avatar;
+    }else{
+      if(avatar &&　avatar.length>0 && avatar.indexOf('[')==-1){
+        return staticDomainURL + "/" + avatar;
+      }
+    }
+  }catch(err){
+   return;
+  }
+}
+/**
+ * 对文件路径 初始化
+ * @param {*} val 
+ * @returns 
+ */
+export function initFileListArr(val) {
+  let fileList = [];
+  for (var a = 0; a < val.length; a++) {
+    let url = getFileAccessHttpUrl(val[a]);
+    fileList.push({
+      uid: buildUUID(),
+      // name: val[a],
+      status: UploadResultStatus.SUCCESS,
+      url: url,
+      responseData: {
+        status: true,
+        message: val[a],
+      },
+    });
+  }
+  return fileList = fileList;
 }

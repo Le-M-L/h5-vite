@@ -38,12 +38,11 @@ export const basicProps = {
   bizPath: {
     type: String,
     required: false,
-    default: 'temp',
+    default: null,
   },
   api: {
     type: Function,
-    default: null,
-    required: true,
+    default: uploadApi,
   },
   name: {
     type: String,

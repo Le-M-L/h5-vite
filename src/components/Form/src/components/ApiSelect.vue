@@ -5,6 +5,7 @@
       ref="picker"
       :columns="getOptions"
       :loading="loading"
+      :defaultIndex="defaultIndex"
       @confirm="handleConfirm"
       @change="handleChange"
       @cancel="handleCancel"
@@ -14,7 +15,7 @@
 </template>
 
 <script>
-import { computed, ref, unref, watch, watchEffect } from 'vue';
+import { computed, nextTick, ref, unref, watch, watchEffect } from 'vue';
 import { Picker, Popup, Field } from 'vant';
 import { isFunction } from '@/utils/is';
 import { get, omit } from 'lodash-es';
@@ -69,14 +70,19 @@ export default {
     const isFirstLoad = ref(true);
     const options = ref([]);
     const show = ref(false);
-    // 嵌入表单中，只需使用钩子绑定来执行表单验证  
+    const defaultIndex = ref();
+    // 嵌入表单中，只需使用钩子绑定来执行表单验证
     const [state] = useRuleFormItem(props);
     const getOptions = computed(() => {
       const { labelField, valueField, numberToString } = props;
-
-      return unref(options).reduce((prev, next) => {
+      let defaultValue = unref(state);
+      return unref(options).reduce((prev, next, index) => {
         if (next) {
           const value = next[valueField];
+          /// 设置默认选中
+          if(value == defaultValue){
+            defaultIndex.value = index;
+          }
           prev.push({
             text: next[labelField],
             value: numberToString ? `${value}` : value,
@@ -88,12 +94,12 @@ export default {
     });
 
     const getText = computed(() => {
-       let value = unref(state)
-       return unref(getOptions).find(item => item.value == value)?.text ?? value;
-    })
+      let value = unref(state);
+      return unref(getOptions).find((item) => item.value == value)?.text ?? value;
+    });
 
-    watchEffect(() => {
-      props.immediate && fetch();
+    watchEffect(async () => {
+      props.immediate && (await fetch());
     });
 
     watch(
@@ -140,7 +146,6 @@ export default {
       show.value = false;
       emit('change', ...args);
     };
- 
 
     const handleCancel = () => {
       show.value = false;
@@ -154,6 +159,7 @@ export default {
       getText,
       attrs,
       show,
+      defaultIndex,
       handleConfirm,
       handleChange,
       handleCancel,

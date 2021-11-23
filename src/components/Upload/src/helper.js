@@ -1,8 +1,3 @@
-import { useGlobSetting } from '@/hooks/setting';
-import { buildUUID } from '@/utils/uuid';
-
-const { staticDomainURL } = useGlobSetting()
-
 export function checkFileType(file, accepts) {
   const newTypes = accepts.join('|');
   // const reg = /\.(jpg|jpeg|png|gif|txt|doc|docx|xls|xlsx|xml)$/i;
@@ -28,35 +23,3 @@ export function getBase64WithFile(file) {
   });
 }
 
-export function getFileAccessHttpUrl(avatar,subStr) {
-  if(!subStr) subStr = 'http'
-  try {
-    if(avatar && avatar.startsWith(subStr)){
-      return avatar;
-    }else{
-      if(avatar &&　avatar.length>0 && avatar.indexOf('[')==-1){
-        return staticDomainURL + "/" + avatar;
-      }
-    }
-  }catch(err){
-   return;
-  }
-}
-
-export function initFileListArr(val) {
-  let fileList = [];
-  for (var a = 0; a < val.length; a++) {
-    let url = getFileAccessHttpUrl(val[a].filePath);
-    fileList.push({
-      uid: buildUUID(),
-      name: val[a].fileName,
-      status: 'done',
-      url: url,
-      response: {
-        status: 'history',
-        message: val[a].filePath,
-      },
-    });
-  }
-  return fileList = fileList;
-}

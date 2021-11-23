@@ -1,5 +1,4 @@
 <template>
-  <div>
     <Uploader
       :after-read="afterRead"
       :before-read="beforeRead"
@@ -9,28 +8,27 @@
       v-model="fileListRef"
     >
     </Uploader>
-    <button @click="handleClick">点击</button>
-  </div>
 </template>
 
 <script>
-import { computed, ref, unref, toRefs, watch } from 'vue';
+import { computed, ref, unref, toRefs, watch, nextTick } from 'vue';
 import { Uploader } from 'vant';
 import { useUploadType } from './useUpload';
 import { basicProps } from './props';
 import { useMessage } from '@/hooks/web/useMessage';
-import { checkFileType, initFileListArr } from './helper';
+import { checkFileType } from './helper';
 import { omit } from 'lodash-es';
 import { UploadResultStatus } from './typing';
 import { isArray, isFunction } from '@/utils/is';
 import { warn } from '@/utils/log';
-
+import { initFileListArr } from "@/utils"
 export default {
   name: 'BasicUpload',
   components: { Uploader },
   props: basicProps,
   emits: ['change', 'delete'],
   setup(props, { emit, attrs }) {
+    console.log(props)
     //   是否正在上传
     const isUploadingRef = ref(false);
     const fileListRef = ref([]);
@@ -47,23 +45,20 @@ export default {
 
     const getBindValue = computed(() => {
       const value = {
+        ...attrs,
         ...props,
       };
-      return omit(value, ['modelValue', 'maxSize']);
+      return omit(value, ['modelValue', 'maxSize','api']);
     });
 
     watch(
       () => props.modelValue,
       (value = []) => {
-        console.log(props)
-        let values = isArray(value) ? value : []
-        fileListRef.value = initFileListArr(unref(values))
-        console.log(fileListRef.value)
+        // 如果存在上传失败的文件  会自动清空
+        fileListRef.value = initFileListArr(unref(value));
       },
-      { immediate: true }
+      { immediate: true },
     );
-
-    
 
     // 文件读取前的回调
     const beforeRead = (file) => {
@@ -93,24 +88,21 @@ export default {
     const afterRead = async () => {
       const { autoUpload } = props;
       autoUpload && (await handleStartUpload());
-      // file.status = UploadResultStatus.SUCCESS;
-      emit(
-        'change',
-        unref(fileListRef).map(({ responseData }) => responseData.message),
-      );
-      console.log(fileListRef.value);
+      fileListRef.value = fileListRef.value.filter(({status}) => status === UploadResultStatus.SUCCESS)
+      emit('change', getFileData());
     };
 
-    const handleClick = () => {
-      console.log(fileListRef.value);
-    };
-
-    const handleChange = () => {
-      console.log(fileListRef.value);
-    };
+    // 获取已上传的文件
+    function getFileData() {
+      return unref(fileListRef)
+        .filter(({ status }) => status === UploadResultStatus.SUCCESS)
+        .map(({ responseData }) => responseData.message);
+    }
 
     const beforeDelete = (file) => {
-      emit('delete', file);
+      nextTick(() => {
+        emit('change', getFileData());
+      });
       return true;
     };
 
@@ -181,15 +173,12 @@ export default {
     const oversize = (file) => {
       console.log(file);
     };
-
     return {
       afterRead,
       beforeRead,
       oversize,
       getBindValue,
       fileListRef,
-      handleClick,
-      handleChange,
       beforeDelete,
     };
   },

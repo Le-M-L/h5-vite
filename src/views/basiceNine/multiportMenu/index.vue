@@ -1,18 +1,21 @@
 <template>
   <div class="basiceNine">
     <input type="file" @change="handleChange" />
-    <img  :src="imgRrc" alt="" />
-
+    <img :src="imgRrc" alt="" />
+    <BasicUpload v-model="form.upload" />
+    <button @click="getForm" >获取form</button>
     <ApiRadioGroup />
     <BasicForm :schemas="schemas"> </BasicForm>
   </div>
 </template>
 
 <script>
-import { ref } from 'vue';
+import { ref, reactive } from 'vue';
 import { BasicForm } from '@/components/Form';
 import ApiRadioGroup from '@/components/Form/src/components/ApiRadioGroup.vue';
-  import { uploadApi } from '@/api/sys/upload';
+import {BasicUpload} from '@/components/Upload';
+
+
 
 function optionsListApi(params) {
   return new Promise((r) => {
@@ -26,14 +29,23 @@ function optionsListApi(params) {
           name: 'name2',
           id: 2,
         },
+        {
+          name: 'name3',
+          id: 3,
+        },
       ]);
     }, 3000);
   });
 }
 
 export default {
-  components: { BasicForm, ApiRadioGroup },
+  components: { BasicForm, ApiRadioGroup, BasicUpload },
   setup() {
+
+    const form = reactive({
+      upload: []
+    })
+
     const schemas = [
       {
         defaultValue: '0', //默认值
@@ -131,7 +143,7 @@ export default {
           // use id as value
           valueField: 'id',
         },
-        defaultValue: '1',
+        defaultValue: '2',
       },
       {
         field: 'DatePicker',
@@ -149,35 +161,37 @@ export default {
         componentProps: {
           maxCount: 3,
           multiple: true,
-          onDelete:(file) => {
-            console.log(file)
+          onDelete: (file) => {
+            console.log(file);
           },
-          api:uploadApi
-          // onChange:(file) => {
-          //   console.log(file)
-          // }
         },
-        defaultValue:['temp/bg_1637582014087.png']
+        defaultValue: ['bg_1637630604113.png'],
       },
     ];
 
     const imgRrc = ref('');
-      const reader = new FileReader();
-      console.log(reader.readyState)
-
+    const reader = new FileReader();
+    console.log(reader.readyState);
 
     const handleChange = ({ target: { files } }) => {
       reader.readAsText(files[0]);
-      console.log(reader.readyState)
+      console.log(reader.readyState);
       reader.onload = () => {
         // imgRrc.value = reader.result;
-        console.log(reader.readyState)
+        console.log(reader.readyState);
       };
     };
+
+    const getForm = () => {
+      console.log(form)
+    }
+
     return {
       schemas,
       handleChange,
       imgRrc,
+      form,
+      getForm
     };
   },
 };
