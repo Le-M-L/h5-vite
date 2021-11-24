@@ -48,7 +48,7 @@
 
       const getValues = computed(() => {
         const { allDefaultValues, formModel, schema } = props;
-        console.log(formModel)
+        // console.log(formModel)
 
         const { mergeDynamicData } = props.formProps;
         return {

@@ -1,20 +1,30 @@
 <template>
   <div class="basiceNine">
-    <input type="file" @change="handleChange" />
-    <img :src="imgRrc" alt="" />
-    <BasicUpload v-model="form.upload" />
-    <button @click="getForm" >获取form</button>
+    <!-- <input type="file" @change="handleChange" /> -->
+    <Button @click="handleStart">开始录音</Button>
+    <Button @click="handleEnd">结束录音</Button>
+    <Button @click="getRecorder">获取录音数据</Button>
+
+    <Button @click="handleVideo" >录音回放</Button>
+
+    <span>{{ progress }}</span>
+    <!-- <img :src="imgRrc" alt="" /> -->
+    <!-- <BasicUpload v-model="form.upload" /> -->
+    <button @click="getForm">获取form</button>
     <ApiRadioGroup />
     <BasicForm :schemas="schemas"> </BasicForm>
   </div>
 </template>
 
 <script>
-import { ref, reactive } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
+import { Button } from 'vant';
 import { BasicForm } from '@/components/Form';
 import ApiRadioGroup from '@/components/Form/src/components/ApiRadioGroup.vue';
-import {BasicUpload} from '@/components/Upload';
-
+import { BasicUpload } from '@/components/Upload';
+import { initWebScoket } from './utils';
+import iatRecorder from './audio';
+import Recorder from 'js-audio-recorder';
 
 
 function optionsListApi(params) {
@@ -39,12 +49,101 @@ function optionsListApi(params) {
 }
 
 export default {
-  components: { BasicForm, ApiRadioGroup, BasicUpload },
+  components: { BasicForm, ApiRadioGroup, BasicUpload, Button },
   setup() {
-
     const form = reactive({
-      upload: []
-    })
+      upload: [],
+    });
+
+    const recorder = new Recorder();
+
+    const progress = ref();
+
+    const handleStart = () => {
+      // 录音开始
+      recorder.start();
+      iatRecorder.start()
+    };
+
+    const handleEnd = () => {
+      // 录音开始
+      iatRecorder.stop()
+      recorder.stop();
+    };
+
+    // 获取录音
+    const getRecorder = () => {
+      console.log(recorder);
+      console.log(recorder.getWAV());
+    };
+
+
+    window.onmessage = (e) => {
+      console.log(e)
+    }
+
+    const handleVideo = () => {
+      // recorder.play();
+      window.postMessage('666')
+    }
+
+    console.log(iatRecorder)
+
+    function webSocketSend() {
+      if (webSocket.readyState !== 1) {
+        return;
+      }
+      const APPID = '5ec4f194'
+      const API_SECRET = '5b348ea95510075e40d6fd2ffcd1d355'
+      const API_KEY = '0ba50e9138d9a8040d314308af844072'
+      var params = {
+        common: {
+          app_id: APPID,
+        },
+        business: {
+          language: 'zh_cn', //小语种可在控制台--语音听写（流式）--方言/语种处添加试用
+          domain: 'iat',
+          accent: 'mandarin', //中文方言可在控制台--语音听写（流式）--方言/语种处添加试用
+          vad_eos: 5000,
+          dwa: 'wpgs', //为使该功能生效，需到控制台开通动态修正功能（该功能免费）
+        },
+        data: {
+          status: 0,
+          format: 'audio/L16;rate=16000',
+          encoding: 'raw',
+          audio: this.toBase64(audioData),
+        },
+      };
+    }
+
+    const formateSeconds = (endTime = 0) => {
+      let secondTime = parseInt(endTime); //将传入的秒的值转化为Number
+      let min = 0; // 初始化分
+      let h = 0; // 初始化小时
+      let result = '';
+      if (secondTime > 60) {
+        //如果秒数大于60，将秒数转换成整数
+        min = parseInt(secondTime / 60); //获取分钟，除以60取整数，得到整数分钟
+        secondTime = parseInt(secondTime % 60); //获取秒数，秒数取佘，得到整数秒数
+        if (min >= 60) {
+          //如果分钟大于60，将分钟转换成小时
+          h = parseInt(min / 60); //获取小时，获取分钟除以60，得到整数小时
+          min = parseInt(min % 60); //获取小时后取佘的分，获取分钟除以60取佘的分
+        }
+      }
+      result = `${h.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}:${secondTime
+        .toString()
+        .padStart(2, '0')}`;
+      return result;
+    };
+
+    // 获取录音时长
+    recorder.onprogress = (params) => {
+      console.log(params)
+      progress.value = formateSeconds(params.duration.toFixed(2));
+    };
+
+    const { webSocket } = initWebScoket();
 
     const schemas = [
       {
@@ -183,15 +282,20 @@ export default {
     };
 
     const getForm = () => {
-      console.log(form)
-    }
+      console.log(form);
+    };
 
     return {
       schemas,
+      handleStart,
+      handleEnd,
       handleChange,
+      getRecorder,
       imgRrc,
       form,
-      getForm
+      getForm,
+      progress,
+      handleVideo
     };
   },
 };

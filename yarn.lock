@@ -2957,6 +2957,11 @@ jpegtran-bin@^5.0.0:
     bin-wrapper "^4.0.0"
     logalot "^2.0.0"
 
+js-audio-recorder@^1.0.7:
+  version "1.0.7"
+  resolved "https://registry.npm.taobao.org/js-audio-recorder/download/js-audio-recorder-1.0.7.tgz#01501cb9eb143d57994b42bd5ae97974fda18908"
+  integrity sha1-AVAcuesUPVeZS0K9Wul5dP2hiQg=
+
 js-base64@^2.1.9:
   version "2.6.4"
   resolved "https://registry.npmmirror.com/js-base64/download/js-base64-2.6.4.tgz#f4e686c5de1ea1f867dbcad3d46d969428df98c4"
