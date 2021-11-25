@@ -17,8 +17,6 @@ var log = require('log4node')
 var fs = require('fs')
 var path = require('path')
 
-let audio = require('./test.mp3')
-
 // 系统配置
 const config = {
     // 请求地址
@@ -28,7 +26,7 @@ const config = {
     // 在控制台-我的应用-语音转写获取
     secretKey: "d0a8a211947cdfec3725df76067c8bcd",
     // 音频文件地址
-    filePath: require('./test.mp3')
+    filePath: './test.mp3'
 }
 
 // 请求的接口名

@@ -21,5 +21,14 @@ export const LoginRoute = {
   },
 };
 
+export const Home = {
+  path: '/home',
+  name: 'Home',
+  component: () => import('@/views/home/index.vue'),
+  meta: {
+    title: '登录页',
+  },
+};
+
 // 基础路由 无权限
-export const basicRoutes = [LoginRoute, RootRoute];
+export const basicRoutes = [LoginRoute, RootRoute,Home];

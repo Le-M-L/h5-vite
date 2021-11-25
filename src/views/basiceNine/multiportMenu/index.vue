@@ -1,6 +1,6 @@
 <template>
   <div class="basiceNine">
-    <!-- <input type="file" @change="handleChange" /> -->
+    <input type="file" @change="handleChange" />
     <Button @click="handleStart">开始录音</Button>
     <Button @click="handleEnd">结束录音</Button>
     <Button @click="getRecorder">获取录音数据</Button>
@@ -9,7 +9,7 @@
 
     <span>{{ progress }}</span>
     <!-- <img :src="imgRrc" alt="" /> -->
-    <!-- <BasicUpload v-model="form.upload" /> -->
+    <BasicUpload v-model="form.upload" />
     <button @click="getForm">获取form</button>
     <ApiRadioGroup />
     <BasicForm :schemas="schemas"> </BasicForm>
@@ -88,33 +88,6 @@ export default {
     }
 
     console.log(iatRecorder)
-
-    function webSocketSend() {
-      if (webSocket.readyState !== 1) {
-        return;
-      }
-      const APPID = '5ec4f194'
-      const API_SECRET = '5b348ea95510075e40d6fd2ffcd1d355'
-      const API_KEY = '0ba50e9138d9a8040d314308af844072'
-      var params = {
-        common: {
-          app_id: APPID,
-        },
-        business: {
-          language: 'zh_cn', //小语种可在控制台--语音听写（流式）--方言/语种处添加试用
-          domain: 'iat',
-          accent: 'mandarin', //中文方言可在控制台--语音听写（流式）--方言/语种处添加试用
-          vad_eos: 5000,
-          dwa: 'wpgs', //为使该功能生效，需到控制台开通动态修正功能（该功能免费）
-        },
-        data: {
-          status: 0,
-          format: 'audio/L16;rate=16000',
-          encoding: 'raw',
-          audio: this.toBase64(audioData),
-        },
-      };
-    }
 
     const formateSeconds = (endTime = 0) => {
       let secondTime = parseInt(endTime); //将传入的秒的值转化为Number
@@ -273,12 +246,13 @@ export default {
     console.log(reader.readyState);
 
     const handleChange = ({ target: { files } }) => {
-      reader.readAsText(files[0]);
-      console.log(reader.readyState);
-      reader.onload = () => {
-        // imgRrc.value = reader.result;
-        console.log(reader.readyState);
-      };
+      console.log(files)
+      // reader.readAsText(files[0]);
+      // console.log(reader.readyState);
+      // reader.onload = () => {
+      //   // imgRrc.value = reader.result;
+      //   console.log(reader.readyState);
+      // };
     };
 
     const getForm = () => {
