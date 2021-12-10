@@ -7,8 +7,8 @@ import InputNumber from './components/InputNumber.vue';
 import InputTextArea from './components/InputTextArea.vue';
 import ApiSelect from './components/ApiSelect.vue';
 import DatePicker from './components/DatePicker.vue';
+import ApiCascader from './components/ApiCascader.vue';
 import { BasicUpload } from '@/components/Upload';
-
 const componentMap = new Map();
 
 // 输入框
@@ -21,6 +21,7 @@ componentMap.set('DatePicker', DatePicker);
 componentMap.set('ApiRadioGroup', ApiRadioGroup);
 componentMap.set('ApiCheckboxGroup', ApiCheckboxGroup);
 componentMap.set('ApiSelect', ApiSelect);
+componentMap.set('ApiCascader', ApiCascader);
 componentMap.set('InputNumber', InputNumber);
 componentMap.set('InputTextArea', InputTextArea);
 componentMap.set('Upload', BasicUpload);

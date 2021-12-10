@@ -239,6 +239,18 @@ export default {
         },
         defaultValue: ['bg_1637630604113.png'],
       },
+      {
+        field: 'ApiCascader',
+        component: 'ApiCascader',
+        label: '联级选择器',
+        componentProps: {
+          api: optionsListApi,
+          valueField:'id',
+          labelField:'name'
+
+        },
+        defaultValue: 2 ,
+      },
     ];
 
     const imgRrc = ref('');
