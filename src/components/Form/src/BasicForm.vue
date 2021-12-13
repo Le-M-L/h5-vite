@@ -47,7 +47,7 @@ export default {
     const schemaRef = ref(null);
     const { prefixCls } = useDesign('basic-form');
     const defaultValueRef = ref({});
-      const isInitedDefaultRef = ref(false);
+    const isInitedDefaultRef = ref(false);
 
     const formElRef = ref(null);
     // 获取表单的基本配置

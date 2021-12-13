@@ -251,6 +251,11 @@ export default {
         },
         defaultValue: 2 ,
       },
+      {
+        field: 'map',
+        component: 'Map',
+        label: '地图',
+      },
     ];
 
     const imgRrc = ref('');

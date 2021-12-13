@@ -3,7 +3,8 @@ export const basicProps = {
     type: Function,
     default: null,
   },
-  params: {
+  // 初始化参数
+  initFetchParams: {
     type: [Object, String],
     default: () => ({}),
   },
@@ -11,7 +12,7 @@ export const basicProps = {
     type: [String, Number],
     default: '',
   },
-  // 数组转字符串
+  // 数字转字符串
   numberToString: {
     type: Boolean,
   },
@@ -33,6 +34,11 @@ export const basicProps = {
   childField: {
     type: String,
     default: 'children',
+  },
+  // 获取下一次数据 参数
+  asyncFetchParamKey:{
+    type:String,
+    default:''
   },
   // 自定义字段对象
   fieldNames: {
@@ -63,6 +69,11 @@ export const basicProps = {
   title: {
     type: String,
     default: '',
+  },
+  // 是否有下级
+  isLeaf:{
+    type: Function,
+    default:null
   },
   immediate: {
     type: Boolean,

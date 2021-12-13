@@ -1,12 +1,19 @@
 <template>
   <div>
-    <Field is-link readonly placeholder="请选择所在地区" v-model="getText" @click="show = true" />
+    <Field
+      is-link
+      readonly
+      placeholder="请选择所在地区"
+      v-model="fieldValue"
+      @click="show = true"
+    />
     <Popup v-model:show="show" round position="bottom">
       <Cascader
-        :fieldNames="fieldNames"
         :closeable="closeable"
         v-model="state"
-        @finish="handleChange"
+        :options="options"
+        @change="handleChange"
+        @finish="handleFinish"
         @close="handleClose"
         readonly
       />
@@ -34,44 +41,50 @@ export default {
   emits: ['options-change', 'change'],
   setup(props, { emit }) {
     const options = ref([]);
+    const apiData = ref([]);
     const emitData = ref([]);
     const attrs = useAttrs();
     const loading = ref(false);
     const isFirstLoad = ref(true);
-    const [state] = useRuleFormItem(props);
+    const [state] = useRuleFormItem(props, 'value', 'change', emitData);
     const show = ref(false);
-    const getOptions = computed(() => {
-      return unref(options);
-    });
+    const fieldValue = ref('');
 
     watchEffect(() => {
-      props.immediate && fetch();
+      props.immediate && initialFetch();
     });
 
     watch(
-      () => props.params,
+      () => props.initFetchParams,
       () => {
-        !unref(isFirstLoad) && fetch();
+        !unref(isFirstLoad) && initialFetch();
       },
       { deep: true },
     );
 
-    async function fetch() {
+    watch(
+      apiData,
+      (data) => {
+        const opts = generatorOptions(data);
+        options.value = opts;
+      },
+      { deep: true },
+    );
+
+    async function initialFetch() {
       const api = props.api;
       if (!api || !isFunction(api)) return;
-      options.value = [];
+      apiData.value = [];
+      loading.value = true;
       try {
-        loading.value = true;
-        const res = await api(props.params);
+        const res = await api(props.initFetchParams);
         if (Array.isArray(res)) {
-          options.value = res;
-          emitChange();
+          apiData.value = res;
           return;
         }
         if (props.resultField) {
-          options.value = get(res, props.resultField) || [];
+          apiData.value = get(res, props.resultField) || [];
         }
-        emitChange();
       } catch (error) {
         console.warn(error);
       } finally {
@@ -79,40 +92,81 @@ export default {
       }
     }
 
-    function emitChange() {
-      emit('options-change', unref(getOptions));
+    function generatorOptions(options) {
+      const { labelField, valueField, numberToString, childField, isLeaf } = props;
+      return options.reduce((prev, next) => {
+        if (next) {
+          const value = next[valueField];
+          const item = {
+            ...omit(next, [labelField, valueField]),
+            text: next[labelField],
+            value: numberToString ? `${value}` : value,
+            isLeaf: isLeaf && typeof isLeaf === 'function' ? isLeaf(next) : false,
+          };
+          const children = Reflect.get(next, childField);
+          if (children) {
+            Reflect.set(item, childField, generatorOptions(children));
+          }
+          prev.push(item);
+        }
+        return prev;
+      }, []);
+    }
+
+    // 改变时触发
+    async function handleChange({ value, selectedOptions, tabIndex }) {
+      if (!props.asyncFetchParamKey) return;
+      const targetOption = selectedOptions[selectedOptions.length - 1];
+      targetOption.loading = true;
+
+      const api = props.api;
+      if (!api || !isFunction(api)) return;
+      try {
+        const res = await api({
+          [props.asyncFetchParamKey]: Reflect.get(targetOption, 'text'),
+        });
+        if (Array.isArray(res)) {
+          const children = generatorOptions(res);
+          targetOption.children = children;
+          return;
+        }
+        if (props.resultField) {
+          const children = generatorOptions(get(res, props.resultField) || []);
+          targetOption.children = children;
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        targetOption.loading = false;
+      }
     }
 
     // 全部选择完之后 调用
-    function handleChange(e) {
-      console.log(e);
+    function handleFinish({ selectedOptions }) {
+      let values = [];
+      show.value = false;
+      fieldValue.value = selectedOptions
+        .map((option) => {
+          values.push(option.value);
+          return option.text;
+        })
+        .join('/');
+      emit('change', values.join());
     }
 
     // 点击关闭按钮时触发
     function handleClose() {}
 
-    const fieldNames = computed(() => {
-      const { labelField, valueField, childField, fieldNames } = props;
-      return {
-        text: labelField,
-        value: valueField,
-        children: childField,
-        ...fieldNames,
-      };
-    });
-
-    const getText = ref('');
-
     return {
       state,
-      getOptions,
-      fieldNames,
       show,
       attrs,
-      getText,
+      fieldValue,
       loading,
-      handleChange,
+      options,
+      handleFinish,
       handleClose,
+      handleChange,
     };
   },
 };
