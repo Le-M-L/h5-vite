@@ -1,5 +1,5 @@
 <template>
-  <Field is-link readonly v-model="getText" @click="show = true" />
+  <Field v-bind="getAttrs" is-link readonly v-model="getText" @click="show = true" />
   <Popup v-model:show="show" round position="bottom">
     <Picker
       ref="picker"
@@ -9,17 +9,16 @@
       @confirm="handleConfirm"
       @change="handleChange"
       @cancel="handleCancel"
-      v-bind="attrs"
+      v-bind="getBindValue"
     />
   </Popup>
 </template>
 
 <script>
-import { computed, nextTick, ref, unref, watch, watchEffect } from 'vue';
+import { computed, ref, unref, watch, watchEffect } from 'vue';
 import { Picker, Popup, Field } from 'vant';
 import { isFunction } from '@/utils/is';
 import { get, omit } from 'lodash-es';
-import { useAttrs } from '@/hooks/core/useAttrs';
 import { useRuleFormItem } from '@/hooks/component/useFormItem';
 
 export default {
@@ -61,14 +60,13 @@ export default {
       type: Boolean,
       default: true,
     },
-    options:{
-      type:Array,
-      default: () => ([])
-    }
+    options: {
+      type: Array,
+      default: () => [],
+    },
   },
-  emits: ['options-change', 'change'],
-  setup(props, { emit }) {
-    const attrs = useAttrs();
+  emits: ['change'],
+  setup(props, { emit, attrs }) {
     const picker = ref(null);
     const loading = ref(false);
     const isFirstLoad = ref(true);
@@ -84,7 +82,7 @@ export default {
         if (next) {
           const value = next[valueField];
           /// 设置默认选中
-          if(value == defaultValue){
+          if (value == defaultValue) {
             defaultIndex.value = index;
           }
           prev.push({
@@ -115,9 +113,9 @@ export default {
     );
 
     async function fetch() {
-      if(props.options && props.options.length){
-          options.value = props.options ;
-          return
+      if (props.options && props.options.length) {
+        options.value = props.options;
+        return;
       }
       const api = props.api;
       if (!api || !isFunction(api)) return;
@@ -127,14 +125,12 @@ export default {
         const res = await api(props.params);
         if (Array.isArray(res)) {
           options.value = res;
-          emitChange();
           return;
         }
         // 当返回值是一个对象时 可以设置resultField 取指定值
         if (props.resultField) {
           options.value = get(res, props.resultField) || [];
         }
-        emitChange();
       } catch (error) {
         console.warn(error);
       } finally {
@@ -146,10 +142,6 @@ export default {
       // emit('change', ...args);
     }
 
-    function emitChange() {
-      emit('options-change', unref(getOptions));
-    }
-
     const handleConfirm = (...args) => {
       show.value = false;
       emit('change', ...args);
@@ -159,18 +151,33 @@ export default {
       show.value = false;
     };
 
+    // 获取 field 的属性
+    const getAttrs = computed(() => {
+      return {
+        ...get(attrs, 'inputProps'),
+      };
+    });
+    console.log(getAttrs.value)
+
+    const getBindValue = computed(() => {
+      return {
+        ...omit(attrs, 'inputProps'),
+      };
+    });
+
     return {
       getOptions,
       options,
       loading,
       picker,
       getText,
-      attrs,
       show,
       defaultIndex,
       handleConfirm,
       handleChange,
       handleCancel,
+      getAttrs,
+      getBindValue,
     };
   },
 };

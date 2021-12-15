@@ -1,5 +1,5 @@
 <template>
-  <Form v-bind="getBindValue" :class="getFormClass" ref="formElRef" >
+  <Form v-bind="getBindValue" :class="getFormClass" ref="formElRef" @submit="onSubmit">
     <CellGroup v-bind="getRow">
       <slot name="formHeader"></slot>
       <template v-for="schema in getSchema" :key="schema.field">
@@ -102,12 +102,12 @@ export default {
       }
     });
 
-     const { handleFormValues, initDefault } = useFormValues({
-        getProps,
-        defaultValueRef,
-        getSchema,
-        formModel,
-      });
+    const { handleFormValues, initDefault } = useFormValues({
+      getProps,
+      defaultValueRef,
+      getSchema,
+      formModel,
+    });
 
     // 使用表单方法
     const { validateFields, handleSubmit } = useFormEvents({
@@ -135,23 +135,28 @@ export default {
       // console.log(formElRef);
     });
 
-     watch(
-        () => getSchema.value,
-        (schema) => {
-          // nextTick(() => {
-          //   //  Solve the problem of modal adaptive height calculation when the form is placed in the modal
-          //   modalFn?.redoModalHeight?.();
-          // });
-          if (unref(isInitedDefaultRef)) {
-            return;
-          }
-          if (schema?.length) {
-            initDefault();
-            isInitedDefaultRef.value = true;
-          }
-        },
-      );
+    watch(
+      () => getSchema.value,
+      (schema) => {
+        // nextTick(() => {
+        //   //  Solve the problem of modal adaptive height calculation when the form is placed in the modal
+        //   modalFn?.redoModalHeight?.();
+        // });
+        if (unref(isInitedDefaultRef)) {
+          return;
+        }
+        if (schema?.length) {
+          initDefault();
+          isInitedDefaultRef.value = true;
+        }
+      },
+    );
 
+    // 表单提交的回调
+    function onSubmit(val) {
+      const res = handleFormValues(val);
+      emit('submit', res);
+    }
 
     // form 的操作
     const formActionType = {};
@@ -166,7 +171,8 @@ export default {
       formActionType,
       formElRef,
       defaultValueRef,
-      handleSubmit
+      handleSubmit,
+      onSubmit,
     };
   },
 };

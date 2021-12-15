@@ -1,15 +1,16 @@
 <template>
-  <Field is-link readonly v-model="state" @click="show = true" />
+  <Field v-bind="getAttrs" v-model="state" readonly @click="show = true" />
   <Popup v-model:show="show" round position="bottom">
-    <DatetimePicker v-bind="getBindValue" @confirm="handleConfirm" @cancel="handleCancel"  />
+    <DatetimePicker v-bind="getBindValue" @confirm="handleConfirm" @cancel="handleCancel" />
   </Popup>
 </template>
 
 <script>
-import { ref,  computed, unref } from 'vue';
+import { ref, computed, unref } from 'vue';
 import { DatetimePicker, Popup, Field } from 'vant';
 import { useRuleFormItem } from '@/hooks/component/useFormItem';
 import { dateUtil } from '@/utils/dateUtil';
+import { get, omit } from 'lodash-es';
 export default {
   name: 'DatePicker',
   inheritAttrs: false,
@@ -54,17 +55,21 @@ export default {
     const show = ref(false);
     // 嵌入表单中，只需使用钩子绑定来执行表单验证
     const [state] = useRuleFormItem(props);
-
+    // 获取 field 的属性
+    const getAttrs = computed(() => {
+      return {
+        ...get(attrs, 'inputProps'),
+      };
+    });
     const getBindValue = computed(() => {
       let bindValue = {
-        type:'date',
-        ...attrs,
+        type: 'date',
+        ...omit(attrs, 'inputProps'),
         ...props,
-        modelValue: new Date(unref(state))
+        modelValue: new Date(unref(state)),
       };
       return bindValue;
     });
-
 
     const handleConfirm = (date) => {
       show.value = false;
@@ -81,6 +86,7 @@ export default {
       getBindValue,
       handleConfirm,
       handleCancel,
+      getAttrs,
     };
   },
 };

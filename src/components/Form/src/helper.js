@@ -4,12 +4,12 @@ import { isNumber, isObject } from '@/utils/is';
 /**
  * @description: 生成placeholder
  */
-export function createPlaceholderMessage(component) {
+export function createPlaceholderMessage(component, label = '') {
   if (component.includes('Input') || component.includes('Complete')) {
-    return '请输入';
+    return `请输入${label}`;
   }
   if (component.includes('Picker')) {
-    return '请选择';
+    return `请选择${label}`;
   }
   if (
     component.includes('Select') ||
@@ -18,8 +18,7 @@ export function createPlaceholderMessage(component) {
     component.includes('Radio') ||
     component.includes('Switch')
   ) {
-    // return `请选择${label}`;
-    return '请选择';
+    return `请选择${label}`;
   }
   return '';
 }
@@ -68,22 +67,33 @@ export const formatSchemas = (data = []) => {
     let items = data[key];
     const schemasItem = {
       field: key,
-      show: !items.hidden,           // 隐藏
-      label: items.title,           // 显示字段名
+      show: !items.hidden, // 隐藏
+      label: items.title, // 显示字段名
       order: items.order,
-      required:true,
-      componentProps:{
-        ...(items.ui?.widgetattrs || {})
-      },            // 属性
+      required: true,
+      componentProps: {
+        ...(items.ui?.widgetattrs || {}),
+      }, // 属性
+      itemProps:{}
     };
     switch (items.view) {
+      case 'text':              // 文本输入框
+        schemasItem.component = 'Input';
+        break;
+      case 'radio':             // 单选框
+        schemasItem.component = 'ApiRadioGroup';
+        schemasItem.componentProps.options = items.enum;
+        schemasItem.componentProps.labelField = 'text';
+        schemasItem.componentProps.valueField = 'value';
+        break;
+      case 'switch':            // switch 切换
+      
+        break;
       case 'hidden': // 隐藏
         break;
       case 'date': // 日期选择
         schemasItem.component = 'DatePicker';
-        break;
-      case 'text': // 输入框
-        schemasItem.component = 'Input';
+        schemasItem.itemProps.isLink = true;
         break;
       case 'popup': // 弹窗
         break;
@@ -110,13 +120,6 @@ export const formatSchemas = (data = []) => {
     }
     return schemasItem;
   });
-  fromSchemas.sort((a, b) => (a.order = b.order))
-  return [
-    {
-      field: 'key',
-      label: '测试',           // 显示字段名
-      component:'Input',
-      required:true,
-    }
-  ];
+  fromSchemas.sort((a, b) => (a.order = b.order));
+  return fromSchemas
 };

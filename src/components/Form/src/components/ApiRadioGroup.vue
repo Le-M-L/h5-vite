@@ -1,23 +1,22 @@
 <template>
-  <RadioGroup  v-model="state" @change="handleChange" v-bind="attrs">
-    <template v-for="item in getOptions" :key="`${item.value}`">
-      <Radio :name="item.value" :disabled="item.disabled">
-        {{ item.label }}
-        <!-- 自定义图标 -->
-        <!-- <template #icon="props">
-         
-        </template> -->
-      </Radio>
+  <Field v-bind="getAttrs" readonly @click="show = true">
+    <template #input>
+      <RadioGroup v-bind="getBindValue"  v-model="state" @change="handleChange" direction="horizontal" >
+        <template v-for="item in getOptions" :key="`${item.value}`">
+          <Radio :name="item.value" :disabled="item.disabled">
+            {{ item.label }}
+          </Radio>
+        </template>
+      </RadioGroup>
     </template>
-  </RadioGroup>
+  </Field>
 </template>
 
 <script>
 import { computed, ref, watchEffect, watch, unref } from 'vue';
-import { RadioGroup, Radio } from 'vant';
+import { RadioGroup, Radio, Field } from 'vant';
 import { isFunction } from '@/utils/is';
 import { get, omit } from 'lodash-es';
-import { useAttrs } from '@/hooks/core/useAttrs';
 import { useRuleFormItem } from '@/hooks/component/useFormItem';
 
 export default {
@@ -25,6 +24,7 @@ export default {
   components: {
     RadioGroup,
     Radio,
+    Field,
   },
   props: {
     api: {
@@ -61,15 +61,29 @@ export default {
       type: Boolean,
       default: true,
     },
+    options: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   emits: ['options-change', 'change'],
-  setup(props, { emit }) {
+  setup(props, { emit, attrs }) {
     const options = ref([]);
     const emitData = ref([]);
-    const attrs = useAttrs();
     const loading = ref(false);
-     const isFirstLoad = ref(true);
+    const isFirstLoad = ref(true);
     const [state] = useRuleFormItem(props);
+
+    // 获取 field 的属性
+    const getAttrs = computed(() => {
+      return {
+        ...get(attrs, 'inputProps'),
+      };
+    });
+
+    const getBindValue = computed(() => {
+      return omit(attrs, 'inputProps');
+    });
 
     const getOptions = computed(() => {
       const { labelField, valueField, numberToString } = props;
@@ -100,6 +114,10 @@ export default {
     );
 
     async function fetch() {
+      if (props.options && props.options.length) {
+        options.value = props.options;
+        return;
+      }
       const api = props.api;
       if (!api || !isFunction(api)) return;
       options.value = [];
@@ -130,7 +148,7 @@ export default {
       console.log(_, args);
       emitData.value = args;
     }
-    return { state, getOptions, attrs, loading, handleChange, props };
+    return { state, getAttrs, getOptions, getBindValue, loading, handleChange, props };
   },
 };
 </script>

@@ -213,8 +213,11 @@ export function useFormEvents({
    * @param { string | string[] }
    */
   async function validate(nameList) {
-    console.log(unref(formElRef))
     return unref(formElRef)?.validate(nameList);
+  }
+
+  async function submit(){
+    return unref(formElRef)?.submit();
   }
 
   /**
@@ -247,10 +250,7 @@ export function useFormEvents({
     const formEl = unref(formElRef);
     if (!formEl) return;
     try {
-      const values = await validate();
-      console.log(values)
-      const res = handleFormValues(values);
-      emit('submit', res);
+       await submit();
     } catch (error) {
       throw new Error(error);
     }

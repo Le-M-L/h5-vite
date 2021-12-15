@@ -48,7 +48,7 @@
 
       const getValues = computed(() => {
         const { allDefaultValues, formModel, schema } = props;
-        // console.log(formModel)
+        console.log(formModel)
 
         const { mergeDynamicData } = props.formProps;
         return {
@@ -141,9 +141,7 @@
           ? rulesMessageJoinLabel
           : globalRulesMessageJoinLabel;
         const defaultMsg = createPlaceholderMessage(component) + `${joinLabel ? label : ''}`;
-
-        function validator(rule, value) {
-          console.log(rule, value)
+        function validator(value,rule) {
           const msg = rule.message || defaultMsg;
           if (value === undefined || isNull(value)) {
             // 空值
@@ -207,20 +205,10 @@
             rules[characterInx].message ||
             `字符数应小于${rules[characterInx].max}位`;
         }
-        // return rules.map(item => {
-        //   delete item.required;
-        //   return item
-        // })
-        return [
-          {
-            validator:(val)=>{
-              console.log(val)
-              return Promise.resolve('错误信息')
-
-            },
-            message:'错误信息'
-          }
-        ]
+        return rules.map(item => {
+          delete item.required;
+          return item
+        })
       }
       function renderComponent() {
         const {
@@ -229,14 +217,28 @@
           field,
           changeEvent = 'change',
           valueField,
+          label,
+          itemProps
         } = props.schema;
-
+        const { colon } = props.formProps;
         const isSelect = component && ['ApiSelect'].includes(component);
+        const { labelCol, wrapperCol } = unref(itemLabelWidthProp);
+
+        const inputProps = {
+            name:field,
+            colon:colon,
+            label:renderLabelHelpMessage(),
+            rules:handleRules(),
+            labelCol:labelCol,
+            wrapperCol:wrapperCol,
+            ...itemProps,
+        }
 
         const eventKey = `on${upperFirst(changeEvent)}`;
 
         const on = {
           [eventKey]: (...args) => {
+            console.log(args)
             const [e] = args;
             if (propsData[eventKey]) {
               propsData[eventKey](...args);
@@ -263,13 +265,14 @@
           size,
           ...unref(getComponentsProps),
           disabled: unref(getDisable),
+          
         };
 
         const isCreatePlaceholder = !propsData.disabled && autoSetPlaceHolder;
         // RangePicker place is an array
         if (isCreatePlaceholder && component !== 'RangePicker' && component) {
-          propsData.placeholder =
-            unref(getComponentsProps)?.placeholder || createPlaceholderMessage(component);
+          inputProps.placeholder =
+            unref(getComponentsProps)?.placeholder || createPlaceholderMessage(component, label);
         }
         propsData.codeField = field;
         propsData.formValues = unref(getValues);
@@ -281,7 +284,9 @@
           ...propsData,
           ...on,
           ...bindValue,
+          inputProps:inputProps
         };
+        // component == 'Input' && Object.assign(compAttr,inputProps)
         if (!renderComponentContent) {
           return <Comp {...compAttr} />;
         }
@@ -342,31 +347,30 @@
 
           const showSuffix = !!suffix;
           const getSuffix = isFunction(suffix) ? suffix(unref(getValues)) : suffix;
-
-          return (
-            <Field
-              name={field}
-              colon={colon}
-              class={{ 'suffix-item': showSuffix }}
-              {...(itemProps)}
-              rules={handleRules()}
-              labelCol={labelCol}
-              wrapperCol={wrapperCol}
-            >
-            {{
-              label: () => renderLabelHelpMessage(),
-              input: () =>  <div style="display:flex">
-                <div style="flex:1;">{getContent()}</div>
-              </div>,
-              // button: () => <Button size="small" type="primary">发送验证码</Button>,
-              // "right-icon": () => <Icon name="arrow" />,
-              // "left-icon": () => <Icon name="arrow" />,
-              // 'error-message': () => '错误',
-              // extra: () => "???"
-            }}
+          
+          return getContent()
+          // return component == 'Input' ?  getContent(): (
+          //   <Field
+          //     name={field}
+          //     colon={colon}
+          //     class={{ 'suffix-item': showSuffix }}
+          //     {...(itemProps)}
+          //     rules={handleRules()}
+          //     labelCol={labelCol}
+          //     wrapperCol={wrapperCol}
+          //   >
+          //   {{
+          //     label: () => renderLabelHelpMessage(),
+          //     input: () => getContent(),
+          //     // button: () => <Button size="small" type="primary">发送验证码</Button>,
+          //     // "right-icon": () => <Icon name="arrow" />,
+          //     // "left-icon": () => <Icon name="arrow" />,
+          //     // 'error-message': () => '错误',
+          //     // extra: () => "???"
+          //   }}
               
-            </Field>
-          );
+          //   </Field>
+          // );
         }
       }
 

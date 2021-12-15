@@ -1,5 +1,5 @@
 <template>
-  <CheckboxGroup v-model="state" @change="handleChange" v-bind="attrs">
+  <CheckboxGroup v-model="state" @change="handleChange" v-bind="attrs" >
     <template v-for="item in getOptions" :key="`${item.value}`">
       <Checkbox :name="item.value" :disabled="item.disabled">
         {{ item.label }}

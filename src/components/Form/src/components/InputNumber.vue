@@ -1,12 +1,12 @@
 <template>
-  <Field v-model="state"  v-bind="attrs" type="textarea"  />
+  <Field v-bind="getAttrs" v-model="state" type="number"  />
 </template>
 
 <script>
+import { computed } from "vue"
 import { Field } from 'vant';
-import { useAttrs } from '@/hooks/core/useAttrs';
 import { useRuleFormItem } from '@/hooks/component/useFormItem';
-
+import { get,  omit } from "lodash"
 export default {
   name: 'InputNumber',
   components: {
@@ -18,11 +18,15 @@ export default {
     },
   },
   emits: ['change'],
-  setup(props) {
-    const attrs = useAttrs();
+  setup(props,{attrs}) {
     const [state] = useRuleFormItem(props);
-
-    return { state, attrs };
+    const getAttrs = computed(() => {
+      return {
+        ...get(attrs,'inputProps'),
+        ...omit(attrs,'inputProps')
+      }
+    })
+    return { state, getAttrs };
   },
 };
 </script>
