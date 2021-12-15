@@ -1,5 +1,5 @@
 <template>
-  <Form v-bind="getBindValue" :class="getFormClass" ref="formElRef">
+  <Form v-bind="getBindValue" :class="getFormClass" ref="formElRef" >
     <CellGroup v-bind="getRow">
       <slot name="formHeader"></slot>
       <template v-for="schema in getSchema" :key="schema.field">
@@ -17,7 +17,7 @@
         </FormItem>
       </template>
     </CellGroup>
-    <van-button round block type="primary" native-type="submit"> 提交 </van-button>
+    <van-button round block type="primary" @click="handleSubmit"> 提交 </van-button>
   </Form>
 </template>
 
@@ -110,7 +110,7 @@ export default {
       });
 
     // 使用表单方法
-    const { validateFields } = useFormEvents({
+    const { validateFields, handleSubmit } = useFormEvents({
       emit,
       getProps,
       formModel,
@@ -166,6 +166,7 @@ export default {
       formActionType,
       formElRef,
       defaultValueRef,
+      handleSubmit
     };
   },
 };

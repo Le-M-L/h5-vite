@@ -61,6 +61,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    options:{
+      type:Array,
+      default: () => ([])
+    }
   },
   emits: ['options-change', 'change'],
   setup(props, { emit }) {
@@ -111,6 +115,10 @@ export default {
     );
 
     async function fetch() {
+      if(props.options && props.options.length){
+          options.value = props.options ;
+          return
+      }
       const api = props.api;
       if (!api || !isFunction(api)) return;
       options.value = [];

@@ -204,7 +204,7 @@ export function useFormEvents({
    * @description: 验证表单
    * @param { string | string[] }
    */
-   async function validateFields(nameList) {
+  async function validateFields(nameList) {
     return unref(formElRef)?.validate(nameList);
   }
 
@@ -213,6 +213,7 @@ export function useFormEvents({
    * @param { string | string[] }
    */
   async function validate(nameList) {
+    console.log(unref(formElRef))
     return unref(formElRef)?.validate(nameList);
   }
 
@@ -247,13 +248,13 @@ export function useFormEvents({
     if (!formEl) return;
     try {
       const values = await validate();
+      console.log(values)
       const res = handleFormValues(values);
       emit('submit', res);
     } catch (error) {
       throw new Error(error);
     }
   }
-
   return {
     handleSubmit,
     clearValidate,

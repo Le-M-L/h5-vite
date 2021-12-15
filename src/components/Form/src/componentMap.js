@@ -9,7 +9,7 @@ import ApiSelect from './components/ApiSelect.vue';
 import DatePicker from './components/DatePicker.vue';
 import ApiCascader from './components/ApiCascader.vue';
 import { BasicUpload } from '@/components/Upload';
-import { BasicMap } from '@/components/Map';
+import { GaodeMap } from '@/components/Map';
 const componentMap = new Map();
 
 // 输入框
@@ -26,6 +26,6 @@ componentMap.set('ApiCascader', ApiCascader);
 componentMap.set('InputNumber', InputNumber);
 componentMap.set('InputTextArea', InputTextArea);
 componentMap.set('Upload', BasicUpload);
-componentMap.set('Map', BasicMap);
+componentMap.set('GaodeMap', GaodeMap);
 
 export { componentMap };

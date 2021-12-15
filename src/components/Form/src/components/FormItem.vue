@@ -143,16 +143,17 @@
         const defaultMsg = createPlaceholderMessage(component) + `${joinLabel ? label : ''}`;
 
         function validator(rule, value) {
+          console.log(rule, value)
           const msg = rule.message || defaultMsg;
           if (value === undefined || isNull(value)) {
             // 空值
-            return Promise.reject(msg);
+            return Promise.resolve(msg);
           } else if (Array.isArray(value) && value.length === 0) {
             // 数组类型
-            return Promise.reject(msg);
+            return Promise.resolve(msg);
           } else if (typeof value === 'string' && value.trim() === '') {
             // 空字符串
-            return Promise.reject(msg);
+            return Promise.resolve(msg);
           } else if (
             typeof value === 'object' &&
             Reflect.has(value, 'checked') &&
@@ -163,7 +164,7 @@
             value.halfChecked.length === 0
           ) {
             // 非关联选择的tree组件
-            return Promise.reject(msg);
+            return Promise.resolve(msg);
           }
           return Promise.resolve();
         }
@@ -199,16 +200,28 @@
           }
         }
 
-        // Maximum input length rule check
+        // 最大输入长度规则检查
         const characterInx = rules.findIndex((val) => val.max);
         if (characterInx !== -1 && !rules[characterInx].validator) {
           rules[characterInx].message =
             rules[characterInx].message ||
             `字符数应小于${rules[characterInx].max}位`;
         }
-        return rules;
-      }
+        // return rules.map(item => {
+        //   delete item.required;
+        //   return item
+        // })
+        return [
+          {
+            validator:(val)=>{
+              console.log(val)
+              return Promise.resolve('错误信息')
 
+            },
+            message:'错误信息'
+          }
+        ]
+      }
       function renderComponent() {
         const {
           renderComponentContent,
@@ -228,12 +241,21 @@
             if (propsData[eventKey]) {
               propsData[eventKey](...args);
             }
-            const value =  isSelect ?isObject(e) ? e.value : e: e;
+
+            const target = e ? e.target : null;
+
+            const value =  target? target.value : (isSelect && isObject(e) ? e.value : e);
             props.setFormModel(field, value);
+            if(args[1] && args[1].flag === 'map'){
+              Object.keys(args[1]).map(item => {
+                if(item !== 'flag'){
+                  props.setFormModel(item, args[1][item]);
+                }
+              })
+            }
           },
         };
         const Comp = componentMap.get(component) ;
-
         const { autoSetPlaceHolder, size } = props.formProps;
         const propsData = {
           allowClear: true,
