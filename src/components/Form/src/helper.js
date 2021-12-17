@@ -1,6 +1,6 @@
 import { dateUtil } from '@/utils/dateUtil';
 import { isNumber, isObject } from '@/utils/is';
-
+import { queryDepartTreeList } from "@/api/sys/api"
 /**
  * @description: 生成placeholder
  */
@@ -74,21 +74,34 @@ export const formatSchemas = (data = []) => {
       componentProps: {
         ...(items.ui?.widgetattrs || {}),
       }, // 属性
-      itemProps:{}
+      itemProps: {},
     };
     switch (items.view) {
-      case 'text':              // 文本输入框
+      case 'text': // 文本输入框
         schemasItem.component = 'Input';
         break;
-      case 'radio':             // 单选框
+      case 'radio': // 单选框
         schemasItem.component = 'ApiRadioGroup';
         schemasItem.componentProps.options = items.enum;
         schemasItem.componentProps.labelField = 'text';
         schemasItem.componentProps.valueField = 'value';
         break;
-      case 'switch':            // switch 切换
-      
+      case 'switch': // switch 切换
         break;
+      case 'pca': // 户籍地 联级
+        schemasItem.component = 'AreaCascader';
+        schemasItem.componentProps.labelField = 'text';
+        schemasItem.componentProps.valueField = 'id';
+        schemasItem.componentProps.asyncFetchParamKey = 'id';
+        schemasItem.defaultValue = '120101'
+        break;
+      case 'address':
+        schemasItem.component = 'ListSelect';
+        break;
+      case 'sel_depart':  // 系统部门
+        schemasItem.component = 'DepartSelect';
+        schemasItem.defaultValue = 'A01A01A05'
+       break;
       case 'hidden': // 隐藏
         break;
       case 'date': // 日期选择
@@ -121,5 +134,5 @@ export const formatSchemas = (data = []) => {
     return schemasItem;
   });
   fromSchemas.sort((a, b) => (a.order = b.order));
-  return fromSchemas
+  return fromSchemas;
 };

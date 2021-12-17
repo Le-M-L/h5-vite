@@ -488,6 +488,11 @@
   resolved "https://registry.nlark.com/@types/throttle-debounce/download/@types/throttle-debounce-2.1.0.tgz#1c3df624bfc4b62f992d3012b84c56d41eab3776"
   integrity sha1-HD32JL/Eti+ZLTASuExW1B6rN3Y=
 
+"@vant/area-data@^1.1.5":
+  version "1.1.5"
+  resolved "https://registry.npmmirror.com/@vant/area-data/download/@vant/area-data-1.1.5.tgz#84df2063f222e7ea130ecb1c8d0943bb7a3a4d75"
+  integrity sha512-dva7UJXpOzR38dgSLW2pPD9e3EXLXokk7Un5LVzI3OtfWfF8FnQVScLjvHU0xB9I7UIQRKRoT6xtM8V1B5K0cg==
+
 "@vant/icons@^1.7.1":
   version "1.7.1"
   resolved "https://registry.nlark.com/@vant/icons/download/@vant/icons-1.7.1.tgz?cache=0&sync_timestamp=1631954457671&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40vant%2Ficons%2Fdownload%2F%40vant%2Ficons-1.7.1.tgz#49ae420302b5581e54e6894891e5a05bc76e9f87"
@@ -1221,6 +1226,11 @@ change-case@^4.1.2:
     sentence-case "^3.0.4"
     snake-case "^3.0.4"
     tslib "^2.0.3"
+
+china-area-data@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.npm.taobao.org/china-area-data/download/china-area-data-5.0.1.tgz#7943b83a0619f033bb5893da80cb46e52e44be66"
+  integrity sha1-eUO4OgYZ8DO7WJPagMtG5S5EvmY=
 
 chokidar@^3.5.2:
   version "3.5.2"

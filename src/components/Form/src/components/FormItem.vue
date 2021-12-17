@@ -265,7 +265,6 @@
           size,
           ...unref(getComponentsProps),
           disabled: unref(getDisable),
-          
         };
 
         const isCreatePlaceholder = !propsData.disabled && autoSetPlaceHolder;

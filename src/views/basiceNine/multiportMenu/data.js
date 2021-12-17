@@ -99,7 +99,24 @@ export const data = {
     maxLength: 100,
     order: 18,
   },
-
+  sel_depart: {
+    dbPointLength: 0,
+    view: 'sel_depart',
+    fieldExtendJson: '',
+    type: 'string',
+    title: '部门选择',
+    maxLength: 100,
+    order: 18,
+  },
+  address: {
+    dbPointLength: 0,
+    view: 'address',
+    fieldExtendJson: '',
+    type: 'string',
+    title: '地址选择',
+    maxLength: 100,
+    order: 18,
+  },
   remarks: {
     dbPointLength: 0,
     view: 'textarea',

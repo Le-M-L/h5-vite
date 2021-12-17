@@ -1,7 +1,7 @@
 <template>
-  <Field v-bind="getAttrs" required errorMessage='123' >
-    <template #input> 
-        <BasicUpload />
+  <Field v-bind="getAttrs" required errorMessage="123">
+    <template #input>
+      <BasicUpload v-bind="getBindValue" />
     </template>
   </Field>
 </template>
@@ -11,12 +11,12 @@ import { computed } from 'vue';
 import { Field } from 'vant';
 import { useRuleFormItem } from '@/hooks/component/useFormItem';
 import { get, omit } from 'lodash';
-import { BasicUpload } from "@/components/Upload"
+import { BasicUpload } from '@/components/Upload';
 export default {
   name: 'InputNumber',
   components: {
     Field,
-    BasicUpload
+    BasicUpload,
   },
   props: {
     modelValue: {
@@ -32,7 +32,12 @@ export default {
         ...omit(attrs, 'inputProps'),
       };
     });
-    return { state, getAttrs };
+    const getBindValue = computed(() => {
+      return {
+        ...omit(attrs, 'inputProps'),
+      };
+    });
+    return { state, getAttrs, getBindValue };
   },
 };
 </script>

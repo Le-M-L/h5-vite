@@ -9,7 +9,7 @@ const { uploadUrl = '' } = useGlobSetting();
 export function uploadApi(params, onUploadProgress) {
   return defHttp.uploadFile(
     {
-      url: uploadUrl,
+      url: 'http://test.xmock.top/sys/common/uploadFileToFtp',
       onUploadProgress,
     },
     params,
