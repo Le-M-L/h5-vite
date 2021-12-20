@@ -32,7 +32,11 @@
         :finished="finished"
         @load="onLoad"
       >
-        <Cell v-for="item in list" :key="item" :title="item" />
+        <Cell @click="handleClick(item)" v-for="item in list" :key="item.id" :title="item.name">
+          <template #right-icon>
+            <Icon v-if="state == item.id" name="success" />
+          </template>
+        </Cell>
       </List>
     </PullRefresh>
   </Popup>
@@ -40,7 +44,7 @@
 
 <script>
 import { computed, onMounted, ref } from 'vue';
-import { List, Cell, Popup, Field, Search, PullRefresh, Sticky } from 'vant';
+import { List, Cell, Popup, Field, Search, PullRefresh, Sticky, Icon } from 'vant';
 import { get, omit } from 'lodash-es';
 import { useRuleFormItem } from '@/hooks/component/useFormItem';
 export default {
@@ -54,6 +58,13 @@ export default {
     PullRefresh,
     Sticky,
     Search,
+    Icon,
+  },
+  props: {
+    modelValue: {
+      type: [Number, String],
+      default: '',
+    },
   },
   emits: ['change'],
   setup(props, { emit, attrs }) {
@@ -98,7 +109,10 @@ export default {
       }
 
       for (let i = 0; i < 15; i++) {
-        list.value.push(list.value.length + 1);
+        list.value.push({
+          id: list.value.length + 1,
+          name: list.value.length + 1,
+        });
       }
       loading.value = false;
 
@@ -121,6 +135,14 @@ export default {
       isFlexd.value = false;
     };
 
+    const handleClick = (items) => {
+      fieldValue.value = items.name;
+      emit('change', items.id);
+      show.value = false;
+      finished.value = false;
+      loading.value = true;
+    };
+
     return {
       state,
       show,
@@ -139,6 +161,7 @@ export default {
       isFlexd,
       scroll,
       onSearch,
+      handleClick,
     };
   },
 };
@@ -160,7 +183,7 @@ export default {
     padding: 0 16px;
     color: #999;
     font-size: 14px;
-    span{
+    span {
       color: #333;
     }
   }

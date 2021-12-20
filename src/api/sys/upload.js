@@ -4,7 +4,7 @@ import { useGlobSetting } from '@/hooks/setting';
 const { uploadUrl = '' } = useGlobSetting();
 
 /**
- * @description: 上传接口
+ * @description: 图片上传接口
  */
 export function uploadApi(params, onUploadProgress) {
   return defHttp.uploadFile(
@@ -14,4 +14,17 @@ export function uploadApi(params, onUploadProgress) {
     },
     params,
   );
+}
+
+/**
+ * 文件上传接口
+ */
+export function uploadFile(params,onUploadProgress){
+  return defHttp.uploadFile(
+    {
+      url:'http://test.xmock.top/sys/common/upload',
+      onUploadProgress
+    },
+    params
+  )
 }

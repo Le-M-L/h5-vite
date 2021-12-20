@@ -93,6 +93,9 @@ export default {
             schema.defaultValue = def;
           }
         }
+        if(defaultValue && ['Rate'].includes(component)){
+            schema.defaultValue = Number(schema.defaultValue);
+        }
       }
       // 操作按钮
       if (unref(getProps).showAdvancedButton) {

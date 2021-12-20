@@ -1,6 +1,6 @@
 import { dateUtil } from '@/utils/dateUtil';
 import { isNumber, isObject } from '@/utils/is';
-import { queryDepartTreeList } from "@/api/sys/api"
+import { queryDepartTreeList } from '@/api/sys/api';
 /**
  * @description: 生成placeholder
  */
@@ -80,33 +80,54 @@ export const formatSchemas = (data = []) => {
       case 'text': // 文本输入框
         schemasItem.component = 'Input';
         break;
+      case 'integer': // 文本输入框
+        schemasItem.component = 'Input';
+        schemasItem.componentProps.type = 'digit';
+        break;
+      case 'password': // 文本输入框
+        schemasItem.component = 'Input';
+        schemasItem.componentProps.type = 'password';
+        break;
       case 'radio': // 单选框
         schemasItem.component = 'ApiRadioGroup';
         schemasItem.componentProps.options = items.enum;
         schemasItem.componentProps.labelField = 'text';
         schemasItem.componentProps.valueField = 'value';
         break;
+      case 'rate':
+        schemasItem.component = 'Rate';
+        schemasItem.defaultValue = '1';
+        break;
       case 'switch': // switch 切换
+        schemasItem.component = 'Switch';
+        schemasItem.defaultValue = false;
         break;
       case 'pca': // 户籍地 联级
         schemasItem.component = 'AreaCascader';
         schemasItem.componentProps.labelField = 'text';
         schemasItem.componentProps.valueField = 'id';
         schemasItem.componentProps.asyncFetchParamKey = 'id';
-        schemasItem.defaultValue = '120101'
+        schemasItem.defaultValue = '120101';
         break;
       case 'address':
         schemasItem.component = 'ListSelect';
+        schemasItem.defaultValue = '2';
         break;
-      case 'sel_depart':  // 系统部门
+      case 'sel_depart': // 系统部门
         schemasItem.component = 'DepartSelect';
-        schemasItem.defaultValue = 'A01A01A05'
-       break;
+        schemasItem.defaultValue = 'A01A01A05';
+        break;
       case 'hidden': // 隐藏
         break;
       case 'date': // 日期选择
         schemasItem.component = 'DatePicker';
         schemasItem.itemProps.isLink = true;
+        break;
+      case 'datetime': // 日期选择
+        schemasItem.component = 'DatePicker';
+        schemasItem.componentProps.type = 'datetime';
+        schemasItem.componentProps.format = 'YYYY-MM-DD HH:mm';
+
         break;
       case 'popup': // 弹窗
         break;
@@ -124,6 +145,9 @@ export const formatSchemas = (data = []) => {
         break;
       case 'image': // 图片上传
         schemasItem.component = 'Upload';
+        break;
+      case 'file': // 文件上传
+        schemasItem.component = 'UploadFile';
         break;
       case 'textarea': // 多行文本框
         schemasItem.component = 'InputTextArea';
