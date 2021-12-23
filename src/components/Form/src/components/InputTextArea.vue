@@ -22,8 +22,9 @@ export default {
     const [state] = useRuleFormItem(props);
     const getAttrs = computed(() => {
       return {
+        ...attrs,
         ...get(attrs,'inputProps'),
-        ...omit(attrs,'inputProps')
+        inputProps:null
       }
     })
     return { state, getAttrs };

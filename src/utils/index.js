@@ -84,7 +84,7 @@ export function getFileAccessHttpUrl(avatar,subStr) {
     if(avatar && avatar.startsWith(subStr)){
       return avatar;
     }else{
-      if(avatar &&　avatar.length>0 && avatar.indexOf('[')==-1){
+      if(avatar && avatar.length>0 && avatar.indexOf('[')==-1){
         return staticDomainURL + "/" + avatar;
       }
     }
@@ -100,15 +100,17 @@ export function getFileAccessHttpUrl(avatar,subStr) {
 export function initFileListArr(val) {
   let fileList = [];
   for (var a = 0; a < val.length; a++) {
-    let url = getFileAccessHttpUrl(val[a]);
+    let url = isObject(val[a]) ? getFileAccessHttpUrl(val[a].url) : getFileAccessHttpUrl(val[a]);
+    console.log(JSON.parse(JSON.stringify(val[a])))
     fileList.push({
       uid: buildUUID(),
-      // name: val[a],
+      name: isObject(val[a]) ? val[a].message: val[a],
       status: UploadResultStatus.SUCCESS,
       url: url,
+      message:isObject(val[a]) ? val[a].message: val[a],
       responseData: {
         status: true,
-        message: val[a],
+        message: isObject(val[a]) ? val[a].message: val[a],
       },
     });
   }

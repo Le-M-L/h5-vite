@@ -1,6 +1,6 @@
 // 组件列表，在这里注册以在表单中设置它
 
-import {   Slider, Divider } from 'vant';
+import { Slider, Divider } from 'vant';
 import ApiRadioGroup from './components/ApiRadioGroup.vue';
 import ApiCheckboxGroup from './components/ApiCheckboxGroup.vue';
 import InputNumber from './components/InputNumber.vue';

@@ -6,6 +6,6 @@ import { formatSchemas } from "./src/helper"
 
 // export { default as ApiSelect } from './src/components/ApiSelect.vue';
 // export { default as RadioButtonGroup } from './src/components/RadioButtonGroup.vue';
-// export { default as ApiTreeSelect } from './src/components/ApiTreeSelect.vue';
+export { default as DatePicker } from './src/components/DatePicker.vue';
 
 export { BasicForm, formatSchemas };

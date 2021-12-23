@@ -122,12 +122,13 @@ export const formatSchemas = (data = []) => {
       case 'date': // 日期选择
         schemasItem.component = 'DatePicker';
         schemasItem.itemProps.isLink = true;
+        // schemasItem.defaultValue = '2020-11-22';
         break;
       case 'datetime': // 日期选择
         schemasItem.component = 'DatePicker';
         schemasItem.componentProps.type = 'datetime';
         schemasItem.componentProps.format = 'YYYY-MM-DD HH:mm';
-
+        
         break;
       case 'popup': // 弹窗
         break;
@@ -145,9 +146,11 @@ export const formatSchemas = (data = []) => {
         break;
       case 'image': // 图片上传
         schemasItem.component = 'Upload';
+        schemasItem.defaultValue = 'icon5_1640053995543.png,icon5_1640054005034.png';
         break;
       case 'file': // 文件上传
         schemasItem.component = 'UploadFile';
+        schemasItem.defaultValue = 'temp/icon5_1640049442300.png,temp/icon5_1640049472680.png';
         break;
       case 'textarea': // 多行文本框
         schemasItem.component = 'InputTextArea';

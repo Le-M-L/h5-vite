@@ -13,7 +13,6 @@ const stp = projectSetting.sessionTimeoutProcessing;
 export function checkStatus(status, msg, errorMessageMode) {
   const userStore = useUserStoreWithOut();
   let errMessage = '';
-
   switch (status) {
     case 400:
       errMessage = `${msg}`;
@@ -44,7 +43,9 @@ export function checkStatus(status, msg, errorMessageMode) {
       errMessage = '网络请求超时!';
       break;
     case 500:
-      errMessage = '服务器错误,请联系管理员!';
+      errMessage = `${msg}`;
+      userStore.logout(true);
+      // errMessage = '服务器错误,请联系管理员!';
       break;
     case 501:
       errMessage = '网络未实现!';
@@ -72,7 +73,7 @@ export function checkStatus(status, msg, errorMessageMode) {
       createAlertDialog({ title: '错误提示', content: errMessage });
     } else if (errorMessageMode === 'message') {
       error({
-        content: errMessage,
+        message:errMessage,
         key: `global_error_message_status_${status}`,
       });
     }

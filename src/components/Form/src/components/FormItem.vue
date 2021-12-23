@@ -248,6 +248,7 @@
 
             const value =  target? target.value : (isSelect && isObject(e) ? e.value : e);
             props.setFormModel(field, value);
+            // 对地图经纬度特殊处理
             if(args[1] && args[1].flag === 'map'){
               Object.keys(args[1]).map(item => {
                 if(item !== 'flag'){
@@ -285,6 +286,7 @@
           ...bindValue,
           inputProps:inputProps
         };
+        console.log(compAttr)
         // component == 'Input' && Object.assign(compAttr,inputProps)
         if (!renderComponentContent) {
           return <Comp {...compAttr} />;

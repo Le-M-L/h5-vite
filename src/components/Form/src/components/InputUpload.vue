@@ -1,43 +1,51 @@
 <template>
-  <Field v-bind="getAttrs" required errorMessage="123">
-    <template #input>
-      <BasicUpload v-bind="getBindValue" />
-    </template>
-  </Field>
+  <Field v-bind="getAttrs" v-model="state" readonly required />
+  <BasicUpload @change="handleChange" :initData="initData" v-bind="getBindValue" />
 </template>
 
 <script>
-import { computed } from 'vue';
+import { computed, watch, unref, ref } from 'vue';
 import { Field } from 'vant';
 import { useRuleFormItem } from '@/hooks/component/useFormItem';
 import { get, omit } from 'lodash';
 import { BasicUpload } from '@/components/Upload';
 export default {
   name: 'InputNumber',
+  inheritAttrs: false,
   components: {
     Field,
     BasicUpload,
   },
   props: {
     modelValue: {
-      type: [Number, String],
+      type: [Array, String],
     },
   },
   emits: ['change'],
-  setup(props, { attrs }) {
+  setup(props, { emit, attrs }) {
     const [state] = useRuleFormItem(props);
+    const initData = ref([]);
     const getAttrs = computed(() => {
       return {
         ...get(attrs, 'inputProps'),
-        ...omit(attrs, 'inputProps'),
       };
     });
+
+    watch(
+      () => unref(state),
+      (val) => {
+        initData.value = val;
+      },
+    );
     const getBindValue = computed(() => {
       return {
-        ...omit(attrs, 'inputProps'),
+        ...omit(attrs, ['inputProps', 'modelValue']),
       };
     });
-    return { state, getAttrs, getBindValue };
+    const handleChange = (val) => {
+      emit('change', val.join());
+    };
+    return { state, initData, getAttrs, getBindValue, handleChange };
   },
 };
 </script>

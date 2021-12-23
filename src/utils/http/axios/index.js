@@ -40,7 +40,7 @@ const transform = {
     }
     //  这里 code，result，message为 后台统一的字段，需要在 types.ts内修改为项目自己的接口返回格式
     const { code, success, result, message } = data;
-
+    
     // 这里逻辑可以根据项目进行修改
     const hasSuccess = data && Reflect.has(data, 'success') && success === ResultEnum.SUCCESS;
     if (hasSuccess) {
@@ -151,7 +151,7 @@ const transform = {
     errorLogStore.addAjaxErrorInfo(error);
     const { response, code, message, config } = error || {};
     const errorMessageMode = config?.requestOptions?.errorMessageMode || 'none';
-    const msg = response?.data?.error?.message ?? '';
+    const msg = response?.data?.message ?? '';
     const err = error?.toString?.() ?? '';
     let errMessage = '';
 
@@ -174,7 +174,6 @@ const transform = {
     } catch (error) {
       throw new Error(error);
     }
-
     checkStatus(error?.response?.status, msg, errorMessageMode);
     return Promise.reject(error);
   },

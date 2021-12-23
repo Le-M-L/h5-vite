@@ -28,7 +28,6 @@ export default {
   props: basicProps,
   emits: ['change', 'delete'],
   setup(props, { emit, attrs }) {
-    console.log(props)
     //   是否正在上传
     const isUploadingRef = ref(false);
     const fileListRef = ref([]);
@@ -48,16 +47,14 @@ export default {
         ...attrs,
         ...props,
       };
-      return omit(value, ['modelValue', 'maxSize','api']);
+      return omit(value, ['initData', 'maxSize','api']);
     });
 
-    console.log(getBindValue.value)
-
     watch(
-      () => props.modelValue,
+      () => props.initData,
       (value = []) => {
         // 如果存在上传失败的文件  会自动清空
-        fileListRef.value = initFileListArr(unref(value));
+        fileListRef.value = isArray(unref(value)) ? initFileListArr(unref(value)) :initFileListArr(unref(value).split(','));
       },
       { immediate: true },
     );
@@ -91,7 +88,7 @@ export default {
       const { autoUpload } = props;
       autoUpload && (await handleStartUpload());
       fileListRef.value = fileListRef.value.filter(({status}) => status === UploadResultStatus.SUCCESS)
-      // emit('change', getFileData());
+      emit('change', getFileData());
     };
 
     // 获取已上传的文件
@@ -103,7 +100,7 @@ export default {
 
     const beforeDelete = (file) => {
       nextTick(() => {
-        // emit('change', getFileData());
+        emit('change', getFileData());
       });
       return true;
     };

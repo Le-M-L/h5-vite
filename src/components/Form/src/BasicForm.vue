@@ -158,6 +158,7 @@ export default {
     // 表单提交的回调
     function onSubmit(val) {
       const res = handleFormValues(val);
+      console.log(res)
       emit('submit', res);
     }
 

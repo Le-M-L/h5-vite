@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import { ref, computed, unref } from 'vue';
+import { ref, computed, unref, watch } from 'vue';
 import { DatetimePicker, Popup, Field } from 'vant';
 import { useRuleFormItem } from '@/hooks/component/useFormItem';
 import { dateUtil } from '@/utils/dateUtil';
@@ -66,7 +66,7 @@ export default {
         type: 'date',
         ...omit(attrs, 'inputProps'),
         ...props,
-        modelValue: new Date(unref(state)),
+        modelValue: unref(state)? new Date(unref(state)):new Date(),
       };
       return bindValue;
     });

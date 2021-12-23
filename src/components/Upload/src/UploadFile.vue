@@ -66,7 +66,7 @@ export default {
       () => props.modelValue,
       (value = []) => {
         // 如果存在上传失败的文件  会自动清空
-        fileListRef.value = initFileListArr(unref(value));
+        fileListRef.value = isArray(unref(value)) ? initFileListArr(unref(value)) :initFileListArr(unref(value).split(','));
       },
       { immediate: true },
     );
@@ -80,7 +80,7 @@ export default {
 
     const beforeDelete = (file) => {
       nextTick(() => {
-        // emit('change', getFileData());
+        emit('change', getFileData().join());
       });
       return true;
     };
@@ -125,7 +125,7 @@ export default {
       target.remove();
 
       // 将数据回传给父级
-      emit('change',fileListRef.value.map(item => item.responseData.message).join())
+      emit('change',getFileData().join())
     }
 
     // 文件上传前调用
@@ -162,7 +162,6 @@ export default {
         ({ status }) => status === UploadResultStatus.SUCCESS,
       );
       console.log(fileListRef.value);
-      // emit('change', getFileData());
     }
 
     // 开始上传
@@ -230,6 +229,7 @@ export default {
     // 清空
     const handleClear = (item,i) => {
        fileListRef.value.splice(i,1)
+       beforeDelete()
     }
 
     return {
@@ -237,7 +237,6 @@ export default {
       beforeRead,
       getBindValue,
       fileListRef,
-      beforeDelete,
       uploadFile,
       handleClick,
       handleChange,
@@ -253,8 +252,10 @@ export default {
   width: 100%;
   > span {
     color: #2f54eb;
+    font-size: 16px;
   }
   .previewItem {
+    margin-top:4px;
     height: 52px;
     width: 100%;
     padding: 6px 9px;
@@ -284,6 +285,10 @@ export default {
       display: flex;
       align-items: center;
     }
+  }
+  .previewItem + .previewItem{
+      margin-top:12px;
+
   }
 }
 </style>

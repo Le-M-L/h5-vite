@@ -1,9 +1,14 @@
 import { uploadApi } from '@/api/sys/upload';
+import { uploadFile } from '@/api/sys/upload';
 
 
 export const basicProps = {
   modelValue:{
-    type:Array,
+    type:[Array,String],
+    default: () => []
+  },
+  initData:{
+    type:[Array,String],
     default: () => []
   },
   // 文件最大多少MB
@@ -42,7 +47,7 @@ export const basicProps = {
   },
   api: {
     type: Function,
-    default: uploadApi,
+    default: uploadFile,
   },
   name: {
     type: String,
