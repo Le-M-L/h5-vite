@@ -1,10 +1,5 @@
 <template>
-  <PullRefresh
-    style="overflow-y: scroll; height: 100%"
-    v-model="refreshing"
-    @scroll="scroll"
-    @refresh="onRefresh"
-  >
+  <PullRefresh style="overflow-y: scroll; height: calc(100% - 102px)" v-model="refreshing" @refresh="onRefresh">
     <List
       v-model="loading"
       :finished="finished"
@@ -56,10 +51,6 @@ export default {
       onLoad();
     };
 
-    const scroll = (val) => {
-      console.log(val);
-    };
-
     return {
       loading,
       finished,
@@ -67,7 +58,6 @@ export default {
       list,
       refreshing,
       onRefresh,
-      scroll,
     };
   },
 };

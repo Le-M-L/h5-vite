@@ -1,7 +1,7 @@
 <template>
   <div class="basiceNine">
-    <!-- <BaseList /> -->
-    <BasicForm :schemas="schemas" @submit="submit"> </BasicForm>
+    <BaseList />
+    <!-- <BasicForm :schemas="schemas" @submit="submit"> </BasicForm> -->
   </div>
 </template>
 
