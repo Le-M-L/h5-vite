@@ -5,7 +5,6 @@
 <script>
 import { computed } from 'vue';
 import { DatePicker } from '@/components/Form';
-import { Form } from 'vant';
 export default {
   inheritAttrs: false,
   props: {
@@ -14,7 +13,7 @@ export default {
       default: '',
     },
   },
-  components: { DatePicker, Form },
+  components: { DatePicker },
   emits: ['update:modelValue','change'],
   setup(props, { emit, attrs }) {
     const handleChange = (val) => {

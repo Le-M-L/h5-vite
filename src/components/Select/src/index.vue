@@ -1,35 +1,48 @@
 <template>
-  <DatePicker v-bind="getBindValue" @change="handleChange" />
+  <ApiSelect ref="select" v-bind="getBindValue" @change="handleChange">
+    <template #[item]="data" v-for="item in Object.keys($slots)">
+      <slot :name="item" v-bind="data || {}"></slot>
+    </template>
+  </ApiSelect>
 </template>
 
 <script>
-import { computed } from 'vue';
-import { DatePicker } from '@/components/Form';
-import { Form } from 'vant';
+import { computed, ref, unref } from 'vue';
+import { ApiSelect } from '@/components/Form';
 export default {
   inheritAttrs: false,
   props: {
     modelValue: {
-      type: String,
+      type: [String, Number],
       default: '',
     },
   },
-  components: { DatePicker, Form },
-  emits: ['update:modelValue','change'],
-  setup(props, { emit, attrs }) {
-    const handleChange = (val) => {
-      emit('update:modelValue', val);
-      emit('change',val)
+  components: { ApiSelect },
+  emits: ['update:modelValue', 'change'],
+  setup(props, { emit, attrs, expose }) {
+    const select = ref(null);
+
+    const handleChange = (obj) => {
+      emit('update:modelValue', obj.value);
+      emit('change', obj.value);
     };
+
     const getBindValue = computed(() => {
       return {
         ...attrs,
         modelValue: props.modelValue,
       };
     });
+
+    const handleShow = () => {
+      unref(select).show = true;
+    }
+
+    expose({ handleShow });
     return {
       handleChange,
       getBindValue,
+      select,
     };
   },
 };

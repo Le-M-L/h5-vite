@@ -16,6 +16,7 @@ import InputUpload from './components/InputUpload.vue';
 import UploadFile from './components/UploadFile.vue';
 import InputSwitch from './components/InputSwitch.vue';
 import InpuRate from './components/InpuRate.vue';
+import InputCalendar from './components/InputCalendar.vue';
 import { GaodeMap } from '@/components/Map';
 const componentMap = new Map();
 
@@ -35,6 +36,7 @@ componentMap.set('DepartSelect', DepartSelect);
 componentMap.set('ListSelect', ListSelect);
 componentMap.set('InputNumber', InputNumber);
 componentMap.set('InputTextArea', InputTextArea);
+componentMap.set('InputCalendar', InputCalendar);
 componentMap.set('Upload', InputUpload);
 componentMap.set('UploadFile', UploadFile);
 componentMap.set('GaodeMap', GaodeMap);

@@ -1,9 +1,18 @@
-
+import { unref } from "vue"
 import { useGlobSetting } from '@/hooks/setting';
 import { isObject } from '@/utils/is';
 import { buildUUID } from '@/utils/uuid';
 import { UploadResultStatus } from '@/components/Upload/src/typing';
 const { staticDomainURL } = useGlobSetting()
+
+export function getDynamicProps(props) {
+  const ret = {};
+  Object.keys(props).map((key) => {
+    ret[key] = unref((props)[key]);
+  });
+  return ret;
+}
+
 
 /**
  * Add the object as a parameter to the URL

@@ -1,5 +1,7 @@
 <template>
-  <Field v-bind="getAttrs" is-link readonly v-model="getText" @click="show = true" />
+  <slot name="text" :data="getText">
+    <Field is-link readonly v-bind="getAttrs" v-model="getText" @click="show = true" />
+  </slot>
   <Popup v-model:show="show" round position="bottom">
     <Picker
       ref="picker"
@@ -15,12 +17,11 @@
 </template>
 
 <script>
-import { computed, ref, unref, watch, watchEffect } from 'vue';
+import { computed, ref, unref, watch, watchEffect, onMounted } from 'vue';
 import { Picker, Popup, Field } from 'vant';
 import { isFunction } from '@/utils/is';
 import { get, omit } from 'lodash-es';
 import { useRuleFormItem } from '@/hooks/component/useFormItem';
-
 export default {
   name: 'ApiSelect',
   inheritAttrs: false,
@@ -50,7 +51,7 @@ export default {
     },
     valueField: {
       type: String,
-      default: 'values',
+      default: 'value',
     },
     childrenField: {
       type: String,
@@ -65,7 +66,7 @@ export default {
       default: () => [],
     },
   },
-  emits: ['change'],
+  emits: ['change', 'register'],
   setup(props, { emit, attrs }) {
     const picker = ref(null);
     const loading = ref(false);
@@ -73,6 +74,7 @@ export default {
     const options = ref([]);
     const show = ref(false);
     const defaultIndex = ref();
+    const innerPropsRef = ref();
     // 嵌入表单中，只需使用钩子绑定来执行表单验证
     const [state] = useRuleFormItem(props);
     const getOptions = computed(() => {
@@ -144,6 +146,7 @@ export default {
 
     const handleConfirm = (...args) => {
       show.value = false;
+      unref(innerPropsRef)?.callback?.(...args)
       emit('change', ...args);
     };
 
@@ -157,14 +160,34 @@ export default {
         ...get(attrs, 'inputProps'),
       };
     });
-    console.log(getAttrs.value)
 
     const getBindValue = computed(() => {
       return {
         ...omit(attrs, 'inputProps'),
+        ...omit(unref(innerPropsRef),['options','callback']) 
       };
     });
+    console.log(getBindValue)
 
+    function setProps(props) {
+      if(props.options){
+        options.value = props.options;
+      }
+      innerPropsRef.value = { ...unref(innerPropsRef), ...props };
+    }
+
+    const handleShow = () => {
+      show.value = true;
+    }
+
+    const actionType = {
+      handleShow,
+      setProps,
+    };
+
+    onMounted(() => {
+      emit('register', actionType);
+    });
     return {
       getOptions,
       options,

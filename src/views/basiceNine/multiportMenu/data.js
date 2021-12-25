@@ -180,4 +180,13 @@ export const data = {
     maxLength: 200,
     order: 41,
   },
+  InputCalendar: {
+    dbPointLength: 0,
+    view: 'InputCalendar',
+    fieldExtendJson: '',
+    type: 'string',
+    title: 'InputCalendar',
+    maxLength: 200,
+    order: 41,
+  },
 };

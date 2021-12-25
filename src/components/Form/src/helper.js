@@ -155,6 +155,10 @@ export const formatSchemas = (data = []) => {
       case 'textarea': // 多行文本框
         schemasItem.component = 'InputTextArea';
         break;
+      case 'InputCalendar':  // 日历
+        schemasItem.component = 'InputCalendar';
+        schemasItem.defaultValue = ['2021-12-28']
+        break;
       default:
         break;
     }
