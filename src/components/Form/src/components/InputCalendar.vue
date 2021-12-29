@@ -40,7 +40,7 @@ export default {
   },
   emits: ['change', 'register'],
   setup(props, { emit, attrs, expose }) {
-    const fieldValue = ref('');
+    const fieldValue = ref('请选择日期');
     const show = ref(false);
     const innerPropsRef = ref();
     const [state] = useRuleFormItem(props);
@@ -56,11 +56,11 @@ export default {
       let defaultDate = null;
       if (modelValue) {
         let values = isArray(modelValue) ? modelValue : [modelValue];
-        defaultDate = values.map((item) => new Date(item));
+        defaultDate = values.length ? values.map((item) => new Date(item)) : null;
       }
       let bindValue = {
         type: props.type,
-        ...unref(innerPropsRef),
+        ...omit(unref(innerPropsRef),['callback']),
         ...omit(attrs, ['inputProps', 'modelValue']),
         defaultDate: (props.type == 'single' && defaultDate?.[0]) || defaultDate, // 默认选中的日期
       };
@@ -103,11 +103,10 @@ export default {
     // 提交给form
     const onConfirm = (value) => {
       let values = isArray(value) ? value : [value];
+      let dates = values.map((item) => dateUtil(item).format(props.format));
       show.value = false;
-      emit(
-        'change',
-        values.map((item) => dateUtil(item).format(props.format)),
-      );
+       unref(innerPropsRef)?.callback?.(dates)
+      emit('change', dates);
     };
 
     const handleShow = () => {

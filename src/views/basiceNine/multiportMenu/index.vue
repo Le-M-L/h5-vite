@@ -1,6 +1,6 @@
 <template>
   <div class="basiceNine">
-    <BaseList />
+    <BaseList :columns="listColumns" />
     <!-- <BasicForm :schemas="schemas" @submit="submit"> </BasicForm> -->
   </div>
 </template>
@@ -9,7 +9,7 @@
 import { ref, reactive, onMounted } from 'vue';
 import { Button } from 'vant';
 import { BasicForm, formatSchemas } from '@/components/Form';
-import { data } from './data';
+import { data, listColumns } from './data';
 import { BaseList } from "@/components/List"
 export default {
   components: { BasicForm, BaseList },
@@ -25,6 +25,7 @@ export default {
     return {
       schemas,
       submit,
+      listColumns
     };
   },
 };

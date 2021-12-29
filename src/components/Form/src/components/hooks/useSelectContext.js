@@ -3,8 +3,7 @@ import { error } from '@/utils/log';
 import { isProdMode } from '@/utils/env';
 import { getDynamicProps } from '@/utils';
 
-export function useSelect(selectProps) {
-  console.log(selectProps)
+export function useSelect(props) {
   const selectRef = ref(null);
   const loadedRef = ref(false);
   // 获取日历组件实例
@@ -26,7 +25,7 @@ export function useSelect(selectProps) {
     if (unref(loadedRef) && isProdMode() && instance === unref(selectRef)) return;
     selectRef.value = instance;
     loadedRef.value = true;
-    selectProps && instance.setProps(getDynamicProps(selectProps));
+    props && instance.setProps(getDynamicProps(props));
   }
 
   const methods = {

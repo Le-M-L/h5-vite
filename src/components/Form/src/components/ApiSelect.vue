@@ -99,7 +99,7 @@ export default {
 
     const getText = computed(() => {
       let value = unref(state);
-      return unref(getOptions).find((item) => item.value == value)?.text ?? value;
+      return unref(getOptions).find((item) => item.value == value)?.text || value || '请选择';
     });
 
     watchEffect(async () => {
@@ -167,7 +167,6 @@ export default {
         ...omit(unref(innerPropsRef),['options','callback']) 
       };
     });
-    console.log(getBindValue)
 
     function setProps(props) {
       if(props.options){

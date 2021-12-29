@@ -11,15 +11,16 @@
           </template>
         </DCalendar>
       </div>
+
       <div class="base-list-header-content-item">
-        <Select @register="register1" v-model="school">
+        <DSelect @register="register1" v-model="school">
           <template #text="{ data }">
             <div class="base-list-header-content-item-data" @click="handleShow1">
               {{ data }}
               <Icon name="play" />
             </div>
           </template>
-        </Select>
+        </DSelect>
       </div>
     </div>
     <div class="base-list-header-line"></div>
@@ -31,18 +32,22 @@
 import { ref, unref } from 'vue';
 import { Icon } from 'vant';
 import { DCalendar, useCalendar } from '@/components/DCalendar';
-import { Select, useSelect } from '@/components/Select';
+import { DSelect, useSelect } from '@/components/DSelect';
 
 export default {
   components: {
     DCalendar,
-    Select,
+    DSelect,
     Icon,
   },
   setup() {
-    const time = ref(['2021-12-28']);
-    const school = ref('2');
-    const [register, { handleShow }] = useCalendar();
+    const time = ref([]);
+    const school = ref('');
+    const [register, { handleShow }] = useCalendar({
+      callback: (val) => {
+        console.log(val);
+      },
+    });
     const [register1, { handleShow: handleShow1 }] = useSelect({
       options: [
         { value: '1', text: '小学', title: '小学' },
@@ -87,6 +92,7 @@ export default {
     &-item {
       height: 44px;
       text-align: left;
+
       &-data {
         height: 100%;
         display: flex;
@@ -96,7 +102,6 @@ export default {
           transform: rotate(90deg);
           color: #999;
           margin-left: 5px;
-          margin-right: 20px;
         }
       }
       &:nth-child(1) {
@@ -105,7 +110,7 @@ export default {
       &:nth-child(2) {
         flex: 1;
         display: flex;
-        justify-content: end;
+        justify-content: flex-end;
       }
     }
   }

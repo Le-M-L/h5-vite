@@ -1,8 +1,9 @@
 import { ref, onUnmounted, unref } from 'vue';
 import { error } from '@/utils/log';
 import { isProdMode } from '@/utils/env';
+import { getDynamicProps } from '@/utils';
 
-export function useCalendar() {
+export function useCalendar(props) {
   const calendarRef = ref(null);
   const loadedRef = ref(false);
   // 获取日历组件实例
@@ -24,6 +25,7 @@ export function useCalendar() {
     if (unref(loadedRef) && isProdMode() && instance === unref(calendarRef)) return;
     calendarRef.value = instance;
     loadedRef.value = true;
+    props && instance.setProps(getDynamicProps(props));
   }
 
   const methods = {
