@@ -1,14 +1,15 @@
 <template>
-  <slot name="text" :data="fieldValue">
-    <Field
-      is-link
-      readonly
-      placeholder="请选择日期"
-      v-bind="getAttrs"
-      v-model="fieldValue"
-      @click="show = true"
-    />
-  </slot>
+  <span @click="show = true">
+    <slot name="text" :data="fieldValue">
+      <Field
+        is-link
+        readonly
+        placeholder="请选择日期"
+        v-bind="getAttrs"
+        v-model="fieldValue"
+      />
+    </slot>
+  </span>
   <Calendar v-bind="getBindValue" v-model:show="show" @confirm="onConfirm" />
 </template>
 
@@ -60,7 +61,7 @@ export default {
       }
       let bindValue = {
         type: props.type,
-        ...omit(unref(innerPropsRef),['callback']),
+        ...omit(unref(innerPropsRef), ['callback']),
         ...omit(attrs, ['inputProps', 'modelValue']),
         defaultDate: (props.type == 'single' && defaultDate?.[0]) || defaultDate, // 默认选中的日期
       };
@@ -105,8 +106,8 @@ export default {
       let values = isArray(value) ? value : [value];
       let dates = values.map((item) => dateUtil(item).format(props.format));
       show.value = false;
-       unref(innerPropsRef)?.callback?.(dates)
       emit('change', dates);
+      unref(innerPropsRef)?.callback?.(dates);
     };
 
     const handleShow = () => {

@@ -1,7 +1,9 @@
 <template>
-  <slot name="text" :data="getText">
-    <Field is-link readonly v-bind="getAttrs" v-model="getText" @click="show = true" />
-  </slot>
+  <span @click="show = true">
+    <slot name="text" :data="getText">
+      <Field is-link readonly v-bind="getAttrs" v-model="getText"  />
+    </slot>
+  </span>
   <Popup v-model:show="show" round position="bottom">
     <Picker
       ref="picker"
@@ -17,7 +19,7 @@
 </template>
 
 <script>
-import { computed, ref, unref, watch, watchEffect, onMounted } from 'vue';
+import { computed, ref, unref, watch, watchEffect, onMounted, nextTick } from 'vue';
 import { Picker, Popup, Field } from 'vant';
 import { isFunction } from '@/utils/is';
 import { get, omit } from 'lodash-es';
@@ -144,10 +146,11 @@ export default {
       // emit('change', ...args);
     }
 
-    const handleConfirm = (...args) => {
+    const handleConfirm = async (...args) => {
       show.value = false;
-      unref(innerPropsRef)?.callback?.(...args)
       emit('change', ...args);
+      await nextTick();
+      unref(innerPropsRef)?.callback?.(...args);
     };
 
     const handleCancel = () => {
@@ -164,12 +167,12 @@ export default {
     const getBindValue = computed(() => {
       return {
         ...omit(attrs, 'inputProps'),
-        ...omit(unref(innerPropsRef),['options','callback']) 
+        ...omit(unref(innerPropsRef), ['options', 'callback']),
       };
     });
 
     function setProps(props) {
-      if(props.options){
+      if (props.options) {
         options.value = props.options;
       }
       innerPropsRef.value = { ...unref(innerPropsRef), ...props };
@@ -177,7 +180,7 @@ export default {
 
     const handleShow = () => {
       show.value = true;
-    }
+    };
 
     const actionType = {
       handleShow,

@@ -33,6 +33,7 @@ export default {
         modelValue: props.modelValue,
       };
     });
+    console.log(getBindValue.value)
 
     const handleShow = () => {
       unref(select).show = true;

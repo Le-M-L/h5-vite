@@ -62,7 +62,6 @@ export function handleInputNumberValue(component, val) {
 export const dateItemType = genType();
 
 export const formatSchemas = (data = []) => {
-  console.log(data);
   let fromSchemas = Object.keys(data).map((key) => {
     let items = data[key];
     const schemasItem = {
@@ -76,94 +75,98 @@ export const formatSchemas = (data = []) => {
       }, // 属性
       itemProps: {},
     };
-    switch (items.view) {
-      case 'text': // 文本输入框
-        schemasItem.component = 'Input';
-        break;
-      case 'integer': // 文本输入框
-        schemasItem.component = 'Input';
-        schemasItem.componentProps.type = 'digit';
-        break;
-      case 'password': // 文本输入框
-        schemasItem.component = 'Input';
-        schemasItem.componentProps.type = 'password';
-        break;
-      case 'radio': // 单选框
-        schemasItem.component = 'ApiRadioGroup';
-        schemasItem.componentProps.options = items.enum;
-        schemasItem.componentProps.labelField = 'text';
-        schemasItem.componentProps.valueField = 'value';
-        break;
-      case 'rate':
-        schemasItem.component = 'Rate';
-        schemasItem.defaultValue = '1';
-        break;
-      case 'switch': // switch 切换
-        schemasItem.component = 'Switch';
-        schemasItem.defaultValue = false;
-        break;
-      case 'pca': // 户籍地 联级
-        schemasItem.component = 'AreaCascader';
-        schemasItem.componentProps.labelField = 'text';
-        schemasItem.componentProps.valueField = 'id';
-        schemasItem.componentProps.asyncFetchParamKey = 'id';
-        schemasItem.defaultValue = '120101';
-        break;
-      case 'address':
-        schemasItem.component = 'ListSelect';
-        schemasItem.defaultValue = '2';
-        break;
-      case 'sel_depart': // 系统部门
-        schemasItem.component = 'DepartSelect';
-        schemasItem.defaultValue = 'A01A01A05';
-        break;
-      case 'hidden': // 隐藏
-        break;
-      case 'date': // 日期选择
-        schemasItem.component = 'DatePicker';
-        schemasItem.itemProps.isLink = true;
-        // schemasItem.defaultValue = '2020-11-22';
-        break;
-      case 'datetime': // 日期选择
-        schemasItem.component = 'DatePicker';
-        schemasItem.componentProps.type = 'datetime';
-        schemasItem.componentProps.format = 'YYYY-MM-DD HH:mm';
-        
-        break;
-      case 'popup': // 弹窗
-        break;
-      case 'list': // 下拉框
-        schemasItem.componentProps.options = items.enum;
-        schemasItem.componentProps.labelField = 'text';
-        schemasItem.componentProps.valueField = 'value';
-        schemasItem.component = 'ApiSelect';
-        break;
-      case 'number': // 数字类型
-        schemasItem.component = 'InputNumber';
-        break;
-      case 'radio': // 单选框
-        schemasItem.component = 'ApiRadioGroup';
-        break;
-      case 'image': // 图片上传
-        schemasItem.component = 'Upload';
-        schemasItem.defaultValue = 'icon5_1640053995543.png,icon5_1640054005034.png';
-        break;
-      case 'file': // 文件上传
-        schemasItem.component = 'UploadFile';
-        schemasItem.defaultValue = 'temp/icon5_1640049442300.png,temp/icon5_1640049472680.png';
-        break;
-      case 'textarea': // 多行文本框
-        schemasItem.component = 'InputTextArea';
-        break;
-      case 'InputCalendar':  // 日历
-        schemasItem.component = 'InputCalendar';
-        schemasItem.defaultValue = ['2021-12-28']
-        break;
-      default:
-        break;
-    }
+    formatMode(schemasItem, items);
     return schemasItem;
   });
   fromSchemas.sort((a, b) => (a.order = b.order));
   return fromSchemas;
 };
+
+export function formatMode(schemasItem, items) {
+  switch (items.view) {
+    case 'text': // 文本输入框
+      schemasItem.component = 'Input';
+      break;
+    case 'integer': // 文本输入框
+      schemasItem.component = 'Input';
+      schemasItem.componentProps.type = 'digit';
+      break;
+    case 'password': // 文本输入框
+      schemasItem.component = 'Input';
+      schemasItem.componentProps.type = 'password';
+      break;
+    case 'radio': // 单选框
+      schemasItem.component = 'ApiRadioGroup';
+      schemasItem.componentProps.options = items.enum ;
+      schemasItem.componentProps.labelField = 'text';
+      schemasItem.componentProps.valueField = 'value';
+      break;
+    case 'rate':
+      schemasItem.component = 'Rate';
+      schemasItem.defaultValue = '1';
+      break;
+    case 'switch': // switch 切换
+      schemasItem.component = 'Switch';
+      schemasItem.defaultValue = false;
+      break;
+    case 'pca': // 户籍地 联级
+      schemasItem.component = 'AreaCascader';
+      schemasItem.componentProps.labelField = 'text';
+      schemasItem.componentProps.valueField = 'id';
+      schemasItem.componentProps.asyncFetchParamKey = 'id';
+      schemasItem.defaultValue = '120101';
+      break;
+    case 'address':
+      schemasItem.component = 'ListSelect';
+      schemasItem.defaultValue = '2';
+      break;
+    case 'sel_depart': // 系统部门
+      schemasItem.component = 'DepartSelect';
+      schemasItem.defaultValue = 'A01A01A05';
+      break;
+    case 'hidden': // 隐藏
+      break;
+    case 'date': // 日期选择
+      schemasItem.component = 'DatePicker';
+      schemasItem.itemProps.isLink = true;
+      // schemasItem.defaultValue = '2020-11-22';
+      break;
+    case 'datetime': // 日期选择
+      schemasItem.component = 'DatePicker';
+      schemasItem.componentProps.type = 'datetime';
+      schemasItem.componentProps.format = 'YYYY-MM-DD HH:mm';
+      break;
+    case 'popup': // 弹窗
+      break;
+    case 'list': // 下拉框
+      schemasItem.componentProps.options = items.enum;
+      schemasItem.componentProps.labelField = 'text';
+      schemasItem.componentProps.valueField = 'value';
+      schemasItem.component = 'ApiSelect';
+      break;
+    case 'number': // 数字类型
+      schemasItem.component = 'InputNumber';
+      break;
+    case 'radio': // 单选框
+      schemasItem.component = 'ApiRadioGroup';
+      break;
+    case 'image': // 图片上传
+      schemasItem.component = 'Upload';
+      schemasItem.defaultValue = 'icon5_1640053995543.png,icon5_1640054005034.png';
+      break;
+    case 'file': // 文件上传
+      schemasItem.component = 'UploadFile';
+      schemasItem.defaultValue = 'temp/icon5_1640049442300.png,temp/icon5_1640049472680.png';
+      break;
+    case 'textarea': // 多行文本框
+      schemasItem.component = 'InputTextArea';
+      break;
+    case 'InputCalendar': // 日历
+      schemasItem.component = 'InputCalendar';
+      schemasItem.defaultValue = ['2021-12-28'];
+      break;
+    default:
+      break;
+  }
+  return schemasItem;
+}

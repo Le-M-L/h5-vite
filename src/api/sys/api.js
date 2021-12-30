@@ -24,6 +24,10 @@ export const getListColumns = params => {
 export const getListData = (id,params) => {
   return defHttp.get({url:`/online/cgform/api/getData/${id}`,params})
 }
+// 在线表单 列表查询 配置获取
+export const getQueryColumns = (id,params) => {
+  return defHttp.get({url:`/online/cgform/api/getQueryInfo/${id}`,params})
+}
 
 // 在线表单 erp列表配置 接口
 export const getErpColumns = params => {

@@ -10,7 +10,7 @@ export function useSelect(props) {
   async function getInstance() {
     const calendar = unref(selectRef);
     if (!calendar) {
-      error('未获得到下拉框实例，请确保日历组件加载完成');
+      error('未获得到下拉框实例，请确保下拉选择组件加载完成');
     }
     return calendar;
   }

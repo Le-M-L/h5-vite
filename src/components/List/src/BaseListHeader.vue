@@ -1,26 +1,25 @@
 <template>
   <div class="base-list-header">
     <div class="base-list-header-content">
-      <div class="base-list-header-content-item">
-        <DCalendar @register="register" type="range" v-model="time">
+      <div
+        v-for="item in columns"
+        :style="item.sign == 'center'? 'flex:1;' : ''"
+        :key="item.field"
+        class="base-list-header-content-item"
+      >
+        <component
+          :is="item.component + 1"
+          @change="handleChange"
+          v-bind="item"
+          v-model="form[item.field]"
+        >
           <template #text="{ data }">
-            <div class="base-list-header-content-item-data" @click="handleShow">
+            <div class="base-list-header-content-item-data">
               {{ data }}
               <Icon name="play" />
             </div>
           </template>
-        </DCalendar>
-      </div>
-
-      <div class="base-list-header-content-item">
-        <DSelect @register="register1" v-model="school">
-          <template #text="{ data }">
-            <div class="base-list-header-content-item-data" @click="handleShow1">
-              {{ data }}
-              <Icon name="play" />
-            </div>
-          </template>
-        </DSelect>
+        </component>
       </div>
     </div>
     <div class="base-list-header-line"></div>
@@ -29,49 +28,62 @@
 </template>
 
 <script>
-import { ref, unref } from 'vue';
-import { Icon } from 'vant';
-import { DCalendar, useCalendar } from '@/components/DCalendar';
-import { DSelect, useSelect } from '@/components/DSelect';
-
+import { reactive, ref, unref, onMounted, computed, watch } from 'vue';
+import { NavBar, Icon } from 'vant';
+import { componentMap } from './componentMap';
+import { formatSchemas } from './hooks/handle';
+let comps = {};
+for (let key of componentMap.keys()) {
+  // + 1 防止组件冲突
+  comps[key + 1] = componentMap.get(key);
+}
 export default {
   components: {
-    DCalendar,
-    DSelect,
+    ...comps,
     Icon,
   },
-  setup() {
-    const time = ref([]);
-    const school = ref('');
-    const [register, { handleShow }] = useCalendar({
-      callback: (val) => {
-        console.log(val);
-      },
+  props: {
+    id: {
+      type: String,
+      default: '',
+    },
+    queryColumns: {
+      type: Array,
+      default: () => [],
+    },
+    dictOptions: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
+  emits: ['change'],
+  setup(props, { emit }) {
+    const form = reactive({
+      time: [],
+      school: '',
     });
-    const [register1, { handleShow: handleShow1 }] = useSelect({
-      options: [
-        { value: '1', text: '小学', title: '小学' },
-        { value: '2', text: '初中', title: '初中' },
-        { value: '3', text: '高中', title: '高中' },
-        { value: '4', text: '大专', title: '大专' },
-        { value: '5', text: '本科', title: '本科' },
-        { value: '6', text: '研究生', title: '研究生' },
-        { value: '7', text: '硕士', title: '硕士' },
-        { value: '8', text: '博士', title: '博士' },
-        { value: '9', text: '其他', title: '其他' },
-      ],
-      callback: (val) => {
-        console.log(val);
+    // 查询配置
+    const columns = ref([]);
+    const handleChange = (e) => {
+      console.log(e);
+    };
+
+    watch(
+      () => props.queryColumns,
+      (values) => {
+        columns.value = formatSchemas(unref(values), props.dictOptions).slice(0, 2);
+        console.log(columns.value);
       },
+    );
+
+    onMounted(() => {
+      console.log(props);
     });
 
     return {
-      time,
-      school,
-      register,
-      handleShow,
-      register1,
-      handleShow1,
+      form,
+      handleChange,
+      columns,
     };
   },
 };

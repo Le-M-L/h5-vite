@@ -37,7 +37,7 @@
           <div class="custom-list-item-content">
             <div v-for="(items, i) in columns" :key="i">
               <div v-for="child in items.children" :key="child.dataIndex">
-                <span>{{ item[child.dataIndex] }}</span>
+                <span v-text="handleItem(item, child, dictOptions)"></span>
               </div>
             </div>
           </div>
@@ -48,42 +48,66 @@
 </template>
 
 <script>
-import { ref, unref, onMounted } from 'vue';
+import { ref, unref, onMounted, reactive, computed } from 'vue';
 import { PullRefresh, List, Cell, Image, Loading } from 'vant';
-import { getListColumns, getListData } from '@/api/sys/api';
+import {  getListData } from '@/api/sys/api';
 import { useDebounceFn } from '@vueuse/core';
-import { useDataSource } from './hooks/useTable';
+import { handleItem } from './hooks/useTable';
 export default {
   components: { PullRefresh, List, Cell, Image, Loading },
-  setup(props) {
+  props: {
+    id: {
+      type: String,
+      default: '',
+    },
+    rawColumns: {
+      type: Array,
+      default: () => [],
+    },
+    columns: {
+      type: Array,
+      default: () => [],
+    },
+    dictOptions: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
+  emits: ['register'],
+  setup(props, { emit }) {
+    const form = reactive({
+      pageNo: 0,
+      pageSize: 10,
+    });
+    const extraParams = ref({});
     const loading = ref(false); // loading 加载
     const finished = ref(false); // 数据是否全部加载完成
     const refreshing = ref(false); // 下拉刷新
     const tableData = ref([]); // tableData 数据列表
-    const columns = ref([]);
-    const rawColumns = ref([]); // 原数据 columns
-    const pageSize = ref(10);
-    const pageNo = ref(0);
     const total = ref(0);
-    const dictOptions = ref({});
+
+    const tableParams = computed(() => {
+      return {
+        ...unref(form),
+        ...unref(extraParams),
+      };
+    });
 
     // 加载触发是方法
-    const onLoad = useDebounceFn(() => {
+    const onLoad = useDebounceFn((params = {}) => {
       // 重新刷新
       if (refreshing.value) {
         tableData.value = [];
-        pageNo.value = 0;
-        total.value = 0;
+        form.pageNo = 0;
         refreshing.value = false;
       }
       loading.value = true;
-      pageNo.value = pageNo.value + 1;
-      getListData('4db774ba5b4746d5bfb6351a50aa97df', {
-        pageNo: unref(pageNo),
-        pageSize: unref(pageSize),
+      form.pageNo++;
+      getListData(props.id, {
+        ...unref(tableParams),
       })
         .then(({ records, total: totals }) => {
-          tableData.value.concat(useDataSource({ records, rawColumns, dictOptions }));
+          tableData.value = tableData.value.concat(records);
           total.value = totals;
 
           // 加载完毕
@@ -100,9 +124,19 @@ export default {
     const onRefresh = () => {
       // 清空列表数据
       finished.value = false;
-      // 重新加载数据
       // 将 loading 设置为 true，表示处于加载状态
       loading.value = true;
+      onLoad();
+    };
+
+    // 重新加载列表数据
+    const onReset = (params) => {
+      extraParams.value = params;
+      finished.value = false; // 清空列表数据
+      loading.value = true; // 处于加载状态
+      // 初始状态
+      tableData.value = [];
+      form.pageNo = 0;
       onLoad();
     };
 
@@ -111,21 +145,15 @@ export default {
       console.log(item);
     };
 
+    const actionType = {
+      onReset,
+    };
+
     onMounted(() => {
       // 获取列表配置
-      getListColumns({ id: '4db774ba5b4746d5bfb6351a50aa97df' }).then((res) => {
-        columns.value = [
-          {
-            children: res.columns.slice(0, 2),
-          },
-          {
-            children: res.columns.slice(2, 4),
-          },
-        ];
-        dictOptions.value = res.dictOptions;
-        rawColumns.value = res.columns;
-        onRefresh();
-      });
+      onRefresh();
+      // 将内部方法返回出去
+      emit('register', actionType);
     });
 
     return {
@@ -133,10 +161,10 @@ export default {
       finished,
       onLoad,
       tableData,
-      columns,
       refreshing,
       onRefresh,
       handleClick,
+      handleItem,
     };
   },
 };
