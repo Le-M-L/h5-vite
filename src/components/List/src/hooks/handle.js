@@ -20,7 +20,8 @@ export const formatSchemas = (query = [], dictOptions) => {
           schemasItem.options = dictOptions[next.field] || [];
           break;
         case 'text':
-          schemasItem.component = 'DSelect';
+          schemasItem.component = 'DCalendar';
+          schemasItem.type="range"
           break;
         default:
           break;
@@ -29,6 +30,5 @@ export const formatSchemas = (query = [], dictOptions) => {
     }
     return prev;
   }, []);
-  console.log(schemas);
   return schemas;
 };

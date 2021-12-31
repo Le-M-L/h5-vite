@@ -3,7 +3,7 @@
     <div class="base-list-header-content">
       <div
         v-for="item in columns"
-        :style="item.sign == 'center'? 'flex:1;' : ''"
+        :style="item.sign == 'center' ? 'flex:1;justify-content: center;' : ''"
         :key="item.field"
         class="base-list-header-content-item"
       >
@@ -65,7 +65,7 @@ export default {
     // 查询配置
     const columns = ref([]);
     const handleChange = (e) => {
-      console.log(e);
+        console.log(form)
     };
 
     watch(
@@ -117,6 +117,7 @@ export default {
         }
       }
       &:nth-child(1) {
+        display: flex;
         flex: 2;
       }
       &:nth-child(2) {
