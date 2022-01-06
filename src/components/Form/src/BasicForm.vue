@@ -93,8 +93,8 @@ export default {
             schema.defaultValue = def;
           }
         }
-        if(defaultValue && ['Rate'].includes(component)){
-            schema.defaultValue = Number(schema.defaultValue);
+        if (defaultValue && ['Rate'].includes(component)) {
+          schema.defaultValue = Number(schema.defaultValue);
         }
       }
       // 操作按钮
@@ -158,7 +158,7 @@ export default {
     // 表单提交的回调
     function onSubmit(val) {
       const res = handleFormValues(val);
-      console.log(res)
+      console.log(res);
       emit('submit', res);
     }
 
@@ -182,5 +182,58 @@ export default {
 };
 </script>
 
-<style>
+<style lang="less" >
+@prefix-cls: ~'@{namespace}-basic-form';
+@formItemPd:16px;
+.@{prefix-cls} {
+  .van-cell-group{
+    background: transparent;
+  }
+  .van-col{
+    background: #fff;
+    .van-cell{
+      &::after{
+        border:0px;
+      }
+    }
+    .van-field__error-message{
+      height: 18px;
+      line-height: 18px;
+      background: rgba(255,77,77,0.15);
+    }
+  }
+  &-item {
+    padding: 8px 0 12px;
+    margin-bottom: 1px;
+    .van-cell.van-field{
+      padding: 4px @formItemPd 0;
+    }
+    &-label {
+      font-size: 14px;
+      padding: 0 @formItemPd;
+      color: #333;
+      font-weight: 500;
+      >span{
+        color:#FF4D4D;
+      }
+    }
+    &-error{
+      height: 18px;
+      font-size: 12px;
+      padding: 0 @formItemPd;
+      color: rgba(255,77,77);
+      background: rgba(255,77,77,0.15);
+    }
+    input{
+      font-size: 16px;
+      &::placeholder{
+        color: #999;
+      }
+    }
+    .van-field__control--error, .van-field__control--error::placeholder{
+        color: #ee0a24;
+  
+    }
+  }
+}
 </style>

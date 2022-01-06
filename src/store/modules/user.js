@@ -3,7 +3,8 @@ import { store } from '@/store';
 import { router } from '@/router';
 import { ROLES_KEY, TOKEN_KEY, USER_INFO_KEY } from '@/enums/cacheEnum';
 import { getAuthCache, setAuthCache } from '@/utils/auth';
-import { doLogout, getUserInfo, loginApi } from '@/api/sys/user';
+import { doLogout, loginApi } from '@/api/sys/user';
+import { getAllDepartInfo } from '@/api/sys/api';
 import { usePermissionStore } from '@/store/modules/permission';
 import { PAGE_NOT_FOUND_ROUTE } from '@/router/routes/basic';
 import { PageEnum } from '@/enums/pageEnum';
@@ -21,6 +22,8 @@ export const useUserStore = defineStore({
     sessionTimeout: false,
     // 最后获取时间
     lastUpdateTime: 0,
+    // 部门信息
+    departInfo:{}
   }),
   getters: {
     // 获取用户信息
@@ -65,6 +68,10 @@ export const useUserStore = defineStore({
     setSessionTimeout(flag) {
       this.sessionTimeout = flag;
     },
+    // 设置部门信息
+    setDepartInfo(info){
+      this.departInfo = info
+    },
     // 初始化状态
     resetState() {
       this.userInfo = null;
@@ -78,22 +85,34 @@ export const useUserStore = defineStore({
         const { goHome = true, mode, ...loginParams } = params;
         const data = await loginApi(loginParams, mode);
         const { token , userInfo} = data;
-        userInfo.homePath = '/mobile/multiportMenu/index'
+        userInfo.homePath = '/online/cgformErpList/33305b71c08d4b42a7b86326dfe2bb4c'
         // save token
         this.setToken(token);
         // save userInfo
         this.setUserInfo(userInfo);
+        // 设置部门信息
+        const result = await getAllDepartInfo();
+        const depInfo = {};
+        result.map((item) => {
+          depInfo[item.orgCode] = {
+            value: item.orgCode,
+            title: item.departName,
+            text: item.departName,
+            departId: item.id,
+          };
+        });
+        // 设置部门信息
+        this.setDepartInfo(depInfo);
+        
         return this.afterLoginAction(goHome);
       } catch (error) {
         return Promise.reject(error);
       }
     },
-    // 登录之后操作
+    // 登录之后操作 获取路由 获取部门
     async afterLoginAction(goHome) {
       if (!this.getToken) return null;
-      console.log(this);
-      const userInfo = this.getUserInfo();
-
+      const userInfo = this.getUserInfo;
       const sessionTimeout = this.sessionTimeout;
       if (sessionTimeout) {
         this.setSessionTimeout(false);

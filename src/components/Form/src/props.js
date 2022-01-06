@@ -6,12 +6,12 @@ export const basicProps = {
     // 是否在 验证不通过时候标红输入框
     showError:{
       type:Boolean,
-      default:true
+      default:false
     },
     // 是否在检验不通过时 输入框下方展示错误提示
     showErrorMessage:{
       type:Boolean,
-      default:false
+      default:true
     },
     // 标签宽度  固定宽度
     labelWidth: {

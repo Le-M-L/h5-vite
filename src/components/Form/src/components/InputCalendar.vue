@@ -41,7 +41,7 @@ export default {
   },
   emits: ['change', 'register'],
   setup(props, { emit, attrs, expose }) {
-    const fieldValue = ref('请选择日期');
+    const fieldValue = ref('');
     const show = ref(false);
     const innerPropsRef = ref();
     const [state] = useRuleFormItem(props);
@@ -49,6 +49,7 @@ export default {
     const getAttrs = computed(() => {
       return {
         ...get(attrs, 'inputProps'),
+        label:null
       };
     });
 

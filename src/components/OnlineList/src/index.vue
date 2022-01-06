@@ -18,25 +18,29 @@
     @change="handleChange"
     :queryColumns="queryColumns"
     :dictOptions="dictOptions"
-    :id="id"
+    :code="code"
   />
   <BaseList
     @register="register"
-    :id="id"
+    :code="code"
     :rawColumns="rawColumns"
     :columns="columns"
     :queryColumns="queryColumns"
     :dictOptions="dictOptions"
   />
+
+  <div class="baseAdd" @click="handleAdd" ></div>
 </template>
 
 <script>
-import { ref, unref } from 'vue';
+import { onMounted, ref, unref } from 'vue';
 import { NavBar, Icon } from 'vant';
 import BaseList from './BaseList.vue';
 import BaseListHeader from './BaseListHeader.vue';
 import { getListColumns, getQueryColumns } from '@/api/sys/api';
 import { useTable } from './hooks/useTable';
+import { useRoute, useRouter } from "vue-router"
+import { useOnlineStoreWithOut } from "@/store/modules/online"
 export default {
   inheritAttrs: false,
   props: {
@@ -47,7 +51,11 @@ export default {
   },
   components: { BaseList, BaseListHeader, NavBar, Icon },
   setup(props) {
-    const id = ref('33305b71c08d4b42a7b86326dfe2bb4c');
+    const route = useRoute();
+    const router = useRouter()
+    const { code } = route.params;
+    // 在线开发 全局状态
+    const onlineStore = useOnlineStoreWithOut();
     const dictOptions = ref({}); // 字典表
     const rawColumns = ref([]); // 行配置 源
     const columns = ref([]);
@@ -64,7 +72,12 @@ export default {
       onReset(values);
     };
 
-    Promise.all([getListColumns({ id: unref(id) }), getQueryColumns(unref(id))]).then(
+    // 添加
+    const handleAdd = () => {
+      router.push(`/online/form/${code}`)
+    }
+
+    Promise.all([getListColumns({ code: unref(code) }), getQueryColumns(unref(code))]).then(
       ([res, query]) => {
         // 获取列表配置
         columns.value = [
@@ -82,6 +95,10 @@ export default {
       },
     );
 
+    onMounted(() => {
+      onlineStore.setOnlineCode(code)
+    })
+
     return {
       register,
       onClickLeft,
@@ -92,7 +109,8 @@ export default {
       rawColumns,
       columns,
       queryColumns,
-      id,
+      handleAdd,
+      code,
     };
   },
 };
@@ -103,5 +121,14 @@ export default {
   font-weight: 500;
   color: #333;
   font-size: 18px;
+}
+.baseAdd{
+  position: fixed;
+  right: 0;
+  bottom: 90px;
+  width: 64px;
+  height: 64px;
+  background: url('../../../assets/images/list_icon_add.png') no-repeat center center;
+  background-size: 100% 100%;
 }
 </style> 

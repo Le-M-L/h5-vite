@@ -3,7 +3,7 @@ import { cloneDeep, omit } from 'lodash-es';
 import { warn } from '@/utils/log';
 import { createRouter, createWebHashHistory } from 'vue-router';
 
-const IFRAME = () => import('@/views/sys/iframe/FrameBlank.vue');
+const IFRAME = () => import('@/pages/sys/iframe/FrameBlank.vue');
 
 const LayoutMap = new Map();
 
@@ -14,7 +14,7 @@ let dynamicViewsModules;
 
 // 动态引入
 function asyncImportRoute(routes) {
-  dynamicViewsModules = dynamicViewsModules || import.meta.glob('../../views/**/*.{vue,tsx}');
+  dynamicViewsModules = dynamicViewsModules || import.meta.glob('../../pages/**/*.{vue,tsx}');
   if (!routes) return;
   routes.forEach((item) => {
     if (!item.component && item.meta?.frameSrc) {
@@ -25,7 +25,7 @@ function asyncImportRoute(routes) {
     if (component) {
       const layoutFound = LayoutMap.get(component.toUpperCase());
       if (layoutFound) {
-        // iframe 
+        // iframe
         item.component = layoutFound;
       } else {
         item.component = dynamicImport(dynamicViewsModules, component);
@@ -37,10 +37,11 @@ function asyncImportRoute(routes) {
   });
 }
 
+// 动态引入路由 对路由地址转换
 function dynamicImport(dynamicViewsModules, component) {
   const keys = Object.keys(dynamicViewsModules);
   const matchKeys = keys.filter((key) => {
-    const k = key.replace('../../views', '');
+    const k = key.replace('../../pages', '');
     const startFlag = component.startsWith('/');
     const endFlag = component.endsWith('.vue') || component.endsWith('.jsx');
     const startIndex = startFlag ? 0 : 1;
@@ -52,11 +53,11 @@ function dynamicImport(dynamicViewsModules, component) {
     return dynamicViewsModules[matchKey];
   } else if (matchKeys?.length > 1) {
     warn(
-      'Please do not create `.vue` and `.JSX` files with the same file name in the same hierarchical directory under the views folder. This will cause dynamic introduction failure',
+      'Please do not create `.vue` and `.JSX` files with the same file name in the same hierarchical directory under the pages folder. This will cause dynamic introduction failure',
     );
     return;
   } else {
-    warn('在src/views/下找不到`' + component + '.vue` 或 `' + component + '.jsx`, 请自行创建!');
+    warn('在src/pages/下找不到`' + component + '.vue` 或 `' + component + '.jsx`, 请自行创建!');
     return EXCEPTION_COMPONENT;
   }
 }
@@ -93,7 +94,7 @@ export function flatMultiLevelRoutes(routeModules) {
   const modules = cloneDeep(routeModules);
   for (let index = 0; index < modules.length; index++) {
     const routeModule = modules[index];
-     // 判断 路由是否超过二级    不超过二级 跳过本次操作
+    // 判断 路由是否超过二级    不超过二级 跳过本次操作
     if (!isMultipleRoute(routeModule)) {
       continue;
     }

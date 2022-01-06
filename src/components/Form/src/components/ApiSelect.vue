@@ -101,7 +101,7 @@ export default {
 
     const getText = computed(() => {
       let value = unref(state);
-      return unref(getOptions).find((item) => item.value == value)?.text || value || '请选择';
+      return unref(getOptions).find((item) => item.value == value)?.text || value ;
     });
 
     watchEffect(async () => {
@@ -161,6 +161,7 @@ export default {
     const getAttrs = computed(() => {
       return {
         ...get(attrs, 'inputProps'),
+        label:null
       };
     });
 

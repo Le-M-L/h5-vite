@@ -61,24 +61,29 @@ export function handleInputNumberValue(component, val) {
  */
 export const dateItemType = genType();
 
-export const formatSchemas = (data = []) => {
-  let fromSchemas = Object.keys(data).map((key) => {
-    let items = data[key];
+/**
+ * schema item
+ * require 必填字段
+ */
+export const formatSchemas = (schema = [], require = []) => {
+  let fromSchemas = Object.keys(schema).map((key) => {
+    let items = schema[key];
     const schemasItem = {
       field: key,
       show: !items.hidden, // 隐藏
       label: items.title, // 显示字段名
       order: items.order,
-      required: true,
+      required: require.includes(key),
       componentProps: {
         ...(items.ui?.widgetattrs || {}),
       }, // 属性
+      defaultValue:items.defVal,
       itemProps: {},
     };
     formatMode(schemasItem, items);
     return schemasItem;
   });
-  fromSchemas.sort((a, b) => (a.order = b.order));
+  fromSchemas.sort((a, b) => (a.order - b.order));
   return fromSchemas;
 };
 
@@ -97,39 +102,33 @@ export function formatMode(schemasItem, items) {
       break;
     case 'radio': // 单选框
       schemasItem.component = 'ApiRadioGroup';
-      schemasItem.componentProps.options = items.enum ;
+      schemasItem.componentProps.options = items.enum;
       schemasItem.componentProps.labelField = 'text';
       schemasItem.componentProps.valueField = 'value';
       break;
     case 'rate':
       schemasItem.component = 'Rate';
-      schemasItem.defaultValue = '1';
       break;
     case 'switch': // switch 切换
       schemasItem.component = 'Switch';
-      schemasItem.defaultValue = false;
       break;
     case 'pca': // 户籍地 联级
       schemasItem.component = 'AreaCascader';
       schemasItem.componentProps.labelField = 'text';
       schemasItem.componentProps.valueField = 'id';
       schemasItem.componentProps.asyncFetchParamKey = 'id';
-      schemasItem.defaultValue = '120101';
       break;
-    case 'address':
+    case 'address': // 地址选择
       schemasItem.component = 'ListSelect';
-      schemasItem.defaultValue = '2';
       break;
     case 'sel_depart': // 系统部门
       schemasItem.component = 'DepartSelect';
-      schemasItem.defaultValue = 'A01A01A05';
       break;
     case 'hidden': // 隐藏
       break;
     case 'date': // 日期选择
       schemasItem.component = 'DatePicker';
       schemasItem.itemProps.isLink = true;
-      // schemasItem.defaultValue = '2020-11-22';
       break;
     case 'datetime': // 日期选择
       schemasItem.component = 'DatePicker';
@@ -152,18 +151,18 @@ export function formatMode(schemasItem, items) {
       break;
     case 'image': // 图片上传
       schemasItem.component = 'Upload';
-      schemasItem.defaultValue = 'icon5_1640053995543.png,icon5_1640054005034.png';
+      // schemasItem.defaultValue = 'icon5_1640053995543.png,icon5_1640054005034.png';
       break;
     case 'file': // 文件上传
       schemasItem.component = 'UploadFile';
-      schemasItem.defaultValue = 'temp/icon5_1640049442300.png,temp/icon5_1640049472680.png';
+      // schemasItem.defaultValue = 'temp/icon5_1640049442300.png,temp/icon5_1640049472680.png';
       break;
     case 'textarea': // 多行文本框
       schemasItem.component = 'InputTextArea';
       break;
     case 'InputCalendar': // 日历
       schemasItem.component = 'InputCalendar';
-      schemasItem.defaultValue = ['2021-12-28'];
+      // schemasItem.defaultValue = ['2021-12-28'];
       break;
     default:
       break;

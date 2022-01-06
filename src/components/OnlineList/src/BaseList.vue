@@ -56,7 +56,7 @@ import { handleItem } from './hooks/useTable';
 export default {
   components: { PullRefresh, List, Cell, Image, Loading },
   props: {
-    id: {
+    code: {
       type: String,
       default: '',
     },
@@ -103,7 +103,7 @@ export default {
       }
       loading.value = true;
       form.pageNo++;
-      getListData(props.id, {
+      getListData(props.code, {
         ...unref(tableParams),
       })
         .then(({ records, total: totals }) => {

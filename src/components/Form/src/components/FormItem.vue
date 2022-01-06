@@ -8,6 +8,7 @@
   import { createPlaceholderMessage, setComponentRuleType } from '../helper';
   import { upperFirst, cloneDeep } from 'lodash-es';
   import { useItemLabelWidth } from '../hooks/useLabelWidth';
+  import { useDesign } from '@/hooks/web/useDesign';
 
   export default {
     name: 'BasicFormItem',
@@ -43,12 +44,13 @@
     setup(props, { slots }) {
 
       const { schema, formProps } = toRefs(props) ;
+      const { prefixCls } = useDesign('basic-form');
 
       const itemLabelWidthProp = useItemLabelWidth(schema, formProps);
 
       const getValues = computed(() => {
         const { allDefaultValues, formModel, schema } = props;
-        console.log(formModel)
+        // console.log(formModel)
 
         const { mergeDynamicData } = props.formProps;
         return {
@@ -284,7 +286,7 @@
           ...propsData,
           ...on,
           ...bindValue,
-          inputProps:inputProps
+          inputProps:inputProps,
         };
         console.log(compAttr)
         // component == 'Input' && Object.assign(compAttr,inputProps)
@@ -327,10 +329,9 @@
       }
 
       function renderItem() {
-        const { itemProps, slot, render, field, suffix, component } = props.schema;
+        const { itemProps, slot, render, required, field, suffix, component, label } = props.schema;
         const { labelCol, wrapperCol } = unref(itemLabelWidthProp);
         const { colon } = props.formProps;
-
         if (component === 'Divider') {
           return (
             <Col span={24}>
@@ -349,7 +350,15 @@
           const showSuffix = !!suffix;
           const getSuffix = isFunction(suffix) ? suffix(unref(getValues)) : suffix;
           
-          return getContent()
+          return (
+            <div className={`${prefixCls}-item`} >
+              <div className={`${prefixCls}-item-label`}>{label}{ required ?<span>*</span>:''} </div>
+              {getContent()}
+              {
+                // <div className={`${prefixCls}-item-error`} >此处不能为空</div>
+              }
+            </div>
+          )
           // return component == 'Input' ?  getContent(): (
           //   <Field
           //     name={field}

@@ -1,5 +1,5 @@
 <template>
-  <CheckboxGroup v-model="state" @change="handleChange" v-bind="attrs" >
+  <CheckboxGroup v-model="state" @change="handleChange" v-bind="getAttrs">
     <template v-for="item in getOptions" :key="`${item.value}`">
       <Checkbox :name="item.value" :disabled="item.disabled">
         {{ item.label }}
@@ -17,7 +17,6 @@ import { computed, ref, watchEffect, watch, unref } from 'vue';
 import { Checkbox, CheckboxGroup } from 'vant';
 import { isFunction } from '@/utils/is';
 import { get, omit } from 'lodash-es';
-import { useAttrs } from '@/hooks/core/useAttrs';
 import { useRuleFormItem } from '@/hooks/component/useFormItem';
 
 export default {
@@ -60,14 +59,20 @@ export default {
     },
   },
   emits: ['options-change', 'change'],
-  setup(props, { emit }) {
+  setup(props, { emit, attrs }) {
     const options = ref([]);
     const emitData = ref([]);
-    const attrs = useAttrs();
     const loading = ref(false);
-     const isFirstLoad = ref(true);
+    const isFirstLoad = ref(true);
     const [state] = useRuleFormItem(props);
-    
+    const getAttrs = computed(() => {
+      return {
+        ...omit(attrs,'inputProps'),
+        ...get(attrs, 'inputProps'),
+        label: null,
+      };
+    });
+
     const getOptions = computed(() => {
       const { labelField, valueField, numberToString } = props;
 
@@ -127,7 +132,7 @@ export default {
       console.log(_, args);
       emitData.value = args;
     }
-    return { state, getOptions, attrs, loading, handleChange };
+    return { state, getOptions, getAttrs, loading, handleChange };
   },
 };
 </script>

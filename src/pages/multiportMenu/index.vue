@@ -10,7 +10,7 @@ import { ref, reactive, onMounted } from 'vue';
 import { Button } from 'vant';
 import { BasicForm, formatSchemas } from '@/components/Form';
 import { data, listColumns } from './data';
-import { BaseList } from "@/components/List"
+import { BaseList } from "@/components/OnlineList"
 export default {
   components: { BasicForm, BaseList },
   setup() {

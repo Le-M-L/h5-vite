@@ -1,5 +1,4 @@
 import { unref } from 'vue';
-import { formatMode } from '@/components/Form';
 
 export const formatSchemas = (query = [], dictOptions) => {
   let schemas = unref(query).reduce((prev, next, index) => {
@@ -16,13 +15,15 @@ export const formatSchemas = (query = [], dictOptions) => {
       }
       switch (next.view) {
         case 'list':
+          schemasItem.placeholder = '请选择'
           schemasItem.component = 'DSelect';
           schemasItem.options = dictOptions[next.field] || [];
           break;
         case 'text':
           schemasItem.component = 'DCalendar';
           schemasItem.type="range"
-          break;
+          schemasItem.placeholder = '请选择日期'
+        break;
         default:
           break;
       }

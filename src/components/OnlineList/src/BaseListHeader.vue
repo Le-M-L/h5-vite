@@ -2,7 +2,7 @@
   <div class="base-list-header">
     <div class="base-list-header-content">
       <div
-        v-for="item in columns"
+        v-for="item in getSchema.slice(0,2)"
         :style="item.sign == 'center' ? 'flex:1;justify-content: center;' : ''"
         :key="item.field"
         class="base-list-header-content-item"
@@ -11,11 +11,11 @@
           :is="item.component + 1"
           @change="handleChange"
           v-bind="item"
-          v-model="form[item.field]"
+          v-model="formModel[item.field]"
         >
           <template #text="{ data }">
             <div class="base-list-header-content-item-data">
-              {{ data }}
+              {{ data || item.placeholder }}
               <Icon name="play" />
             </div>
           </template>
@@ -32,6 +32,7 @@ import { reactive, ref, unref, onMounted, computed, watch } from 'vue';
 import { NavBar, Icon } from 'vant';
 import { componentMap } from './componentMap';
 import { formatSchemas } from './hooks/handle';
+import { useTableValues } from './hooks/useTableValues';
 let comps = {};
 for (let key of componentMap.keys()) {
   // + 1 防止组件冲突
@@ -43,7 +44,7 @@ export default {
     Icon,
   },
   props: {
-    id: {
+    code: {
       type: String,
       default: '',
     },
@@ -55,35 +56,42 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    // 多个日期参数使用
+    // 示例 [field,['start','end','YYYY-MM-DD']]
+    fieldMapToTime:{
+      type:Array,
+      default: () => [['name',['startTime','endTimeKey']]]
+    }
   },
   emits: ['change'],
   setup(props, { emit }) {
-    const form = reactive({
-      time: [],
-      school: '',
+    const formModel = reactive({});
+    const schemaRef = ref(null);
+    const getProps = computed(() => {
+      return { ...props };
     });
-    // 查询配置
-    const columns = ref([]);
-    const handleChange = (e) => {
-        console.log(form)
-    };
 
-    watch(
-      () => props.queryColumns,
-      (values) => {
-        columns.value = formatSchemas(unref(values), props.dictOptions).slice(0, 2);
-        console.log(columns.value);
-      },
-    );
+    // 查询配置
+    const getSchema = computed(() => {
+      const schemas = unref(schemaRef) || props.queryColumns;
+      return formatSchemas(schemas, props.dictOptions);
+    });
+
+    const { handleFormValues } = useTableValues({ getProps, getSchema, formModel });
+
+    const handleChange = (e) => {
+      let formData = handleFormValues(formModel);
+      emit('change',formData)
+    };
 
     onMounted(() => {
       console.log(props);
     });
 
     return {
-      form,
+      formModel,
       handleChange,
-      columns,
+      getSchema,
     };
   },
 };

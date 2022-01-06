@@ -54,7 +54,9 @@ export const useTable = () => {
   }
 
   const methods = {
-    // 刷新列表
+    /**
+     * 刷新列表
+     */
     onReset: async (params) => {
       const instance = await getInstance();
       instance?.onReset(params);

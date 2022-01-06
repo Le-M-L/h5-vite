@@ -9,7 +9,6 @@ import { queryPermissionsByUser } from '@/api/sys/api';
 import { useMessage } from "@/hooks/web/useMessage"
 import { transformRouteToMenu } from '@/router/helper/menuHelper';
 import { transformObjToRoute, flatMultiLevelRoutes } from '@/router/helper/routeHelper';
-import jsonData from '@/router/helper/index';
 import { filter } from '@/utils/helper/treeHelper';
 
 export const usePermissionStore = defineStore({
@@ -118,10 +117,9 @@ export const usePermissionStore = defineStore({
               // 获取按钮权限
             // this.changePermissionCode();
             // 获取菜单
-            
-            // let { allAuth, auto, menu } = (await queryPermissionsByUser());
-            let { allAuth, auto, menu } = jsonData.result;
-            routeList = menu.filter(item => item.name == 'mobile');
+            let { allAuth, auto, menu } = (await queryPermissionsByUser());
+            routeList = menu.filter(item => item.name == 'db_platform');
+            console.log(routeList)
           } catch (error) {
             console.error(error);
           }

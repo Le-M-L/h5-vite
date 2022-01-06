@@ -11,6 +11,7 @@ import { reactive, ref } from 'vue';
 import { Field, CellGroup, Button } from 'vant';
 import { useDesign } from '@/hooks/web/useDesign';
 import { useUserStoreWithOut } from '@/store/modules/user';
+import { encryptBySha1 } from "@/utils/cipher"
 export default {
   components: {
     Field,
@@ -20,12 +21,15 @@ export default {
     const value = ref('');
     const form = reactive({
       username: 'admin',
-      password: 'admin123456?',
+      password: encryptBySha1('dingdang123456?') ,
     });
     const { prefixCls } = useDesign('login');
     const userStore = useUserStoreWithOut()
     const handleClick = () => {
       userStore.login(form)
+        .then(res =>{
+            console.log(res)
+        })
     };
     return {
       prefixCls,
