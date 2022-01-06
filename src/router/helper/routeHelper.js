@@ -1,4 +1,4 @@
-import { getParentLayout, LAYOUT, EXCEPTION_COMPONENT } from '@/router/constant';
+import { getParentLayout, LAYOUT, EXCEPTION_COMPONENT, ONLINE_FORM } from '@/router/constant';
 import { cloneDeep, omit } from 'lodash-es';
 import { warn } from '@/utils/log';
 import { createRouter, createWebHashHistory } from 'vue-router';
@@ -20,20 +20,22 @@ function asyncImportRoute(routes) {
     if (!item.component && item.meta?.frameSrc) {
       item.component = 'IFRAME';
     }
-    const { component, name } = item;
-    const { children } = item;
+    const { component, name, children, path } = item;
+    let pathFlag = path.startsWith('/online/cgformErpList');
+    item.meta.ignoreRoute = item.meta?.ignoreRoute ?? !pathFlag;
     if (component) {
       const layoutFound = LayoutMap.get(component.toUpperCase());
       if (layoutFound) {
         // iframe
         item.component = layoutFound;
       } else {
-        item.component = dynamicImport(dynamicViewsModules, component);
+        item.component =  dynamicImport(dynamicViewsModules, component);
       }
     } else if (name) {
       item.component = getParentLayout();
     }
     children && asyncImportRoute(children);
+
   });
 }
 
@@ -82,6 +84,7 @@ export function transformObjToRoute(routeList) {
     } else {
       warn('请正确配置路由：' + route?.name + '的component属性');
     }
+   
     route.children && asyncImportRoute(route.children);
   });
   return routeList;

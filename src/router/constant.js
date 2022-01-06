@@ -14,7 +14,8 @@ export const EXCEPTION_COMPONENT = () => import('@/pages/sys/exception/Exception
 
  export const PAGE_LAYOUT = () => import('@/layouts/page/index.vue');
 
-
+// 在线表单
+export const ONLINE_FORM = () => import('@/components/OnlineList/src/index.vue');
 
  /**
  * @description: 父级布局

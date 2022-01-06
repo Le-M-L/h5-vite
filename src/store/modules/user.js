@@ -121,6 +121,7 @@ export const useUserStore = defineStore({
         // 如果没有完成异步路由更新 则重新获取路由
         if (!permissionStore.isDynamicAddedRoute) {
           const routes = await permissionStore.buildRoutesAction();
+
           routes.forEach((route) => {
             router.addRoute(route);
           });

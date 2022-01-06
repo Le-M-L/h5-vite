@@ -1,11 +1,11 @@
 <script lang="jsx" >
-  import {  computed, unref, toRefs } from 'vue';
+  import {  computed, unref, ref, toRefs } from 'vue';
   import { Field, Col, Divider,Button, Icon } from 'vant';
   import { componentMap } from '../componentMap';
   import { BasicHelp } from '@/components/Basic';
   import { isBoolean, isFunction, isNull, isObject } from '@/utils/is';
   import { getSlot } from '@/utils/helper/jsxHelper';
-  import { createPlaceholderMessage, setComponentRuleType } from '../helper';
+  import { createPlaceholderMessage, setComponentRuleType, validatorMax, validatorMin } from '../helper';
   import { upperFirst, cloneDeep } from 'lodash-es';
   import { useItemLabelWidth } from '../hooks/useLabelWidth';
   import { useDesign } from '@/hooks/web/useDesign';
@@ -45,6 +45,8 @@
 
       const { schema, formProps } = toRefs(props) ;
       const { prefixCls } = useDesign('basic-form');
+      const isError = ref(false);
+      const errorMsg = ref('')
 
       const itemLabelWidthProp = useItemLabelWidth(schema, formProps);
 
@@ -77,6 +79,7 @@
             plain: true,
           });
         }
+        componentProps.isError = unref(isError)
         return componentProps ;
       });
 
@@ -130,29 +133,34 @@
           label,
           dynamicRules,
           required,
+          pattern,
+          maxLength,
+          minLength,
+          errorInfo
         } = props.schema;
-
         if (isFunction(dynamicRules)) {
           return dynamicRules(unref(getValues)) ;
         }
-
         let rules = cloneDeep(defRules);
         const { rulesMessageJoinLabel: globalRulesMessageJoinLabel } = props.formProps;
-
         const joinLabel = Reflect.has(props.schema, 'rulesMessageJoinLabel')
           ? rulesMessageJoinLabel
           : globalRulesMessageJoinLabel;
         const defaultMsg = createPlaceholderMessage(component) + `${joinLabel ? label : ''}`;
         function validator(value,rule) {
           const msg = rule.message || defaultMsg;
+          errorMsg.value = msg;
           if (value === undefined || isNull(value)) {
             // 空值
+            isError.value = true;
             return Promise.resolve(msg);
           } else if (Array.isArray(value) && value.length === 0) {
             // 数组类型
+            isError.value = true;
             return Promise.resolve(msg);
           } else if (typeof value === 'string' && value.trim() === '') {
             // 空字符串
+            isError.value = true;
             return Promise.resolve(msg);
           } else if (
             typeof value === 'object' &&
@@ -164,15 +172,33 @@
             value.halfChecked.length === 0
           ) {
             // 非关联选择的tree组件
+            isError.value = true;
             return Promise.resolve(msg);
           }
+          else if(pattern){
+             const reg = pattern && eval(`/${pattern}/`)
+             if(!reg.test(value)){
+              isError.value = true;
+              return Promise.resolve(msg);
+             }
+          }
+
+          isError.value = false;
           return Promise.resolve();
         }
 
         const getRequired = isFunction(required) ? required(unref(getValues)) : required;
 
         if ((!rules || rules.length === 0) && getRequired) {
-          rules = [{ required: getRequired, validator }];
+          const trigger = 
+          rules = [{ required: getRequired, validator, trigger: 'onChange', message:errorInfo }];
+          if(maxLength){
+            rules.push({required: getRequired, validator:validatorMax, trigger:'onBlur'})
+          }
+
+          if(minLength){
+            rules.push({required: getRequired, validator:validatorMin, trigger:'onBlur'})
+          }
         }
 
         const requiredRuleIndex = rules.findIndex(
@@ -199,7 +225,6 @@
             setComponentRuleType(rule, component, valueFormat);
           }
         }
-
         // 最大输入长度规则检查
         const characterInx = rules.findIndex((val) => val.max);
         if (characterInx !== -1 && !rules[characterInx].validator) {
@@ -240,7 +265,6 @@
 
         const on = {
           [eventKey]: (...args) => {
-            console.log(args)
             const [e] = args;
             if (propsData[eventKey]) {
               propsData[eventKey](...args);
@@ -249,6 +273,7 @@
             const target = e ? e.target : null;
 
             const value =  target? target.value : (isSelect && isObject(e) ? e.value : e);
+            console.log(value,field)
             props.setFormModel(field, value);
             // 对地图经纬度特殊处理
             if(args[1] && args[1].flag === 'map'){
@@ -288,7 +313,6 @@
           ...bindValue,
           inputProps:inputProps,
         };
-        console.log(compAttr)
         // component == 'Input' && Object.assign(compAttr,inputProps)
         if (!renderComponentContent) {
           return <Comp {...compAttr} />;
@@ -351,11 +375,11 @@
           const getSuffix = isFunction(suffix) ? suffix(unref(getValues)) : suffix;
           
           return (
-            <div className={`${prefixCls}-item`} >
-              <div className={`${prefixCls}-item-label`}>{label}{ required ?<span>*</span>:''} </div>
+            <div className={`${prefixCls}-item`}   >
+              <div className={`${prefixCls}-item-label ${unref(isError) && 'label-error'}`} >{label}{ required ?<span>*</span>:''} </div>
               {getContent()}
               {
-                // <div className={`${prefixCls}-item-error`} >此处不能为空</div>
+                unref(isError) ? <div className={`${prefixCls}-item-error`} >{unref(errorMsg)}</div> : ''
               }
             </div>
           )

@@ -1,13 +1,13 @@
 <template>
-    <Uploader
-      :after-read="afterRead"
-      :before-read="beforeRead"
-      :before-delete="beforeDelete"
-      @oversize="oversize"
-      v-bind="getBindValue"
-      v-model="fileListRef"
-    >
-    </Uploader>
+  <Uploader
+    :after-read="afterRead"
+    :before-read="beforeRead"
+    :before-delete="beforeDelete"
+    @oversize="oversize"
+    v-bind="getBindValue"
+    v-model="fileListRef"
+  >
+  </Uploader>
 </template>
 
 <script>
@@ -21,7 +21,7 @@ import { omit } from 'lodash-es';
 import { UploadResultStatus } from './typing';
 import { isArray, isFunction } from '@/utils/is';
 import { warn } from '@/utils/log';
-import { initFileListArr } from "@/utils"
+import { initFileListArr } from '@/utils';
 export default {
   name: 'BasicUpload',
   components: { Uploader },
@@ -47,14 +47,20 @@ export default {
         ...attrs,
         ...props,
       };
-      return omit(value, ['initData', 'maxSize','api']);
+      return omit(value, ['initData', 'maxSize', 'api']);
     });
 
     watch(
       () => props.initData,
       (value = []) => {
-        // 如果存在上传失败的文件  会自动清空
-        fileListRef.value = isArray(unref(value)) ? initFileListArr(unref(value)) :initFileListArr(unref(value).split(','));
+        if (!value) {
+          fileListRef.value = [];
+        } else {
+          // 如果存在上传失败的文件  会自动清空
+          fileListRef.value = isArray(unref(value))
+            ? initFileListArr(unref(value))
+            : initFileListArr(unref(value).split(','));
+        }
       },
       { immediate: true },
     );
@@ -87,7 +93,9 @@ export default {
     const afterRead = async () => {
       const { autoUpload } = props;
       autoUpload && (await handleStartUpload());
-      fileListRef.value = fileListRef.value.filter(({status}) => status === UploadResultStatus.SUCCESS)
+      fileListRef.value = fileListRef.value.filter(
+        ({ status }) => status === UploadResultStatus.SUCCESS,
+      );
       emit('change', getFileData());
     };
 
@@ -98,6 +106,7 @@ export default {
         .map(({ responseData }) => responseData.message);
     }
 
+    // 删除的回调
     const beforeDelete = (file) => {
       nextTick(() => {
         emit('change', getFileData());
@@ -127,7 +136,10 @@ export default {
             item.percent = complete;
           },
         );
-        item.status = UploadResultStatus.SUCCESS;
+        if(data.code == 500){
+          createMessage.fail(`${data.message}`)
+        }
+        item.status = data.code == 500 ? UploadResultStatus.ERROR : UploadResultStatus.SUCCESS;
         item.responseData = data;
         return {
           success: true,

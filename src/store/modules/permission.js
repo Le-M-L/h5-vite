@@ -137,7 +137,7 @@ export const usePermissionStore = defineStore({
           // 将多级路由转换为二级路由
           routeList = flatMultiLevelRoutes(routeList);
           routes = [PAGE_NOT_FOUND_ROUTE, ...routeList];
-
+          console.log(routes)
 
 
       /**

@@ -47,7 +47,7 @@ export const basicProps = {
   },
   api: {
     type: Function,
-    default: uploadFile,
+    default: uploadApi,
   },
   name: {
     type: String,

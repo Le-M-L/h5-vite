@@ -11,7 +11,7 @@ export const basicProps = {
     // 是否在检验不通过时 输入框下方展示错误提示
     showErrorMessage:{
       type:Boolean,
-      default:true
+      default:false
     },
     // 标签宽度  固定宽度
     labelWidth: {

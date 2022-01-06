@@ -157,7 +157,7 @@ export default {
 
     // 表单提交的回调
     function onSubmit(val) {
-      const res = handleFormValues(val);
+      const res = handleFormValues(unref(formModel));
       console.log(res);
       emit('submit', res);
     }
@@ -215,6 +215,10 @@ export default {
       font-weight: 500;
       >span{
         color:#FF4D4D;
+      }
+      &.label-error{
+        color:#FF4D4D;
+
       }
     }
     &-error{

@@ -1,5 +1,5 @@
 <template>
-  <Field v-bind="getAttrs" v-model="state" />
+  <Field v-bind="getAttrs"  @error-item="handleItem" v-model="state" />
 </template>
 
 <script>
@@ -21,9 +21,17 @@ export default {
         label: null,
       };
     });
+    console.log(getAttrs.value)
+    const isError = computed(() => unref(getAttrs).isError)
+  
+    const handleItem = (e) =>{
+      console.log(e)
+    }
     return {
       state,
       getAttrs,
+      isError,
+      handleItem
     };
   },
 };

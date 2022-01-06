@@ -1,6 +1,7 @@
 <template>
-  <Field v-bind="getAttrs" v-model="state" readonly required />
-  <BasicUpload @change="handleChange" :initData="initData" v-bind="getBindValue" />
+ <div class="van-cell van-field" >
+    <BasicUpload @change="handleChange" :initData="initData" v-bind="getBindValue" />
+ </div>
 </template>
 
 <script>
@@ -24,7 +25,6 @@ export default {
   emits: ['change'],
   setup(props, { emit, attrs }) {
     const [state] = useRuleFormItem(props);
-    const initData = ref([]);
     const getAttrs = computed(() => {
       return {
         ...get(attrs, 'inputProps'),
@@ -32,18 +32,17 @@ export default {
       };
     });
 
-    watch(
-      () => unref(state),
-      (val) => {
-        initData.value = val;
-      },
-    );
+    const initData = computed(() => props.modelValue)
+    
+
     const getBindValue = computed(() => {
       return {
         ...omit(attrs, ['inputProps', 'modelValue']),
       };
     });
+    console.log(getBindValue)
     const handleChange = (val) => {
+      console.log(val)
       emit('change', val.join());
     };
     return { state, initData, getAttrs, getBindValue, handleChange };
