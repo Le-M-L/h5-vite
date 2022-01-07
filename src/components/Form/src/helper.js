@@ -100,7 +100,9 @@ export const formatSchemas = (schema = [], require = []) => {
         ...(items.ui?.widgetattrs || {}),
       }, // 属性
       defaultValue: items.defVal,
-      itemProps: {},
+      itemProps: {
+        code:items.code, // 弹窗表格code
+      },
     };
     formatMode(schemasItem, items);
     return schemasItem;
@@ -168,6 +170,7 @@ export function formatMode(schemasItem, items) {
       schemasItem.componentProps.format = 'YYYY-MM-DD HH:mm';
       break;
     case 'popup': // 弹窗
+      schemasItem.component = 'ListSelect';
       break;
     case 'list': // 下拉框
       schemasItem.componentProps.options = items.enum;

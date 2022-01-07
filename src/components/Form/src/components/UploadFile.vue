@@ -1,5 +1,5 @@
 <template>
-  <div style="padding: 12px 16px 6px; color: #333; font-size: 14px">附件</div>
+  <!-- <div style="padding: 12px 16px 6px; color: #333; font-size: 14px">附件</div> -->
   <Field style="display: none" v-model="getText" v-bind="getAttrs" readonly required />
   <div style="padding: 0 16px 12px">
     <UploadFile v-bind="getBindValue" style="width: 100vw" v-model="state" @change="handleChange" />

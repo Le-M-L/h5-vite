@@ -190,7 +190,7 @@
         const getRequired = isFunction(required) ? required(unref(getValues)) : required;
 
         if ((!rules || rules.length === 0) && getRequired) {
-          const trigger = 
+          // const trigger = 
           rules = [{ required: getRequired, validator, trigger: 'onChange', message:errorInfo }];
           if(maxLength){
             rules.push({required: getRequired, validator:validatorMax, trigger:'onBlur'})

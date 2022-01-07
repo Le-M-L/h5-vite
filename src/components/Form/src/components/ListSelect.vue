@@ -1,11 +1,5 @@
 <template>
-  <Field
-    v-bind="getAttrs"
-    readonly
-    placeholder="请选择"
-    v-model="fieldValue"
-    @click="show = true"
-  />
+  <Field v-bind="getAttrs" readonly v-model="fieldValue" @click="handlePopup" />
   <Popup
     v-model:show="show"
     :style="{ height: '70%' }"
@@ -43,10 +37,11 @@
 </template>
 
 <script>
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, unref } from 'vue';
 import { List, Cell, Popup, Field, Search, PullRefresh, Sticky, Icon } from 'vant';
 import { get, omit } from 'lodash-es';
 import { useRuleFormItem } from '@/hooks/component/useFormItem';
+import { getPopupColumns, getPopupData, getPopupQuery } from '@/api/sys/api';
 export default {
   name: 'ListSelect',
   inheritAttrs: false,
@@ -78,12 +73,13 @@ export default {
     const loading = ref(false); // 列表 是否处于加载中
     const list = ref([]);
     const value = ref('');
+    const columns = ref([]); //列表配置
 
     // 获取 field 的属性
     const getAttrs = computed(() => {
       return {
         ...get(attrs, 'inputProps'),
-        label:null
+        label: null,
       };
     });
 
@@ -144,6 +140,21 @@ export default {
       loading.value = true;
     };
 
+    const handlePopup = async () => {
+      const { code } = unref(getAttrs);
+      let { cgRpConfigId, columns, dictOptions } = await getPopupColumns({ code });
+      Promise.all([getPopupQuery({code:cgRpConfigId}),getPopupData({code:cgRpConfigId})])
+        .then(res => {
+      console.log(res)          
+        })
+        .catch((err) => {
+          console.error(err)
+        })        
+      show.value = true;
+    };
+
+    //
+
     return {
       state,
       show,
@@ -163,6 +174,7 @@ export default {
       scroll,
       onSearch,
       handleClick,
+      handlePopup,
     };
   },
 };

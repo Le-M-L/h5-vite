@@ -49,3 +49,22 @@ export const getOnlineFormItem = params => {
   return defHttp.get({url:`/online/cgform/api/getErpFormItem/${params.code}`})
 }
 
+// 弹窗列表 列表配置获取
+export const getPopupColumns = params => {
+  return defHttp.get({url:`/online/cgreport/api/getRpColumns/${params.code}`})
+}
+
+// 弹窗列表 数据获取
+export const getPopupData = params => {
+  return defHttp.get({url:`/online/cgreport/api/getData/${params.code}`})
+}
+
+// 弹窗列表 查询配置获取
+export const getPopupQuery = params => {
+  return defHttp.get({url:`/online/cgreport/api/getQueryInfo/${params.code}`})
+}
+
+// 弹窗列表 数据 和 配置 
+export const getPopupAllColumns = params => {
+  return defHttp.get({url:`/online/cgreport/api/getColumnsAndData${params.code}`})
+}
