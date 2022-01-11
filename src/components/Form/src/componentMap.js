@@ -11,7 +11,7 @@ import DatePicker from './components/DatePicker.vue';
 import ApiCascader from './components/ApiCascader.vue';
 import AreaCascader from './components/AreaCascader.vue';
 import DepartSelect from './components/DepartSelect.vue';
-import ListSelect from './components/ListSelect.vue';
+import ListSelect from './components/ListSelect/index.vue';
 import InputUpload from './components/InputUpload.vue';
 import UploadFile from './components/UploadFile.vue';
 import InputSwitch from './components/InputSwitch.vue';

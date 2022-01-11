@@ -8,7 +8,7 @@
 
 <script>
 import { computed, ref, unref } from 'vue';
-import { ApiSelect } from '@/components/Form';
+import ApiSelect from '@/components/Form/src/components/ApiSelect.vue';
 export default {
   inheritAttrs: false,
   props: {

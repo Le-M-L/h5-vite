@@ -8,6 +8,10 @@ export const basicProps = {
       type:Boolean,
       default:false
     },
+    validateFirst:{
+      type:Boolean,
+      default:true
+    },
     // 是否在检验不通过时 输入框下方展示错误提示
     showErrorMessage:{
       type:Boolean,

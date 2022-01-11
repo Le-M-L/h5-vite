@@ -1,5 +1,12 @@
 <template>
-  <Field v-bind="getAttrs" v-model="state" readonly @click="show = true" />
+  <Field
+    v-bind="getAttrs"
+    v-model="state"
+    disabled
+    :class="{ isDisabled: state }"
+    @clear="handleClear"
+    @click="!getAttrs.readonly ? show = true:null"
+  />
   <Popup v-model:show="show" round position="bottom">
     <DatetimePicker v-bind="getBindValue" @confirm="handleConfirm" @cancel="handleCancel" />
   </Popup>
@@ -21,7 +28,7 @@ export default {
   },
   props: {
     modelValue: {
-      type: [Array, Object, String, Number],
+      type: [Array, String],
     },
     // 日期格式
     format: {
@@ -59,7 +66,7 @@ export default {
     const getAttrs = computed(() => {
       return {
         ...get(attrs, 'inputProps'),
-        label:null
+        label: null,
       };
     });
     const getBindValue = computed(() => {
@@ -67,7 +74,7 @@ export default {
         type: 'date',
         ...omit(attrs, 'inputProps'),
         ...props,
-        modelValue: unref(state)? new Date(unref(state)):new Date(),
+        modelValue: unref(state) ? new Date(unref(state)) : new Date(),
       };
       return bindValue;
     });
@@ -81,6 +88,10 @@ export default {
       show.value = false;
     };
 
+    const handleClear = () => {
+
+    }
+
     return {
       show,
       state,
@@ -88,6 +99,7 @@ export default {
       handleConfirm,
       handleCancel,
       getAttrs,
+      handleClear
     };
   },
 };

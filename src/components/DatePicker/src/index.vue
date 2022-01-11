@@ -4,7 +4,7 @@
 
 <script>
 import { computed } from 'vue';
-import { DatePicker } from '@/components/Form';
+import DatePicker from '@/components/Form/src/components/DatePicker.vue';
 export default {
   inheritAttrs: false,
   props: {
@@ -26,6 +26,7 @@ export default {
         modelValue: props.modelValue,
       };
     });
+    console.log(getBindValue.value)
     return {
       handleChange,
       getBindValue,

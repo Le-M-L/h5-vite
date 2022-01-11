@@ -9,6 +9,7 @@ export const formatSchemas = (query = [], dictOptions) => {
         mode: next.mode, // 单选多选
         dictTable: next.dictTable, // 查询表格
         label: next.label, // 字段label
+
       };
       if(index == 0 && next.view == 'list' || prev[0]?.sign == 'center'){
         schemasItem.sign = 'center';

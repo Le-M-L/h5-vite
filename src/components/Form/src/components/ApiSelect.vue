@@ -1,7 +1,14 @@
 <template>
-  <span @click="show = true">
+  <span @click="!getAttrs.readonly ? show = true:null">
     <slot name="text" :data="getText">
-      <Field is-link readonly v-bind="getAttrs" v-model="getText"  />
+      <Field
+        v-bind="getAttrs"
+        is-link
+        disabled
+        :class="{ isDisabled: getText }"
+        v-model="getText"
+        @clear="handleClear"
+      />
     </slot>
   </span>
   <Popup v-model:show="show" round position="bottom">
@@ -101,7 +108,7 @@ export default {
 
     const getText = computed(() => {
       let value = unref(state);
-      return unref(getOptions).find((item) => item.value == value)?.text || value ;
+      return unref(getOptions).find((item) => item.value == value)?.text || value;
     });
 
     watchEffect(async () => {
@@ -161,9 +168,14 @@ export default {
     const getAttrs = computed(() => {
       return {
         ...get(attrs, 'inputProps'),
-        label:null
+        label: null,
       };
     });
+    console.log(getAttrs.value)
+
+    const handleClear = () => {
+      emit('change', '');
+    };
 
     const getBindValue = computed(() => {
       return {
@@ -204,6 +216,7 @@ export default {
       handleCancel,
       getAttrs,
       getBindValue,
+      handleClear,
     };
   },
 };

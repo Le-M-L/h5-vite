@@ -27,8 +27,8 @@ export const getAllDepartInfo = (params) => defHttp.get({url:'/sys/sysDepart/get
 
 
 // 在线表单 列表配置 接口
-export const getListColumns = params => {
-  return defHttp.get({url:`/online/cgform/api/getColumns/${params.code}`})
+export const getListColumns = (code,params) => {
+  return defHttp.get({url:`/online/cgform/api/getColumns/${code}`,params})
 }
 // 在线表单 列表数据 接口
 export const getListData = (code,params) => {
@@ -40,31 +40,31 @@ export const getQueryColumns = (code,params) => {
 }
 
 // 在线表单 erp列表配置 接口
-export const getErpColumns = params => {
-  return defHttp.get({url:`/online/cgform/api/getErpColumns/${params.code}`})
+export const getErpColumns = (code,params) => {
+  return defHttp.get({url:`/online/cgform/api/getErpColumns/${code}`,params})
 }
 
-// 在线表单  表单项配置 接口
-export const getOnlineFormItem = params => {
-  return defHttp.get({url:`/online/cgform/api/getErpFormItem/${params.code}`})
+// 在线表单 erp表单项配置 接口
+export const getOnlineFormItem = (code,params) => {
+  return defHttp.get({url:`/online/cgform/api/getErpFormItem/${code}`,params})
 }
 
 // 弹窗列表 列表配置获取
-export const getPopupColumns = params => {
-  return defHttp.get({url:`/online/cgreport/api/getRpColumns/${params.code}`})
+export const getPopupColumns = (code,params) => {
+  return defHttp.get({url:`/online/cgreport/api/getRpColumns/${code}`,params})
 }
 
 // 弹窗列表 数据获取
-export const getPopupData = params => {
-  return defHttp.get({url:`/online/cgreport/api/getData/${params.code}`})
+export const getPopupListData = (code,params) => {
+  return defHttp.get({url:`/online/cgreport/api/getData/${code}`,params})
 }
 
 // 弹窗列表 查询配置获取
-export const getPopupQuery = params => {
-  return defHttp.get({url:`/online/cgreport/api/getQueryInfo/${params.code}`})
+export const getPopupQuery = (code,params) => {
+  return defHttp.get({url:`/online/cgreport/api/getQueryInfo/${code}`,params})
 }
 
 // 弹窗列表 数据 和 配置 
-export const getPopupAllColumns = params => {
-  return defHttp.get({url:`/online/cgreport/api/getColumnsAndData${params.code}`})
+export const getPopupAllColumns = (code,params) => {
+  return defHttp.get({url:`/online/cgreport/api/getColumnsAndData${code}`,params})
 }

@@ -29,7 +29,7 @@
     :dictOptions="dictOptions"
   />
 
-  <div class="baseAdd" @click="handleAdd" ></div>
+  <div class="baseAdd" @click="handleAdd"></div>
 </template>
 
 <script>
@@ -37,10 +37,10 @@ import { onMounted, ref, unref } from 'vue';
 import { NavBar, Icon } from 'vant';
 import BaseList from './BaseList.vue';
 import BaseListHeader from './BaseListHeader.vue';
-import { getListColumns, getQueryColumns } from '@/api/sys/api';
+import { getListColumns, getErpColumns, getQueryColumns } from '@/api/sys/api';
 import { useTable } from './hooks/useTable';
-import { useRoute, useRouter } from "vue-router"
-import { useOnlineStoreWithOut } from "@/store/modules/online"
+import { useRoute, useRouter } from 'vue-router';
+import { useOnlineStoreWithOut } from '@/store/modules/online';
 export default {
   inheritAttrs: false,
   props: {
@@ -52,14 +52,16 @@ export default {
   components: { BaseList, BaseListHeader, NavBar, Icon },
   setup(props) {
     const route = useRoute();
-    const router = useRouter()
+    const router = useRouter();
     const { code } = route.params;
+    const { isErp } = route.meta;
     // 在线开发 全局状态
     const onlineStore = useOnlineStoreWithOut();
     const dictOptions = ref({}); // 字典表
     const rawColumns = ref([]); // 行配置 源
     const columns = ref([]);
     const queryColumns = ref([]); // 查询 配置
+    const erpSubList = ref([]); // erp 子列表
     // 点击左边返回触发
     const onClickLeft = () => history.back();
     // 注册table
@@ -74,30 +76,43 @@ export default {
 
     // 添加
     const handleAdd = () => {
-      router.push(`/online/form/${code}`)
-    }
+      router.push(`/online/form/${code}`);
+    };
 
-    Promise.all([getListColumns({ code: unref(code) }), getQueryColumns(unref(code))]).then(
-      ([res, query]) => {
-        // 获取列表配置
-        columns.value = [
-          {
-            children: res.columns.slice(0, 2),
-          },
-          {
-            children: res.columns.slice(2, 4),
-          },
-        ];
-        dictOptions.value = res.dictOptions;
-        rawColumns.value = res.columns;
-        // 获取列表 查询配置
-        queryColumns.value = query;
-      },
-    );
+    // 获取列表配置
+    const getColumns = () => {
+      return new Promise(async (r, j) => {
+        let res = {};
+        if (isErp) {
+          const { main, subList } = await getErpColumns(unref(code));
+          res = main;
+          erpSubList.value = subList;
+        } else {
+          res = await getListColumns(unref(code));
+        }
+        r(res);
+      });
+    };
+
+    Promise.all([getColumns(), getQueryColumns(unref(code))]).then(([res, query]) => {
+      // 获取列表配置
+      columns.value = [
+        {
+          children: res?.columns?.slice(0, 2),
+        },
+        {
+          children: res?.columns?.slice(2, 4),
+        },
+      ];
+      dictOptions.value = res.dictOptions;
+      rawColumns.value = res.columns;
+      // 获取列表 查询配置
+      queryColumns.value = query;
+    });
 
     onMounted(() => {
-      onlineStore.setOnlineCode(code)
-    })
+      onlineStore.setOnlineCode(code);
+    });
 
     return {
       register,
@@ -122,7 +137,7 @@ export default {
   color: #333;
   font-size: 18px;
 }
-.baseAdd{
+.baseAdd {
   position: fixed;
   right: 0;
   bottom: 90px;

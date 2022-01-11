@@ -1,15 +1,27 @@
 <template>
-  <Field v-bind="getAttrs"  @error-item="handleItem" v-model="state" />
+  <Field
+    v-bind="getAttrs"
+    :class="{ isDisabled: state }"
+    @error-item="handleItem"
+    v-model="state"
+  />
 </template>
 
 <script>
-import { computed, unref } from 'vue';
+import { computed, unref, watch } from 'vue';
 import { Field } from 'vant';
 import { get, omit } from 'lodash';
 import { useRuleFormItem } from '@/hooks/component/useFormItem';
 export default {
+  name: 'InputWidget',
   inheritAttrs: false,
   components: { Field },
+  props: {
+    modelValue: {
+      type: [Array, String],
+      default: '',
+    },
+  },
   setup(props, { attrs }) {
     const [state] = useRuleFormItem(props);
     const inputProps = computed(() => get(attrs, 'inputProps'));
@@ -21,17 +33,23 @@ export default {
         label: null,
       };
     });
-    console.log(getAttrs.value)
-    const isError = computed(() => unref(getAttrs).isError)
-  
-    const handleItem = (e) =>{
-      console.log(e)
-    }
+    console.log(getAttrs.value.codeField);
+
+    const handleItem = (e) => {
+      console.log(e);
+    };
+
+    watch(
+      () => state.value,
+      (val) => {
+        console.log(val);
+      },
+    );
+
     return {
       state,
       getAttrs,
-      isError,
-      handleItem
+      handleItem,
     };
   },
 };

@@ -52,7 +52,7 @@
 
       const getValues = computed(() => {
         const { allDefaultValues, formModel, schema } = props;
-        // console.log(formModel)
+        console.log(formModel)
 
         const { mergeDynamicData } = props.formProps;
         return {
@@ -258,6 +258,8 @@
             rules:handleRules(),
             labelCol:labelCol,
             wrapperCol:wrapperCol,
+            clearable:true,
+            'clear-trigger':'always',
             ...itemProps,
         }
 
@@ -273,7 +275,6 @@
             const target = e ? e.target : null;
 
             const value =  target? target.value : (isSelect && isObject(e) ? e.value : e);
-            console.log(value,field)
             props.setFormModel(field, value);
             // 对地图经纬度特殊处理
             if(args[1] && args[1].flag === 'map'){
@@ -308,6 +309,8 @@
           [valueField || 'modelValue']: props.formModel[field],
         };
         const compAttr = {
+          clearable:true,
+          'clear-trigger':'always',
           ...propsData,
           ...on,
           ...bindValue,
@@ -353,7 +356,7 @@
       }
 
       function renderItem() {
-        const { itemProps, slot, render, required, field, suffix, component, label } = props.schema;
+        const { itemProps :{readonly}, slot, render, required, field, suffix, component, label, inputProps } = props.schema;
         const { labelCol, wrapperCol } = unref(itemLabelWidthProp);
         const { colon } = props.formProps;
         if (component === 'Divider') {
@@ -376,7 +379,7 @@
           
           return (
             <div className={`${prefixCls}-item`}   >
-              <div className={`${prefixCls}-item-label ${unref(isError) && 'label-error'}`} >{label}{ required ?<span>*</span>:''} </div>
+              <div className={`${prefixCls}-item-label ${unref(isError) && 'label-error'} ${readonly && 'label-readonly'}` } >{label}{ required ?<span>*</span>:''} </div>
               {getContent()}
               {
                 unref(isError) ? <div className={`${prefixCls}-item-error`} >{unref(errorMsg)}</div> : ''

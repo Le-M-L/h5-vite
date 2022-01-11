@@ -46,7 +46,6 @@ export function useTableValues({ getProps, getSchema, formModel }) {
       values[endTimeKey] = dateUtil(endTime).format(format);
       Reflect.deleteProperty(values, field);
     }
-    console.log(values)
     return values;
   }
 

@@ -8,8 +8,7 @@
 
 <script>
 import { computed, unref } from 'vue';
-import { InputCalendar } from '@/components/Form';
-
+import InputCalendar from '@/components/Form/src/components/InputCalendar.vue';
 export default {
   props: {
     modelValue: {

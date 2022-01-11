@@ -16,7 +16,7 @@
       <Cell
         class="custom-list-item"
         @click="handleClick(item)"
-        v-for="(item, i) in tableData"
+        v-for="(item, i) in listData"
         :key="i"
       >
         <template #title>
@@ -83,35 +83,35 @@ export default {
     const loading = ref(false); // loading 加载
     const finished = ref(false); // 数据是否全部加载完成
     const refreshing = ref(false); // 下拉刷新
-    const tableData = ref([]); // tableData 数据列表
+    const listData = ref([]); // listData 数据列表
     const total = ref(0);
 
-    const tableParams = computed(() => {
+    const listParams = computed(() => {
       return {
         ...unref(form),
         ...unref(extraParams),
       };
     });
 
-    // 加载触发是方法
+    // 加载触发方法
     const onLoad = useDebounceFn((params = {}) => {
       // 重新刷新
       if (refreshing.value) {
-        tableData.value = [];
+        listData.value = [];
         form.pageNo = 0;
         refreshing.value = false;
       }
       loading.value = true;
       form.pageNo++;
       getListData(props.code, {
-        ...unref(tableParams),
+        ...unref(listParams),
       })
         .then(({ records, total: totals }) => {
-          tableData.value = tableData.value.concat(records);
+          listData.value = listData.value.concat(records);
           total.value = totals;
 
           // 加载完毕
-          if (tableData.value.length >= total.value) {
+          if (listData.value.length >= total.value) {
             finished.value = true;
           }
         })
@@ -135,7 +135,7 @@ export default {
       finished.value = false; // 清空列表数据
       loading.value = true; // 处于加载状态
       // 初始状态
-      tableData.value = [];
+      listData.value = [];
       form.pageNo = 0;
       onLoad();
     };
@@ -160,7 +160,7 @@ export default {
       loading,
       finished,
       onLoad,
-      tableData,
+      listData,
       refreshing,
       onRefresh,
       handleClick,

@@ -1,11 +1,12 @@
 <template>
-  <span @click="show = true">
+  <span @click="!getAttrs.readonly ? show = true:null">
     <slot name="text" :data="fieldValue">
       <Field
-        is-link
-        readonly
-        placeholder="请选择日期"
         v-bind="getAttrs"
+        is-link
+        disabled
+        :class="{ isDisabled: fieldValue }"
+        @clear="handleClear"
         v-model="fieldValue"
       />
     </slot>
@@ -124,6 +125,10 @@ export default {
       setProps,
     };
 
+    const handleClear = () => {
+      emit('change', '');
+    }
+
     onMounted(() => {
       emit('register', actionType);
     });
@@ -134,6 +139,7 @@ export default {
       getBindValue,
       fieldValue,
       onConfirm,
+      handleClear
     };
   },
 };

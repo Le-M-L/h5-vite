@@ -37,7 +37,7 @@ export const useOnlineStore = defineStore({
       this.formSchema = schema;
     },
     async setOnlineFormSchema(code) {
-      let { enhanceJs, head, schema } = await getOnlineFormItem({ code });
+      let { enhanceJs, head, schema } = await getOnlineFormItem(code);
       // 对在线开发 表单配置格式化
       const formSchema = formatSchemas(schema.properties, schema.required || []);
       this.setOlineFormSchema(formSchema);

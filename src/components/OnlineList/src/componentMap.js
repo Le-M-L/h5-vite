@@ -4,7 +4,6 @@ import { DSelect } from '@/components/DSelect';
 import { DCalendar } from '@/components/DCalendar';
 const componentMap = new Map();
 
-
 componentMap.set('DSelect', DSelect);
 componentMap.set('DCalendar', DCalendar);
 

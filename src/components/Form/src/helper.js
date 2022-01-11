@@ -68,10 +68,10 @@ export const dateItemType = genType();
  * 格式化正则
  */
 function getPattern(pattern, type) {
-  if (!pattern) return null;  // 无正则
+  if (!pattern) return null; // 无正则
   if ('z' == pattern) return '^-?\\d+$'; // 精度
   if ('only' == pattern) return null; //唯一校验
-  return pattern
+  return pattern;
 }
 
 /**
@@ -95,19 +95,24 @@ export const formatSchemas = (schema = [], require = []) => {
       minimum: items.minimum, // 最小数
       dbPointLength: items.dbPointLength, // 精度
       type: items.type,
+      orgFields:items.orgFields, // popup  传给后台的数据字段
+      destFields:items.destFields, // 表单接收的字段
+      popupMulti:items.popupMulti,// popup 是否能多选
       componentProps: {
         maxlength: items.maxLength,
         ...(items.ui?.widgetattrs || {}),
       }, // 属性
       defaultValue: items.defVal,
       itemProps: {
-        code:items.code, // 弹窗表格code
+        code: items.code, // 弹窗表格code
+        readonly: items.ui?.widgetattrs?.disabled,
       },
     };
     formatMode(schemasItem, items);
     return schemasItem;
   });
   fromSchemas.sort((a, b) => a.order - b.order);
+  console.log(fromSchemas)
   return fromSchemas;
 };
 
@@ -123,6 +128,9 @@ export function validatorMin() {
 
 export function formatMode(schemasItem, items) {
   switch (items.view) {
+    case 'string':
+      schemasItem.component = 'Input';
+      break;
     case 'text': // 文本输入框
       schemasItem.component = 'Input';
       break;

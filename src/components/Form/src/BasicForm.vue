@@ -184,28 +184,37 @@ export default {
 
 <style lang="less" >
 @prefix-cls: ~'@{namespace}-basic-form';
-@formItemPd:16px;
+@formItemPd: 16px;
 .@{prefix-cls} {
-  .van-cell-group{
+  .van-cell-group {
     background: transparent;
   }
-  .van-col{
+  .van-col {
     background: #fff;
-    .van-cell{
-      &::after{
-        border:0px;
+    .van-cell {
+      &::after {
+        border: 0px;
       }
     }
-    .van-field__error-message{
+    .van-field__error-message {
       height: 18px;
       line-height: 18px;
-      background: rgba(255,77,77,0.15);
+      background: rgba(255, 77, 77, 0.15);
+    }
+    .van-field__control {
+      color: #333333;
+      -webkit-text-fill-color: #999;
+    }
+    .isDisabled {
+      .van-field__control {
+        -webkit-text-fill-color: #333333;
+      }
     }
   }
   &-item {
     padding: 8px 0 12px;
     margin-bottom: 1px;
-    .van-cell.van-field{
+    .van-cell.van-field {
       padding: 4px @formItemPd 0;
     }
     &-label {
@@ -213,30 +222,33 @@ export default {
       padding: 0 @formItemPd;
       color: #333;
       font-weight: 500;
-      >span{
-        color:#FF4D4D;
+      > span {
+        color: #ff4d4d;
       }
-      &.label-error{
-        color:#FF4D4D;
-
+      &.label-error {
+        color: #ff4d4d;
       }
-    }
-    &-error{
-      height: 18px;
-      font-size: 12px;
-      padding: 0 @formItemPd;
-      color: rgba(255,77,77);
-      background: rgba(255,77,77,0.15);
-    }
-    input{
-      font-size: 16px;
-      &::placeholder{
+      &.label-readonly{
         color: #999;
       }
     }
-    .van-field__control--error, .van-field__control--error::placeholder{
-        color: #ee0a24;
-  
+    &-error {
+      height: 18px;
+      font-size: 12px;
+      padding: 0 @formItemPd;
+      color: rgba(255, 77, 77);
+      background: rgba(255, 77, 77, 0.15);
+    }
+    
+    input {
+      font-size: 16px;
+      &::placeholder {
+        color: #999;
+      }
+    }
+    .van-field__control--error,
+    .van-field__control--error::placeholder {
+      color: #ee0a24;
     }
   }
 }
