@@ -1,5 +1,5 @@
 <template>
-  <Field v-bind="getAttrs" v-model="state" type="textarea"  />
+  <Field v-bind="getAttrs"  :class="{ isDisabled: state }" v-model="state" type="textarea"  />
 </template>
 
 <script>

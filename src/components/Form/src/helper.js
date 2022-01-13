@@ -78,7 +78,7 @@ function getPattern(pattern, type) {
  * schema item
  * require 必填字段
  */
-export const formatSchemas = (schema = [], require = []) => {
+export const formatSchemas = (schema = [], require = [], readonly) => {
   let fromSchemas = Object.keys(schema).map((key) => {
     let items = schema[key];
     const schemasItem = {
@@ -98,6 +98,7 @@ export const formatSchemas = (schema = [], require = []) => {
       orgFields:items.orgFields, // popup  传给后台的数据字段
       destFields:items.destFields, // 表单接收的字段
       popupMulti:items.popupMulti,// popup 是否能多选
+      isError:false,
       componentProps: {
         maxlength: items.maxLength,
         ...(items.ui?.widgetattrs || {}),
@@ -105,7 +106,7 @@ export const formatSchemas = (schema = [], require = []) => {
       defaultValue: items.defVal,
       itemProps: {
         code: items.code, // 弹窗表格code
-        readonly: items.ui?.widgetattrs?.disabled,
+        readonly: readonly || items.ui?.widgetattrs?.disabled, // 只读
       },
     };
     formatMode(schemasItem, items);

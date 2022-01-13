@@ -33,7 +33,6 @@ export default {
         label: null,
       };
     });
-    console.log(getAttrs.value.codeField);
 
     const handleItem = (e) => {
       console.log(e);

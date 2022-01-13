@@ -13,9 +13,9 @@ export function useListSelect({ checkRef, formValues, emit }) {
 
     let orgFields = schema.orgFields.split(',');
     let destFields = schema.destFields.split(',');
-    let index = destFields.indexOf(field);
+    // let index = destFields.indexOf(field);
     let params = {};
-    let showText = {}
+    // let showText = {}
     for (let i = 0; i < orgFields.length; i++) {
       let data = [];
       tempCkeckArr.forEach((item) => {
@@ -26,16 +26,16 @@ export function useListSelect({ checkRef, formValues, emit }) {
        data.push(val);
       });
       params[destFields[i]] = data.join(',');
-      showText[orgFields[i]] = data.join(',');
+      // showText[orgFields[i]] = data.join(',');
     }
-    const fieldName = showText[orgFields[index]];
+    // const fieldName = showText[orgFields[index]];
     emit('change',null,{
       ...params,
       flag:'map'
     })
     return {
       params,
-      fieldName,
+      // fieldName,
     };
   }
 

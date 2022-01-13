@@ -4,35 +4,32 @@
   </div>
 </template>
 <script>
-  import { defineComponent } from 'vue';
-  import PageLayout from '@/layouts/page/index.vue';
-  import { useDesign } from '@/hooks/web/useDesign';
-  import { useRootSetting } from '@/hooks/setting/useRootSetting';
-  // import { useTransitionSetting } from '@/hooks/setting/useTransitionSetting';
-  import { useContentViewHeight } from './useContentViewHeight';
+import { defineComponent } from 'vue';
+import PageLayout from '@/layouts/page/index.vue';
+import { useDesign } from '@/hooks/web/useDesign';
+import { useRootSetting } from '@/hooks/setting/useRootSetting';
+import { useContentViewHeight } from './useContentViewHeight';
 
-  export default defineComponent({
-    name: 'LayoutContent',
-    components: { PageLayout },
-    setup() {
-      const { prefixCls } = useDesign('layout-content');
-      const { getLayoutContentMode } = useRootSetting();
-
-      useContentViewHeight();
-      return {
-        prefixCls,
-        getLayoutContentMode,
-      };
-    },
-  });
+export default defineComponent({
+  name: 'LayoutContent',
+  components: { PageLayout },
+  setup() {
+    const { prefixCls } = useDesign('layout-content');
+    const { getLayoutContentMode } = useRootSetting();
+    useContentViewHeight();
+    return {
+      prefixCls,
+      getLayoutContentMode,
+    };
+  },
+});
 </script>
 <style lang="less">
-  @prefix-cls: ~'@{namespace}-layout-content';
+@prefix-cls: ~'@{namespace}-layout-content';
 
-  .@{prefix-cls} {
-    position: relative;
-    flex: 1 1 auto;
-    min-height: 0;
-
-  }
+.@{prefix-cls} {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+}
 </style>

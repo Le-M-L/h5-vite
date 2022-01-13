@@ -21,8 +21,10 @@ export const APP_LOCAL_CACHE_KEY = 'COMMON__LOCAL__KEY__';
 // 基础全局 页面缓存 key  sesslon
 export const APP_SESSION_CACHE_KEY = 'COMMON__SESSION__KEY__';
 
-// 在线开发code
-export const ON_LINE_CODE = 'ON_LINE_CODE'
+// 在线表单配置 key
+export const ONLINE_CFG_KEY = 'ONLINE_CFG_KEY'
+//按钮权限 key
+export const BUTTON_AUTH_KEY = 'BUTTON_AUTH_KEY'
 
 export const CacheTypeEnum = {
   SESSION: 0,

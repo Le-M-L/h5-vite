@@ -17,7 +17,6 @@
         </FormItem>
       </template>
     </CellGroup>
-    <van-button round block type="primary" @click="handleSubmit"> 提交 </van-button>
   </Form>
 </template>
 
@@ -31,6 +30,7 @@ import { useDesign } from '@/hooks/web/useDesign';
 import { CellGroup, Form } from 'vant';
 import { useFormEvents } from './hooks/useFormEvents';
 import { useFormValues } from './hooks/useFormValues';
+import { deepMerge } from '@/utils';
 
 export default {
   components: {
@@ -113,7 +113,18 @@ export default {
     });
 
     // 使用表单方法
-    const { validateFields, handleSubmit } = useFormEvents({
+    const {
+      validateFields,
+      handleSubmit,
+      getFieldsValue,
+      setFieldsValue,
+      resetFields,
+      validate,
+      updateSchema,
+      appendSchemaByField,
+      removeSchemaByFiled,
+      clearValidate
+    } = useFormEvents({
       emit,
       getProps,
       formModel,
@@ -132,9 +143,23 @@ export default {
         validateFields([key]).catch((_) => {});
       }
     }
+    // form 的操作
+    const formActionType = {
+      getFieldsValue,
+      setFieldsValue,
+      resetFields,
+      setProps,
+      validate,
+      submit: handleSubmit,
+      updateSchema,
+      appendSchemaByField,
+      removeSchemaByFiled,
+      clearValidate
+    };
 
     onMounted(() => {
       initDefault();
+      emit('register', formActionType);
       // console.log(formElRef);
     });
 
@@ -155,15 +180,16 @@ export default {
       },
     );
 
+    async function setProps(formProps) {
+      propsRef.value = deepMerge(unref(propsRef) || {}, formProps);
+    }
+
     // 表单提交的回调
     function onSubmit(val) {
       const res = handleFormValues(unref(formModel));
-      console.log(res);
       emit('submit', res);
     }
 
-    // form 的操作
-    const formActionType = {};
     return {
       getRow,
       getProps,
@@ -175,7 +201,6 @@ export default {
       formActionType,
       formElRef,
       defaultValueRef,
-      handleSubmit,
       onSubmit,
     };
   },
@@ -228,7 +253,7 @@ export default {
       &.label-error {
         color: #ff4d4d;
       }
-      &.label-readonly{
+      &.label-readonly {
         color: #999;
       }
     }
@@ -239,7 +264,7 @@ export default {
       color: rgba(255, 77, 77);
       background: rgba(255, 77, 77, 0.15);
     }
-    
+
     input {
       font-size: 16px;
       &::placeholder {

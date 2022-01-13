@@ -86,7 +86,7 @@ export function openWindow(url, opt) {
   window.open(url, target, feature.join(','));
 }
 
-
+// 图片 文件地址添加服务器路径
 export function getFileAccessHttpUrl(avatar,subStr) {
   if(!subStr) subStr = 'http'
   try {
@@ -110,7 +110,6 @@ export function initFileListArr(val) {
   let fileList = [];
   for (var a = 0; a < val.length; a++) {
     let url = isObject(val[a]) ? getFileAccessHttpUrl(val[a].url) : getFileAccessHttpUrl(val[a]);
-    console.log(JSON.parse(JSON.stringify(val[a])))
     fileList.push({
       uid: buildUUID(),
       name: isObject(val[a]) ? val[a].message: val[a],

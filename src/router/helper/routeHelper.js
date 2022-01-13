@@ -11,7 +11,7 @@ LayoutMap.set('LAYOUT', LAYOUT);
 LayoutMap.set('IFRAME', IFRAME);
 
 let dynamicViewsModules;
-
+let onlineFrom = ['/online/cgformList','/online/cgformErpList']
 // 动态引入
 function asyncImportRoute(routes) {
   dynamicViewsModules = dynamicViewsModules || import.meta.glob('../../pages/**/*.{vue,tsx}');
@@ -21,8 +21,9 @@ function asyncImportRoute(routes) {
       item.component = 'IFRAME';
     }
     const { component, name, children, path } = item;
-    let pathFlag = path.startsWith('/online/cgformErpList');
-    item.meta.ignoreRoute = item.meta?.ignoreRoute ?? !pathFlag;
+    let pathFlag = onlineFrom.some(i => path.startsWith(i));
+    // 删除不需要的路由
+    item.meta.ignoreRoute = item.meta?.ignoreRoute ?? pathFlag;
     if (component) {
       const layoutFound = LayoutMap.get(component.toUpperCase());
       if (layoutFound) {

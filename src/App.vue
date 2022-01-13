@@ -1,5 +1,5 @@
 <template>
-  <ConfigProvider :theme-vars="themeVars">
+  <ConfigProvider style="height:100%" :theme-vars="themeVars">
     <AppProvider>
       <RouterView />
     </AppProvider>

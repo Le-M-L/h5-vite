@@ -45,14 +45,10 @@
 
       const { schema, formProps } = toRefs(props) ;
       const { prefixCls } = useDesign('basic-form');
-      const isError = ref(false);
       const errorMsg = ref('')
-
       const itemLabelWidthProp = useItemLabelWidth(schema, formProps);
-
       const getValues = computed(() => {
         const { allDefaultValues, formModel, schema } = props;
-        console.log(formModel)
 
         const { mergeDynamicData } = props.formProps;
         return {
@@ -79,9 +75,13 @@
             plain: true,
           });
         }
-        componentProps.isError = unref(isError)
         return componentProps ;
       });
+
+      const getIsError = computed(() => {
+        const { schema } = props;
+          return schema.isError 
+      })
 
       const getDisable = computed(() => {
         const { disabled: globDisabled } = props.formProps;
@@ -126,6 +126,7 @@
       }
 
       function handleRules() {
+        const { formActionType } = props;
         const {
           rules: defRules = [],
           component,
@@ -136,8 +137,10 @@
           pattern,
           maxLength,
           minLength,
-          errorInfo
+          errorInfo,
+          field
         } = props.schema;
+        console.log(props.schema)
         if (isFunction(dynamicRules)) {
           return dynamicRules(unref(getValues)) ;
         }
@@ -150,17 +153,18 @@
         function validator(value,rule) {
           const msg = rule.message || defaultMsg;
           errorMsg.value = msg;
+          console.log(666)
           if (value === undefined || isNull(value)) {
             // 空值
-            isError.value = true;
+            formActionType.updateSchema({field,isError:true})
             return Promise.resolve(msg);
           } else if (Array.isArray(value) && value.length === 0) {
             // 数组类型
-            isError.value = true;
+            formActionType.updateSchema({field,isError:true})
             return Promise.resolve(msg);
           } else if (typeof value === 'string' && value.trim() === '') {
             // 空字符串
-            isError.value = true;
+            formActionType.updateSchema({field,isError:true})
             return Promise.resolve(msg);
           } else if (
             typeof value === 'object' &&
@@ -172,18 +176,18 @@
             value.halfChecked.length === 0
           ) {
             // 非关联选择的tree组件
-            isError.value = true;
+            formActionType.updateSchema({field,isError:true})
             return Promise.resolve(msg);
           }
           else if(pattern){
              const reg = pattern && eval(`/${pattern}/`)
              if(!reg.test(value)){
-              isError.value = true;
+              formActionType.updateSchema({field,isError:true})
               return Promise.resolve(msg);
              }
           }
 
-          isError.value = false;
+          formActionType.updateSchema({field,isError:false})
           return Promise.resolve();
         }
 
@@ -356,7 +360,7 @@
       }
 
       function renderItem() {
-        const { itemProps :{readonly}, slot, render, required, field, suffix, component, label, inputProps } = props.schema;
+        const { itemProps :{readonly}, slot, render, required, field, suffix, component, label } = props.schema;
         const { labelCol, wrapperCol } = unref(itemLabelWidthProp);
         const { colon } = props.formProps;
         if (component === 'Divider') {
@@ -379,10 +383,10 @@
           
           return (
             <div className={`${prefixCls}-item`}   >
-              <div className={`${prefixCls}-item-label ${unref(isError) && 'label-error'} ${readonly && 'label-readonly'}` } >{label}{ required ?<span>*</span>:''} </div>
+              <div className={`${prefixCls}-item-label ${unref(getIsError) && 'label-error'} ${readonly && 'label-readonly'}` } >{label}{ required ?<span>*</span>:''} </div>
               {getContent()}
               {
-                unref(isError) ? <div className={`${prefixCls}-item-error`} >{unref(errorMsg)}</div> : ''
+                unref(getIsError) ? <div className={`${prefixCls}-item-error`} >{unref(errorMsg)}</div> : ''
               }
             </div>
           )

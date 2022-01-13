@@ -1,19 +1,6 @@
 <template>
-  <NavBar
-    left-text="返回"
-    left-arrow
-    @click-left="onClickLeft"
-    @click-right="onClickRight"
-    fixed
-    placeholder
-  >
-    <template #title
-      ><span class="nav-bar-title">{{ title }}</span>
-    </template>
-    <template #right>
-      <Icon name="search" color="#666666" @click="handleSearch" size="20" />
-    </template>
-  </NavBar>
+  <DNavbar />
+
   <BaseListHeader
     @change="handleChange"
     :queryColumns="queryColumns"
@@ -34,13 +21,13 @@
 
 <script>
 import { onMounted, ref, unref } from 'vue';
-import { NavBar, Icon } from 'vant';
 import BaseList from './BaseList.vue';
 import BaseListHeader from './BaseListHeader.vue';
 import { getListColumns, getErpColumns, getQueryColumns } from '@/api/sys/api';
 import { useTable } from './hooks/useTable';
 import { useRoute, useRouter } from 'vue-router';
 import { useOnlineStoreWithOut } from '@/store/modules/online';
+import DNavbar from '@/components/DNavbar.vue';
 export default {
   inheritAttrs: false,
   props: {
@@ -49,7 +36,7 @@ export default {
       default: '标题',
     },
   },
-  components: { BaseList, BaseListHeader, NavBar, Icon },
+  components: { BaseList, BaseListHeader, DNavbar },
   setup(props) {
     const route = useRoute();
     const router = useRouter();
@@ -61,15 +48,9 @@ export default {
     const rawColumns = ref([]); // 行配置 源
     const columns = ref([]);
     const queryColumns = ref([]); // 查询 配置
-    const erpSubList = ref([]); // erp 子列表
-    // 点击左边返回触发
-    const onClickLeft = () => history.back();
     // 注册table
     const [register, { onReset }] = useTable();
 
-    const onClickRight = () => {};
-    // 查询
-    const handleSearch = () => {};
     const handleChange = (values) => {
       onReset(values);
     };
@@ -82,19 +63,15 @@ export default {
     // 获取列表配置
     const getColumns = () => {
       return new Promise(async (r, j) => {
-        let res = {};
-        if (isErp) {
-          const { main, subList } = await getErpColumns(unref(code));
-          res = main;
-          erpSubList.value = subList;
-        } else {
-          res = await getListColumns(unref(code));
-        }
-        r(res);
+        r(
+          isErp
+            ? await onlineStore.setOnlineErpColumns(code)
+            : await onlineStore.setOnlineColumns(code),
+        );
       });
     };
 
-    Promise.all([getColumns(), getQueryColumns(unref(code))]).then(([res, query]) => {
+    Promise.all([getColumns(), onlineStore.setOnlineQueryColumns(code)]).then(([res, query]) => {
       // 获取列表配置
       columns.value = [
         {
@@ -111,14 +88,11 @@ export default {
     });
 
     onMounted(() => {
-      onlineStore.setOnlineCode(code);
+      onlineStore.setOnlineCfg({ code });
     });
 
     return {
       register,
-      onClickLeft,
-      onClickRight,
-      handleSearch,
       handleChange,
       dictOptions,
       rawColumns,

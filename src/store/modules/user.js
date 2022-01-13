@@ -85,7 +85,7 @@ export const useUserStore = defineStore({
         const { goHome = true, mode, ...loginParams } = params;
         const data = await loginApi(loginParams, mode);
         const { token , userInfo} = data;
-        userInfo.homePath = '/online/cgformList/33305b71c08d4b42a7b86326dfe2bb4c'
+        userInfo.homePath = '/home'
         // save token
         this.setToken(token);
         // save userInfo

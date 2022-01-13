@@ -39,3 +39,13 @@ export function getPermCode() {
 export function doLogout() {
   return defHttp.get({ url: Api.Logout });
 }
+
+// 获取用户 已读未读消息
+export function getUserMsg(params){
+  return defHttp.get({ url:'/sys/sysAnnouncementSend/getMyAnnouncementSend',params });
+}
+
+// 获取用户 未读总数
+export function getUserMsgCount(params){
+  return defHttp.get({ url:'/sys/annountCement/listByUser',params });
+}

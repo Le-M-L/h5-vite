@@ -64,7 +64,6 @@ export class Memory {
     return value;
   }
 
-  // 删除缓存
   remove(key) {
     const item = this.get(key);
     Reflect.deleteProperty(this.#alive, key);
@@ -74,7 +73,6 @@ export class Memory {
     }
   }
 
-  // 重置缓存
   resetCache(cache) {
     Object.keys(cache).forEach((key) => {
       const k = key;
@@ -89,7 +87,6 @@ export class Memory {
     });
   }
 
-  // 清空缓存
   clear() {
     Object.keys(this.#cache).forEach((key) => {
       const item = this.#cache[key];

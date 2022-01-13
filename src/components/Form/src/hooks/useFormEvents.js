@@ -1,4 +1,4 @@
-import { unref, toRaw } from 'vue';
+import { unref, toRaw, nextTick } from 'vue';
 import { isArray, isFunction, isObject, isString } from '@/utils/is';
 import { dateItemType, handleInputNumberValue } from '../helper';
 import { dateUtil } from '@/utils/dateUtil';
@@ -114,7 +114,6 @@ export function useFormEvents({
   /**
    * @description 插入某个字段之后，如果不是插入最后一个字段
    */
-
   async function appendSchemaByField(schema, prefixField, first = false) {
     const schemaList = cloneDeep(unref(getSchema));
     const index = schemaList.findIndex((schema) => schema.field === prefixField);
@@ -168,7 +167,6 @@ export function useFormEvents({
 
       return;
     }
-
     const schema = [];
     updateData.forEach((item) => {
       unref(getSchema).forEach((val) => {
@@ -216,7 +214,7 @@ export function useFormEvents({
     return unref(formElRef)?.validate(nameList);
   }
 
-  async function submit(){
+  async function submit() {
     return unref(formElRef)?.submit();
   }
 
@@ -226,6 +224,16 @@ export function useFormEvents({
    */
   async function clearValidate(name) {
     await unref(formElRef)?.resetValidation(name);
+    nextTick(() => {
+      const schemaList = cloneDeep(unref(getSchema));
+      if (isString(name)) {
+        const schemaItem = schemaList.find((schema) => schema.field === name);
+        schemaItem.isError = false;
+      }else{
+        schemaList.forEach((item) => (item.isError = false));
+      }
+      schemaRef.value = schemaList;
+    });
   }
 
   /**
@@ -250,7 +258,7 @@ export function useFormEvents({
     const formEl = unref(formElRef);
     if (!formEl) return;
     try {
-       await submit();
+      await submit();
     } catch (error) {
       throw new Error(error);
     }

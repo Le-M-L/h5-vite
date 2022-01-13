@@ -2,9 +2,9 @@
   <Field
     v-bind="getAttrs"
     disabled
-    :class="{ isDisabled: fieldValue }"
+    :class="{ isDisabled: state }"
     @clear="handleClear"
-    v-model="fieldValue"
+    v-model="state"
     @click="handlePopup"
   />
   <Popup
@@ -134,7 +134,6 @@ export default {
     const container = ref(null);
     const isFlexd = ref(false);
     const show = ref(false);
-    const fieldValue = ref('');
     const finished = ref(false); // true 数据加载完成
     const refreshing = ref(false); // 下拉刷新 是否处于加载中
     const loading = ref(false); // 列表 是否处于加载中
@@ -230,6 +229,8 @@ export default {
       isFlexd.value = false;
     };
 
+
+
     const handleClick = (items) => {
       // 用于多选 现在先不做 后期在做
       // const { popupMulti } = attrs.formValues.schema;
@@ -239,28 +240,27 @@ export default {
       })
       items.checked = true;
       checkRef.value[items.id] = items;
-      const { fieldName } = getCheckParams();
-      fieldValue.value = fieldName;
+      getCheckParams();
       show.value = false;
       finished.value = false;
       loading.value = true;
     };
 
 
-        // 清空数据
+    // 清空数据
     const handleClear = () => {
       Object.values(unref(checkRef)).forEach(item => {
         item.checked = false;
       })
       checkRef.value = {};
-      const { fieldName } = getCheckParams();
-      fieldValue.value = fieldName;
+      getCheckParams();
     };
 
 
     // 弹窗显示
     const handlePopup = async () => {
-      const { code } = unref(getAttrs);
+      const { code, readonly } = unref(getAttrs);
+      if(readonly) return;
       // columns 列表展示配置
       // dictOptions 列表展示 下拉数据
       let { cgRpConfigId, columns = [], dictOptions } = await getPopupColumns(code);
@@ -310,7 +310,6 @@ export default {
     return {
       state,
       show,
-      fieldValue,
       getAttrs,
       getBindValue,
       finished,

@@ -50,9 +50,10 @@
 <script>
 import { ref, unref, onMounted, reactive, computed } from 'vue';
 import { PullRefresh, List, Cell, Image, Loading } from 'vant';
-import {  getListData } from '@/api/sys/api';
+import {  getListData, getOnlineDetail } from '@/api/sys/api';
 import { useDebounceFn } from '@vueuse/core';
 import { handleItem } from './hooks/useTable';
+import { useRouter } from 'vue-router';
 export default {
   components: { PullRefresh, List, Cell, Image, Loading },
   props: {
@@ -85,6 +86,7 @@ export default {
     const refreshing = ref(false); // 下拉刷新
     const listData = ref([]); // listData 数据列表
     const total = ref(0);
+    const router = useRouter()
 
     const listParams = computed(() => {
       return {
@@ -142,7 +144,11 @@ export default {
 
     // 点击列表触发
     const handleClick = (item) => {
-      console.log(item);
+       router.push(`/online/detail/${props.code}/${item.id}`);
+      // getOnlineDetail(props.code,item.id)
+      //   .then(res => {
+      //     console.log(res)
+      //   })
     };
 
     const actionType = {

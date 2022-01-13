@@ -9,9 +9,10 @@ import LayoutContent from './content/index.vue';
 import { useDesign } from '@/hooks/web/useDesign';
 
 export default {
-  components: { LayoutContent },
+  components: { LayoutContent, },
   setup() {
     const { prefixCls } = useDesign('default-layout');
+
     return {
       prefixCls,
     };
@@ -28,7 +29,7 @@ export default {
   min-height: 100%;
   background-color: @content-bg;
   flex-direction: column;
-  >div{
+  > div {
     min-height: 100%;
   }
 }

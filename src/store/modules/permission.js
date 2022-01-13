@@ -1,15 +1,17 @@
-import { toRaw } from "vue"
+import { toRaw } from 'vue';
 import { defineStore } from 'pinia';
 import { store } from '@/store';
 import { useUserStore } from './user';
 import { useAppStoreWithOut } from './app';
 import projectSetting from '@/settings/projectSetting';
 import { ERROR_LOG_ROUTE, PAGE_NOT_FOUND_ROUTE } from '@/router/routes/basic';
-import { queryPermissionsByUser } from '@/api/sys/api';
-import { useMessage } from "@/hooks/web/useMessage"
+import { queryPermissionsByUserApp } from '@/api/sys/api';
+import { useMessage } from '@/hooks/web/useMessage';
 import { transformRouteToMenu } from '@/router/helper/menuHelper';
 import { transformObjToRoute, flatMultiLevelRoutes } from '@/router/helper/routeHelper';
 import { filter } from '@/utils/helper/treeHelper';
+import { BUTTON_AUTH_KEY } from '@/enums/cacheEnum';
+import { Persistent } from '@/utils/cache/persistent';
 
 export const usePermissionStore = defineStore({
   id: 'app-permission',
@@ -23,6 +25,10 @@ export const usePermissionStore = defineStore({
     backMenuList: [],
     // 菜单列表
     frontMenuList: [],
+    buttonAuth: {
+      allAuth: [],
+      auth: [],
+    },
   }),
   getters: {
     // 按钮权限列表
@@ -45,6 +51,14 @@ export const usePermissionStore = defineStore({
     getIsDynamicAddedRoute() {
       return this.isDynamicAddedRoute;
     },
+    // 获取所有权限按钮
+    getAllAuth() {
+      return this.buttonAuth.allAuth
+    },
+    // 获取按钮权限
+    getAuth(){
+      return this.buttonAuth.auth
+    }
   },
   actions: {
     setPermCodeList(codeList) {
@@ -67,6 +81,12 @@ export const usePermissionStore = defineStore({
     setDynamicAddedRoute(added) {
       this.isDynamicAddedRoute = added;
     },
+    // 设置按钮权限
+    setButtonAuth({ allAuth, auth }) {
+      this.buttonAuth.allAuth = allAuth;
+      this.buttonAuth.auth = auth;
+      Persistent.setLocal(BUTTON_AUTH_KEY, this.buttonAuth);
+    },
     // 重置当前状态
     resetState() {
       this.isDynamicAddedRoute = false;
@@ -80,7 +100,7 @@ export const usePermissionStore = defineStore({
     //   this.setPermCodeList(codeList);
     // },
     // 打包路由操作
-    async buildRoutesAction(){
+    async buildRoutesAction() {
       const userStore = useUserStore();
       const appStore = useAppStoreWithOut();
 
@@ -101,139 +121,148 @@ export const usePermissionStore = defineStore({
         return !ignoreRoute;
       };
 
-
-
       const { createMessage } = useMessage();
 
-          createMessage.loading({
-            content:  '菜单加载中...',
-            duration: 1,
-          });
+      createMessage.loading({
+        content: '菜单加载中...',
+        duration: 1,
+      });
 
-          // 从后台获取权限代码
-          // 这个函数可能只需要执行一次，并且实际的项目可以自己在正确的时间放置
-          let routeList = [];
-          try {
-              // 获取按钮权限
-            // this.changePermissionCode();
-            // 获取菜单
-            let { allAuth, auto, menu } = (await queryPermissionsByUser());
-            routeList = menu.filter(item => item.name == 'db_platform');
-            console.log(routeList)
-          } catch (error) {
-            console.error(error);
-          }
-          // 动态引入组件
-          routeList = transformObjToRoute(routeList);
+      // 从后台获取权限代码
+      // 这个函数可能只需要执行一次，并且实际的项目可以自己在正确的时间放置
+      let routeList = [];
+      try {
+        // 获取按钮权限
+        // this.changePermissionCode();
+        // 获取菜单
+        // 用户按钮权限  auth
+        // 系统按钮权限  allAuth
+        let {
+          allAuth,
+          auth,
+          menu: { children = [] },
+        } = await queryPermissionsByUserApp();
+        routeList = children;
+        const newAllAuth = allAuth.filter(
+          (item) => item.action && item.action.indexOf('mobile:') === 0,
+        );
+        const newAuth = auth.filter((item) => item.action && item.action.indexOf('mobile:') === 0);
+        this.setButtonAuth({ allAuth: newAllAuth, auth: newAuth });
+        console.log(routeList);
+      } catch (error) {
+        console.error(error);
+      }
+      // 动态引入组件
+      routeList = transformObjToRoute(routeList);
 
-          // 后台路由到菜单结构
-          const backMenuList = transformRouteToMenu(routeList);
-          this.setBackMenuList(backMenuList);
+      // 后台路由到菜单结构
+      const backMenuList = transformRouteToMenu(routeList);
+      console.log(backMenuList)
+      this.setBackMenuList(backMenuList);
 
-          // 删除需要忽略掉路由
-          routeList = filter(routeList, routeRemoveIgnoreFilter);
-          routeList = routeList.filter(routeRemoveIgnoreFilter);
-        
-          // 将多级路由转换为二级路由
-          routeList = flatMultiLevelRoutes(routeList);
-          routes = [PAGE_NOT_FOUND_ROUTE, ...routeList];
-          console.log(routes)
-
+      // 删除需要忽略掉路由
+      routeList = filter(routeList, routeRemoveIgnoreFilter);
+      routeList = routeList.filter(routeRemoveIgnoreFilter);
+      console.log(routeList);
+      // 将多级路由转换为二级路由
+      routeList = flatMultiLevelRoutes(routeList);
+      routes = [PAGE_NOT_FOUND_ROUTE, ...routeList];
+      console.log(routes);
 
       /**
        * @description 根据设置的首页path，修正routes中的affix标记（固定首页）
        * */
-    //   const patchHomeAffix = (routes) => {
-    //     if (!routes || routes.length === 0) return;
-    //     let homePath = userStore.getUserInfo.homePath || PageEnum.BASE_HOME;
-    //     function patcher(routes, parentPath = '') {
-    //       if (parentPath) parentPath = parentPath + '/';
-    //       routes.forEach((route) => {
-    //         const { path, children, redirect } = route;
-    //         const currentPath = path.startsWith('/') ? path : parentPath + path;
-    //         if (currentPath === homePath) {
-    //           if (redirect) {
-    //             homePath = route.redirect;
-    //           } else {
-    //             route.meta = Object.assign({}, route.meta, { affix: true });
-    //             throw new Error('end');
-    //           }
-    //         }
-    //         children && children.length > 0 && patcher(children, currentPath);
-    //       });
-    //     }
-    //     try {
-    //       patcher(routes);
-    //     } catch (e) {
-    //       // 已处理完毕跳出循环
-    //     }
-    //     return;
-    //   };
+      //   const patchHomeAffix = (routes) => {
+      //     if (!routes || routes.length === 0) return;
+      //     let homePath = userStore.getUserInfo.homePath || PageEnum.BASE_HOME;
+      //     function patcher(routes, parentPath = '') {
+      //       if (parentPath) parentPath = parentPath + '/';
+      //       routes.forEach((route) => {
+      //         const { path, children, redirect } = route;
+      //         const currentPath = path.startsWith('/') ? path : parentPath + path;
+      //         if (currentPath === homePath) {
+      //           if (redirect) {
+      //             homePath = route.redirect;
+      //           } else {
+      //             route.meta = Object.assign({}, route.meta, { affix: true });
+      //             throw new Error('end');
+      //           }
+      //         }
+      //         children && children.length > 0 && patcher(children, currentPath);
+      //       });
+      //     }
+      //     try {
+      //       patcher(routes);
+      //     } catch (e) {
+      //       // 已处理完毕跳出循环
+      //     }
+      //     return;
+      //   };
 
-    //   switch (permissionMode) {
-    //       // 角色权限
-    //     case PermissionModeEnum.ROLE:
-    //       routes = filter(asyncRoutes, routeFilter);
-    //       routes = routes.filter(routeFilter);
-    //       // Convert multi-level routing to level 2 routing
-    //       routes = flatMultiLevelRoutes(routes);
-    //       break;
+      //   switch (permissionMode) {
+      //       // 角色权限
+      //     case PermissionModeEnum.ROLE:
+      //       routes = filter(asyncRoutes, routeFilter);
+      //       routes = routes.filter(routeFilter);
+      //       // Convert multi-level routing to level 2 routing
+      //       routes = flatMultiLevelRoutes(routes);
+      //       break;
 
-    //     case PermissionModeEnum.ROUTE_MAPPING:
-    //       routes = filter(asyncRoutes, routeFilter);
-    //       routes = routes.filter(routeFilter);
-    //       const menuList = transformRouteToMenu(routes, true);
-    //       routes = filter(routes, routeRemoveIgnoreFilter);
-    //       routes = routes.filter(routeRemoveIgnoreFilter);
-    //       menuList.sort((a, b) => {
-    //         return (a.meta?.orderNo || 0) - (b.meta?.orderNo || 0);
-    //       });
+      //     case PermissionModeEnum.ROUTE_MAPPING:
+      //       routes = filter(asyncRoutes, routeFilter);
+      //       routes = routes.filter(routeFilter);
+      //       const menuList = transformRouteToMenu(routes, true);
+      //       routes = filter(routes, routeRemoveIgnoreFilter);
+      //       routes = routes.filter(routeRemoveIgnoreFilter);
+      //       menuList.sort((a, b) => {
+      //         return (a.meta?.orderNo || 0) - (b.meta?.orderNo || 0);
+      //       });
 
-    //       this.setFrontMenuList(menuList);
-    //       // Convert multi-level routing to level 2 routing
-    //       routes = flatMultiLevelRoutes(routes);
-    //       break;
+      //       this.setFrontMenuList(menuList);
+      //       // Convert multi-level routing to level 2 routing
+      //       routes = flatMultiLevelRoutes(routes);
+      //       break;
 
-    //     //  动态路由权限
-    //     case PermissionModeEnum.BACK:
-    //       const { createMessage } = useMessage();
+      //     //  动态路由权限
+      //     case PermissionModeEnum.BACK:
+      //       const { createMessage } = useMessage();
 
-    //       createMessage.loading({
-    //         content:  '菜单加载中...',
-    //         duration: 1,
-    //       });
+      //       createMessage.loading({
+      //         content:  '菜单加载中...',
+      //         duration: 1,
+      //       });
 
-    //       // 从后台获取权限代码
-    //       // 这个函数可能只需要执行一次，并且实际的项目可以自己在正确的时间放置
-    //       let routeList = [];
-    //       try {
-    //           // 获取按钮权限
-    //         // this.changePermissionCode();
-    //         // 获取菜单
-    //         routeList = (await getMenuList());
-    //       } catch (error) {
-    //         console.error(error);
-    //       }
+      //       // 从后台获取权限代码
+      //       // 这个函数可能只需要执行一次，并且实际的项目可以自己在正确的时间放置
+      //       let routeList = [];
+      //       try {
+      //           // 获取按钮权限
+      //         // this.changePermissionCode();
+      //         // 获取菜单
+      //         routeList = (await getMenuList());
+      //       } catch (error) {
+      //         console.error(error);
+      //       }
 
-    //       // 动态引入组件
-    //       routeList = transformObjToRoute(routeList);
+      //       // 动态引入组件
+      //       routeList = transformObjToRoute(routeList);
 
-    //       // 后台路由到菜单结构
-    //       const backMenuList = transformRouteToMenu(routeList);
-    //       this.setBackMenuList(backMenuList);
+      //       // 后台路由到菜单结构
+      //       const backMenuList = transformRouteToMenu(routeList);
+      //       this.setBackMenuList(backMenuList);
 
-    //       // 删除需要忽略掉路由
-    //       routeList = filter(routeList, routeRemoveIgnoreFilter);
-    //       routeList = routeList.filter(routeRemoveIgnoreFilter);
-        
-    //       // 将多级路由转换为二级路由
-    //       routeList = flatMultiLevelRoutes(routeList);
-    //       routes = [PAGE_NOT_FOUND_ROUTE, ...routeList];
-    //       break;
-    //   }
+      //       // 删除需要忽略掉路由
+      //       routeList = filter(routeList, routeRemoveIgnoreFilter);
+      //       routeList = routeList.filter(routeRemoveIgnoreFilter);
+
+      //       // 将多级路由转换为二级路由
+      //       routeList = flatMultiLevelRoutes(routeList);
+      //       routes = [PAGE_NOT_FOUND_ROUTE, ...routeList];
+      //       break;
+      //   }
 
       routes.push(ERROR_LOG_ROUTE);
-    //   patchHomeAffix(routes);
+      //   patchHomeAffix(routes);
       return routes;
     },
   },

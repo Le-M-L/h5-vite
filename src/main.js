@@ -16,6 +16,7 @@ import { setupStore } from '@/store';
 import { router, setupRouter } from '@/router';
 import { setupRouterGuard } from '@/router/guard';
 import { registerGlobComp } from '@/components/registerGlobComp';
+import { setupGlobDirectives } from '@/directives';
 
 // 只在生产环境中启用按需导入。
 if (import.meta.env.DEV) {
@@ -40,6 +41,9 @@ async function bootstrap() {
 
   // 加载路由守卫
   setupRouterGuard(router);
+
+  // 全局指令注册
+  setupGlobDirectives(app);
 
   // 等待路由加载完成
   // await router.isReady();

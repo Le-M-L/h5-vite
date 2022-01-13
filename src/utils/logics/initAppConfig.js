@@ -1,7 +1,8 @@
 // 应用配置
 
 import { useAppStore } from '@/store/modules/app';
-import { PROJ_CFG_KEY } from '@/enums/cacheEnum';
+import { useOnlineStoreWithOut } from '@/store/modules/online';
+import { PROJ_CFG_KEY, ONLINE_CFG_KEY } from '@/enums/cacheEnum';
 import { deepMerge } from '@/utils';
 // 缓存
 import { Persistent } from '@/utils/cache/persistent';
@@ -14,14 +15,16 @@ import './flexible'
 // 最初的项目配置
 export function initAppConfigStore() {
     const appStore = useAppStore();
+    const onlineStore = useOnlineStoreWithOut();
     // 读取本地缓存
+    console.log(Persistent.getLocal('dd'),'----------------------6666')
     let projCfg = Persistent.getLocal(PROJ_CFG_KEY);
+    let onlineCfg = Persistent.getLocal(ONLINE_CFG_KEY);
     // 使用缓存覆盖项目最初配置
     projCfg = deepMerge(projectSetting, projCfg || {});
-
     // 将缓存 存到内存
     appStore.setProjectConfig(projCfg);
-
+    onlineStore.setOnlineCfg(onlineCfg)
     // 清理本地缓存
     setTimeout(() => {
         clearObsoleteStorage();
