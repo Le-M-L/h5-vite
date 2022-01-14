@@ -85,7 +85,7 @@ export const useUserStore = defineStore({
         const { goHome = true, mode, ...loginParams } = params;
         const data = await loginApi(loginParams, mode);
         const { token , userInfo} = data;
-        userInfo.homePath = '/home'
+        userInfo.homePath = '/sys/home'
         // save token
         this.setToken(token);
         // save userInfo

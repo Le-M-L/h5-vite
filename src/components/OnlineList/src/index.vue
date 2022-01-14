@@ -1,15 +1,16 @@
 <template>
-  <DNavbar />
+  <DNavbar @search="handleSearch" />
 
   <BaseListHeader
+    v-if="queryColumns.length"
     @change="handleChange"
     :queryColumns="queryColumns"
     :dictOptions="dictOptions"
-    :code="code"
+    :code="getCode"
   />
   <BaseList
     @register="register"
-    :code="code"
+    :code="getCode"
     :rawColumns="rawColumns"
     :columns="columns"
     :queryColumns="queryColumns"
@@ -20,10 +21,9 @@
 </template>
 
 <script>
-import { onMounted, ref, unref } from 'vue';
+import { computed, onMounted, ref, unref } from 'vue';
 import BaseList from './BaseList.vue';
 import BaseListHeader from './BaseListHeader.vue';
-import { getListColumns, getErpColumns, getQueryColumns } from '@/api/sys/api';
 import { useTable } from './hooks/useTable';
 import { useRoute, useRouter } from 'vue-router';
 import { useOnlineStoreWithOut } from '@/store/modules/online';
@@ -34,6 +34,10 @@ export default {
     title: {
       type: String,
       default: '标题',
+    },
+    code: {
+      type: String,
+      default: '',
     },
   },
   components: { BaseList, BaseListHeader, DNavbar },
@@ -51,13 +55,15 @@ export default {
     // 注册table
     const [register, { onReset }] = useTable();
 
+    const getCode = computed(() => props.code || code);
+
     const handleChange = (values) => {
       onReset(values);
     };
 
     // 添加
     const handleAdd = () => {
-      router.push(`/online/form/${code}`);
+      router.push(`/online/form/${unref(getCode)}`);
     };
 
     // 获取列表配置
@@ -65,30 +71,40 @@ export default {
       return new Promise(async (r, j) => {
         r(
           isErp
-            ? await onlineStore.setOnlineErpColumns(code)
-            : await onlineStore.setOnlineColumns(code),
+            ? await onlineStore.setOnlineErpColumns(unref(getCode))
+            : await onlineStore.setOnlineColumns(unref(getCode)),
         );
       });
     };
 
-    Promise.all([getColumns(), onlineStore.setOnlineQueryColumns(code)]).then(([res, query]) => {
-      // 获取列表配置
-      columns.value = [
-        {
-          children: res?.columns?.slice(0, 2),
-        },
-        {
-          children: res?.columns?.slice(2, 4),
-        },
-      ];
-      dictOptions.value = res.dictOptions;
-      rawColumns.value = res.columns;
-      // 获取列表 查询配置
-      queryColumns.value = query;
-    });
+    Promise.all([getColumns(), onlineStore.setOnlineQueryColumns(unref(getCode))]).then(
+      ([res, query]) => {
+        // 获取列表配置
+        columns.value = [
+          {
+            children: res?.columns?.slice(0, 2),
+          },
+          {
+            children: res?.columns?.slice(2, 4),
+          },
+        ];
+        dictOptions.value = res.dictOptions;
+        rawColumns.value = res.columns;
+        // 获取列表 查询配置
+        queryColumns.value = query;
+        console.log(queryColumns.value)
+      },
+    );
+
+    // 查询
+    const handleSearch = (val) => {
+      onReset({
+        title: val,
+      });
+    };
 
     onMounted(() => {
-      onlineStore.setOnlineCfg({ code });
+      onlineStore.setOnlineCfg({ code: unref(getCode) });
     });
 
     return {
@@ -99,7 +115,8 @@ export default {
       columns,
       queryColumns,
       handleAdd,
-      code,
+      getCode,
+      handleSearch,
     };
   },
 };

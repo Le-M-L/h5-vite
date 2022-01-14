@@ -101,6 +101,7 @@ export function getFileAccessHttpUrl(avatar,subStr) {
    return;
   }
 }
+
 /**
  * 对文件路径 初始化
  * @param {*} val 

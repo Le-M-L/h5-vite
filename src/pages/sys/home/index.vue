@@ -53,7 +53,7 @@
       <div :class="`${prefixCls}-content-matrix`">
         <div :class="`${prefixCls}-content-cont`" v-for="i in 6">
           <div>
-            <img :src="pic_nopic" alt="" />
+            <img :src="'/src/assets/commonImg/home_icon_dwcs@2x.png'" alt="" />
             <div>事件上报</div>
           </div>
         </div>
@@ -76,7 +76,6 @@ import pic_nopic from '../../../assets/images/pic_nopic@2x.png';
 import { dateUtil } from '@/utils/dateUtil';
 import { getFileAccessHttpUrl } from '@/utils';
 import { getUserMsg, getUserMsgCount } from '@/api/sys/user';
-
 export default {
   components: { DTabbar, Button, Row, Col },
   setup() {
@@ -129,7 +128,7 @@ export default {
       handleShowDetail,
       msgContent,
       avatar,
-      pic_nopic
+      pic_nopic,
     };
   },
 };

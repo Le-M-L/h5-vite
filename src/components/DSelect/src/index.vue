@@ -22,10 +22,7 @@ export default {
   setup(props, { emit, attrs, expose }) {
     const select = ref(null);
 
-    const handleChange = (obj) => {
-      emit('update:modelValue', obj.value);
-      emit('change', obj.value);
-    };
+  
 
     const getBindValue = computed(() => {
       return {
@@ -33,8 +30,11 @@ export default {
         modelValue: props.modelValue,
       };
     });
-    console.log(getBindValue.value)
 
+    const handleChange = (obj) => {
+      emit('update:modelValue', obj.value);
+      emit('change', obj.value,unref(getBindValue));
+    };
     const handleShow = () => {
       unref(select).show = true;
     }

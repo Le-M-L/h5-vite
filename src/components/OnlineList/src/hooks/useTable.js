@@ -1,6 +1,8 @@
-import { ref, unref, onUnmounted } from 'vue';
+import { ref, unref, onUnmounted, getCurrentInstance, watchEffect } from 'vue';
 import { error } from '@/utils/log';
 import { isProdMode } from '@/utils/env';
+import { getDynamicProps } from '@/utils';
+import { tryOnUnmounted } from '@vueuse/core';
 
 // 对数据进行处理
 export const handleItem = (item, columns, dictOptions) => {
@@ -28,7 +30,7 @@ export const initDictOptionData = (dictOptions) => {
 };
 
 // 注册table  将table方法暴露出去
-export const useTable = () => {
+export const useTable = (props) => {
   const tableRef = ref(null);
   const loadedRef = ref(false);
 
@@ -51,6 +53,10 @@ export const useTable = () => {
     if (unref(loadedRef) && isProdMode() && instance === unref(tableRef)) return;
     tableRef.value = instance;
     loadedRef.value = true;
+
+    watchEffect(() => {
+      props && instance.setProps(getDynamicProps(props));
+    });
   }
 
   const methods = {
@@ -64,4 +70,46 @@ export const useTable = () => {
   };
 
   return [register, methods];
+};
+
+export const useTableInner = (callbackFn) => {
+  const tableInstanceRef = ref(null);
+  const currentInstance = getCurrentInstance();
+  const uidRef = ref('');
+  const getInstance = () => {
+    const instance = unref(tableInstanceRef);
+    if (!instance) {
+      error('useTableInner instance is undefined!');
+    }
+    return instance;
+  };
+
+  const register = (tableInstance, uuid) => {
+    isProdMode() &&
+      tryOnUnmounted(() => {
+        tableInstanceRef.value = null;
+      });
+    uidRef.value = uuid;
+    tableInstanceRef.value = tableInstance;
+    currentInstance?.emit('register', tableInstance, uuid);
+  };
+
+  watchEffect(() => {
+    const data = dataTransfer[unref(uidRef)];
+    if (!data) return;
+    if (!callbackFn || !isFunction(callbackFn)) return;
+    nextTick(() => {
+      callbackFn(data);
+    });
+  });
+
+  return [
+    register,
+    {
+      onReset: async (params) => {
+        const instance = await getInstance();
+        instance?.onReset(params);
+      },
+    },
+  ];
 };

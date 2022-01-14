@@ -1,5 +1,5 @@
 <template>
-  <div class="base-list-header">
+  <div v-if="getSchema.length" class="base-list-header">
     <div class="base-list-header-content">
       <div
         v-for="item in getSchema.slice(0,2)"
@@ -24,7 +24,8 @@
     </div>
     <div class="base-list-header-line"></div>
   </div>
-  <div class="base-list-header-placeholder"></div>
+  <div v-if="getSchema.length" class="base-list-header-placeholder"></div>
+  <div else style="height:15px" ></div>
 </template>
 
 <script>
@@ -79,8 +80,8 @@ export default {
 
     const { handleFormValues } = useTableValues({ getProps, getSchema, formModel });
 
-    const handleChange = (e) => {
-      let formData = handleFormValues(formModel);
+    const handleChange = (e,items) => {
+      let formData = handleFormValues(formModel,items);
       emit('change',formData)
     };
 

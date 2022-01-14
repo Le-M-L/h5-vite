@@ -5,7 +5,7 @@ import { set } from 'lodash-es';
 
 export function useTableValues({ getProps, getSchema, formModel }) {
   // 格式化数据
-  function handleFormValues(values) {
+  function handleFormValues(values, items) {
     if (!isObject(values)) {
       return {};
     }
@@ -22,6 +22,9 @@ export function useTableValues({ getProps, getSchema, formModel }) {
         value = value.trim();
       }
       
+      if (items.component == 'DCalendar' && items.mode == 'single' ) {
+        value = value.join()
+      }
       set(res, key, value);
     }
     return handleRangeTimeValue(res);

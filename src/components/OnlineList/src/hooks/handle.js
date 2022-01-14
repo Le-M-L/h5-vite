@@ -25,6 +25,11 @@ export const formatSchemas = (query = [], dictOptions) => {
           schemasItem.type="range"
           schemasItem.placeholder = '请选择日期'
         break;
+        case 'date':
+          schemasItem.component = 'DCalendar';
+          schemasItem.placeholder = '请选择日期'
+          break;
+
         default:
           break;
       }

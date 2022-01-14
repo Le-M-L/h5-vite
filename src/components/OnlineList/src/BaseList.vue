@@ -35,9 +35,9 @@
           </Image>
           <!-- 右边内容 -->
           <div class="custom-list-item-content">
-            <div v-for="(items, i) in columns" :key="i">
+            <div v-for="(items, i) in getColumns" :key="i">
               <div v-for="child in items.children" :key="child.dataIndex">
-                <span v-text="handleItem(item, child, dictOptions)"></span>
+                <span v-text="handleItem(item, child, getDictOptions)"></span>
               </div>
             </div>
           </div>
@@ -50,10 +50,11 @@
 <script>
 import { ref, unref, onMounted, reactive, computed } from 'vue';
 import { PullRefresh, List, Cell, Image, Loading } from 'vant';
-import {  getListData, getOnlineDetail } from '@/api/sys/api';
+import { getListData, getOnlineDetail } from '@/api/sys/api';
 import { useDebounceFn } from '@vueuse/core';
 import { handleItem } from './hooks/useTable';
 import { useRouter } from 'vue-router';
+import { deepMerge } from '@/utils';
 export default {
   components: { PullRefresh, List, Cell, Image, Loading },
   props: {
@@ -65,6 +66,7 @@ export default {
       type: Array,
       default: () => [],
     },
+    // 行配置 除去图片
     columns: {
       type: Array,
       default: () => [],
@@ -80,13 +82,28 @@ export default {
       pageNo: 0,
       pageSize: 10,
     });
+    const propsRef = ref({});
     const extraParams = ref({});
     const loading = ref(false); // loading 加载
     const finished = ref(false); // 数据是否全部加载完成
     const refreshing = ref(false); // 下拉刷新
     const listData = ref([]); // listData 数据列表
     const total = ref(0);
-    const router = useRouter()
+    const router = useRouter();
+    
+    const getProps = computed(() => {
+      return { ...props, ...unref(propsRef) };
+    })
+
+    // 获取行配置
+    const getColumns = computed(() => {
+      return  getProps.value.columns
+    })
+
+    // 获取字典数据配置
+    const getDictOptions = computed(() => {
+      return  getProps.value.dictOptions
+    })
 
     const listParams = computed(() => {
       return {
@@ -105,7 +122,7 @@ export default {
       }
       loading.value = true;
       form.pageNo++;
-      getListData(props.code, {
+      getListData(unref(getProps).code, {
         ...unref(listParams),
       })
         .then(({ records, total: totals }) => {
@@ -144,15 +161,20 @@ export default {
 
     // 点击列表触发
     const handleClick = (item) => {
-       router.push(`/online/detail/${props.code}/${item.id}`);
-      // getOnlineDetail(props.code,item.id)
+      router.push(`/online/detail/${unref(getProps).code}/${item.id}`);
+      // getOnlineDetail(unref(getProps).code,item.id)
       //   .then(res => {
       //     console.log(res)
       //   })
     };
 
+    async function setProps(tableProps) {
+      propsRef.value = deepMerge(unref(propsRef) || {}, tableProps);
+    }
+
     const actionType = {
       onReset,
+      setProps,
     };
 
     onMounted(() => {
@@ -171,6 +193,8 @@ export default {
       onRefresh,
       handleClick,
       handleItem,
+      getColumns,
+      getDictOptions
     };
   },
 };

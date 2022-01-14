@@ -25,10 +25,9 @@ export default {
         modelValue: props.modelValue,
       };
     });
-
     const handleChange = (data) => {
       emit('update:modelValue', data);
-      emit('change', data);
+      emit('change', data,unref(getBindValue));
     };
 
     return {
