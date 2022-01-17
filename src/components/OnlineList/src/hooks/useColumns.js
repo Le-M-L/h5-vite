@@ -7,7 +7,8 @@ export const useColumns = ({ code, main, immediate = true }) => {
   const { isErp } = route.meta;
   const mainRef = ref({});
   const subListRef = ref([]);
-  const querySchema = ref([])
+  const querySchema = ref([]);
+
   // 总配置
   const getMainRef = computed(() => {
     return unref(main) || unref(mainRef);
@@ -34,7 +35,10 @@ export const useColumns = ({ code, main, immediate = true }) => {
     return unref(getMainRef).rawColumns;
   });
 
-  const getQuerySchema = computed(() => querySchema)
+
+  const getQuerySchema = computed(() => querySchema);
+
+
 
   // 查询参数配置
   const getOnlineQueryColumns = async (params) => {

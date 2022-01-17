@@ -37,7 +37,7 @@
           <div class="custom-list-item-content">
             <div v-for="(items, i) in getColumns" :key="i">
               <div v-for="child in items.children" :key="child.dataIndex">
-                <span v-text="handleItem(item, child, getDictOptions)"></span>
+                <span v-text="handleItem(item, child, dictOptions)"></span>
               </div>
             </div>
           </div>
@@ -56,6 +56,7 @@ import { handleItem } from './hooks/useTable';
 import { useRouter } from 'vue-router';
 import { deepMerge } from '@/utils';
 import { useOnlineStoreWithOut } from '@/store/modules/online';
+import { useDataSource } from './hooks/useDataSource';
 export default {
   components: { PullRefresh, List, Cell, Image, Loading },
   props: {
@@ -92,20 +93,20 @@ export default {
     const total = ref(0);
     const router = useRouter();
     const onlineStore = useOnlineStoreWithOut();
-    
+
     const getProps = computed(() => {
       return { ...props, ...unref(propsRef) };
-    })
+    });
 
     // 获取行配置
     const getColumns = computed(() => {
-      return  getProps.value.columns
-    })
+      return getProps.value.columns;
+    });
 
     // 获取字典数据配置
     const getDictOptions = computed(() => {
-      return  getProps.value.dictOptions
-    })
+      return getProps.value.dictOptions;
+    });
 
     const listParams = computed(() => {
       return {
@@ -113,6 +114,8 @@ export default {
         ...unref(extraParams),
       };
     });
+
+    const {} = useDataSource(getProps, { listData });
 
     // 加载触发方法
     const onLoad = useDebounceFn((params = {}) => {
@@ -162,7 +165,7 @@ export default {
 
     // 点击列表触发
     const handleClick = (item) => {
-      onlineStore.setRowData(item)
+      onlineStore.setRowData(item);
       // id 固定传参
       router.push(`/online/detail/${unref(getProps).code}/${item.id}`);
       // getOnlineDetail(unref(getProps).code,item.id)
@@ -197,7 +200,7 @@ export default {
       handleClick,
       handleItem,
       getColumns,
-      getDictOptions
+      getDictOptions,
     };
   },
 };

@@ -66,10 +66,11 @@ export default {
       router.push(`/online/form/${unref(getCode)}`);
     };
 
-    const { dictOptions,columns, rawColumns, getOnlineQueryColumns } = useColumns({ code: getCode.value });
-    
-    // 获取列表配置
+    const { dictOptions, columns, rawColumns, getOnlineQueryColumns } = useColumns({
+      code: getCode.value,
+    });
 
+    // 获取列表配置
 
     // 获取查询配置
     getOnlineQueryColumns().then((res) => {
