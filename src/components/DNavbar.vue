@@ -29,7 +29,7 @@
 <script>
 import { ref,computed } from 'vue';
 import { NavBar, Icon, Search } from 'vant';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useOnlineStoreWithOut } from '@/store/modules/online';
 export default {
   components: {
@@ -46,13 +46,14 @@ export default {
   emits: ['click-left', 'click-right', 'search'],
   setup(props, { emit }) {
     const route = useRoute();
+    const router = useRouter()
     const value = ref('');
     const onlineStore = useOnlineStoreWithOut();
     const isSearch = ref(false)
     const navTitle =  computed(() => props.title || onlineStore.getOnlineTitle);
 
     // 点击左边返回触发
-    const onClickLeft = () => history.back();
+    const onClickLeft = () => router.back();
     const onClickRight = () => emit('click-right');
     const handleSearch = () => {
       emit('search',value.value)

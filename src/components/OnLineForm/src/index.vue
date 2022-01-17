@@ -16,14 +16,15 @@
 </template>
 
 <script>
-import { computed, unref, ref } from 'vue';
-import DNavbar from "@/components/DNavbar.vue"
+import { computed, unref, ref, onMounted } from 'vue';
+import DNavbar from '@/components/DNavbar.vue';
 import { BasicForm, useForm } from '@/components/Form';
 import { useRoute } from 'vue-router';
 import { useOnlineStoreWithOut } from '@/store/modules/online';
-import {  Button } from 'vant';
+import { Button } from 'vant';
 import { router } from '../../../router';
 export default {
+  name: 'OnLineForm',
   inheritAttrs: false,
   components: { BasicForm, Button, DNavbar },
   props: {
@@ -102,15 +103,19 @@ export default {
 
     // 在线表单子集
     const goRecord = () => {
-      router.push(`/online/cgformErpSubList/${id}`)
-    }
+      router.push(`/online/cgformErpSubList/${id}`);
+    };
 
     const title = ref('添加');
     // 表单数据格式化
-    const getSchemas = computed(() => unref(onlineStore.getOnlineFormSchema));
+    const getSchemas = computed(() => onlineStore.getOnlineFormSchema);
     // 获取表单项 和 详情数据
     onlineStore.setOnlineFormSchema(code, id).then((res) => {
-     res && setFieldsValue(res);
+      console.log(res);
+      res && setFieldsValue(res);
+    });
+    onMounted(() => {
+      console.log('123');
     });
     return {
       getSchemas,
@@ -127,7 +132,7 @@ export default {
       append,
       remove,
       clearValidate1,
-      goRecord
+      goRecord,
     };
   },
 };

@@ -10,45 +10,53 @@ const baseForm = {
     {
       // 在线开发 列表
       path: 'cgformList/:code',
-      name: 'cgformListPage',
+      name: 'CgformListPage',
       meta: {
         isErp: false,
-      },
-      component: () => import('@/components/OnlineList/src/index.vue'),
-    },
-    {
-      // 在线表单开发 一对多
-      path: 'cgformErpList/:code',
-      name: 'cgformErpListPage',
-      meta: {
-        isErp: true,
+        ignoreKeepAlive: true,
       },
       component: () => import('@/components/OnlineList/src/index.vue'),
     },
     {
       // 在线表单开发 erp子集 列表
       path: 'cgformErpSubList/:code',
-      name: 'cgformErpSubList',
+      name: 'CgformErpSubList',
       meta: {
-        
+        ignoreKeepAlive: true,
       },
       component: () => import('@/components/OnlineList/src/BaseSubList/index.vue'),
     },
     {
       // 在线开发 表单
       path: 'form/:code',
-      name: 'onlineForm',
+      name: 'OnLineForm',
       component: () => import('@/components/OnLineForm/src/index.vue'),
+      meta: {
+        ignoreKeepAlive: true,
+      },
+    },
+    {
+      // 在线表单开发 一对多
+      path: 'cgformErpList/:code',
+      name: 'CgformErpListPage',
+      meta: {
+        isErp: true,
+        ignoreKeepAlive: true,
+        currentActiveMenu: '/online/cgformList/:code',
+      },
+      component: () => import('@/components/OnlineList/src/index.vue'),
     },
     {
       // 在线表单开发 详情
       path: 'detail/:code/:id',
-      name: 'onlineDetail',
+      name: 'OnLineFormDetail',
       meta: {
         readonly: true,
+        ignoreKeepAlive: true,
+        currentActiveMenu: '/online/form/:code',
       },
       component: () => import('@/components/OnLineForm/src/index.vue'),
-    }
+    },
   ],
 };
 

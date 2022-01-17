@@ -5,6 +5,9 @@ const setting = {
   // 权限模式
   permissionMode: PermissionModeEnum.BACK,
 
+  // 缓存开启
+  openKeepAlive:true,
+  
   // 过度设置
   transitionSetting: {
     // 是否打开页面切换动画

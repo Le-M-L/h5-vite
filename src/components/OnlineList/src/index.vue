@@ -28,7 +28,10 @@ import { useTable } from './hooks/useTable';
 import { useRoute, useRouter } from 'vue-router';
 import { useOnlineStoreWithOut } from '@/store/modules/online';
 import DNavbar from '@/components/DNavbar.vue';
+import { useColumns } from './hooks/useColumns';
+
 export default {
+  name: 'CgformListPage',
   inheritAttrs: false,
   props: {
     title: {
@@ -48,9 +51,6 @@ export default {
     const { isErp } = route.meta;
     // 在线开发 全局状态
     const onlineStore = useOnlineStoreWithOut();
-    const dictOptions = ref({}); // 字典表
-    const rawColumns = ref([]); // 行配置 源
-    const columns = ref([]);
     const queryColumns = ref([]); // 查询 配置
     // 注册table
     const [register, { onReset }] = useTable();
@@ -66,35 +66,15 @@ export default {
       router.push(`/online/form/${unref(getCode)}`);
     };
 
+    const { dictOptions,columns, rawColumns, getOnlineQueryColumns } = useColumns({ code: getCode.value });
+    
     // 获取列表配置
-    const getColumns = () => {
-      return new Promise(async (r, j) => {
-        r(
-          isErp
-            ? await onlineStore.setOnlineErpColumns(unref(getCode))
-            : await onlineStore.setOnlineColumns(unref(getCode)),
-        );
-      });
-    };
 
-    Promise.all([getColumns(), onlineStore.setOnlineQueryColumns(unref(getCode))]).then(
-      ([res, query]) => {
-        // 获取列表配置
-        columns.value = [
-          {
-            children: res?.columns?.slice(0, 2),
-          },
-          {
-            children: res?.columns?.slice(2, 4),
-          },
-        ];
-        dictOptions.value = res.dictOptions;
-        rawColumns.value = res.columns;
-        // 获取列表 查询配置
-        queryColumns.value = query;
-        console.log(queryColumns.value)
-      },
-    );
+
+    // 获取查询配置
+    getOnlineQueryColumns().then((res) => {
+      queryColumns.value = res;
+    });
 
     // 查询
     const handleSearch = (val) => {

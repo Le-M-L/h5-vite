@@ -31,9 +31,9 @@
 <script>
 import { reactive, ref, unref, onMounted, computed, watch } from 'vue';
 import { NavBar, Icon } from 'vant';
-import { componentMap } from './componentMap';
-import { formatSchemas } from './hooks/handle';
-import { useTableValues } from './hooks/useTableValues';
+import { componentMap } from '../componentMap';
+import { formatSchemas } from '../hooks/handle';
+import { useTableValues } from '../hooks/useTableValues';
 let comps = {};
 for (let key of componentMap.keys()) {
   // + 1 防止组件冲突
@@ -75,7 +75,6 @@ export default {
     // 查询配置
     const getSchema = computed(() => {
       const schemas = unref(schemaRef) || props.queryColumns;
-      console.log(schemas)
       return formatSchemas(schemas, props.dictOptions);
     });
 

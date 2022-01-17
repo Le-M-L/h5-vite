@@ -4,6 +4,7 @@ import { Persistent } from '@/utils/cache/persistent';
 import { APP_DARK_MODE_KEY_, PROJ_CFG_KEY } from '@/enums/cacheEnum';
 import { deepMerge } from '@/utils';
 import { resetRouter } from '@/router';
+import { getRawRoute } from '@/utils';
 
 let timeId;
 export const useAppStore = defineStore({
@@ -13,6 +14,8 @@ export const useAppStore = defineStore({
     pageLoading: false,
     // 项目配置
     projectConfig: Persistent.getLocal(PROJ_CFG_KEY),
+    // 缓存路由
+    cacheList: new Set(),
   }),
   getters: {
     // 获取 loading 状态
@@ -22,6 +25,10 @@ export const useAppStore = defineStore({
     // 获取项目配置
     getProjectConfig() {
       return this.projectConfig || {};
+    },
+    // 获取缓存的列表
+    getCachedList() {
+      return Array.from(this.cacheList);
     },
   },
   actions: {
@@ -42,6 +49,16 @@ export const useAppStore = defineStore({
     async resetAllState() {
       resetRouter();
       Persistent.clearAll();
+    },
+
+    // 设置缓存
+    addCache(route) {
+      const item = getRawRoute(route);
+      const needCache = !item.meta?.ignoreKeepAlive;
+      if (!needCache) {
+        const name = item.name;
+        this.cacheList.add(name);
+      }
     },
   },
 });

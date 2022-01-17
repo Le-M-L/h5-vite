@@ -22,9 +22,11 @@ export const APP_LOCAL_CACHE_KEY = 'COMMON__LOCAL__KEY__';
 export const APP_SESSION_CACHE_KEY = 'COMMON__SESSION__KEY__';
 
 // 在线表单配置 key
-export const ONLINE_CFG_KEY = 'ONLINE_CFG_KEY'
+export const ONLINE_CFG_KEY = 'ONLINE_CFG_KEY';
 //按钮权限 key
-export const BUTTON_AUTH_KEY = 'BUTTON_AUTH_KEY'
+export const BUTTON_AUTH_KEY = 'BUTTON_AUTH_KEY';
+// 在线表单 行数据 key
+export const ONLINE_ROW_KEY = 'ONLINE_ROW_KEY'; 
 
 export const CacheTypeEnum = {
   SESSION: 0,

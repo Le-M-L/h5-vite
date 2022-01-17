@@ -140,7 +140,6 @@
           errorInfo,
           field
         } = props.schema;
-        console.log(props.schema)
         if (isFunction(dynamicRules)) {
           return dynamicRules(unref(getValues)) ;
         }
@@ -153,7 +152,7 @@
         function validator(value,rule) {
           const msg = rule.message || defaultMsg;
           errorMsg.value = msg;
-          console.log(666)
+          // console.log(666)
           if (value === undefined || isNull(value)) {
             // 空值
             formActionType.updateSchema({field,isError:true})

@@ -3,11 +3,11 @@
   <template v-if="subList.length > 1">
     <Tabs v-model:active="active" :ellipsis="false" sticky animated>
       <Tab v-for="item in subList" :key="item.id" :title="getTitle(item.description)">
-        <TabList :item="item" />
+        <TabList :main="item" />
       </Tab>
     </Tabs>
   </template>
-  <TabList else :item="subList[0]" />
+  <TabList else :main="subList[0]" />
 </template>
 
 <script>
@@ -18,7 +18,7 @@ import TabList from './TabList.vue';
 import DNavbar from '@/components/DNavbar.vue';
 // erp 子集列表
 export default {
-  name: 'BaseSubList',
+  name: 'CgformErpSubList',
   components: {
     Tabs,
     Tab,

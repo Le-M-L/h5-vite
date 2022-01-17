@@ -1,40 +1,36 @@
 <template>
   <RouterView>
     <template #default="{ Component, route }">
-      <component :is="Component" :key="route.fullPath" />
+      <keep-alive v-if="openCache" :include="getCaches">
+        <component :is="Component" :key="route.fullPath" />
+      </keep-alive>
+      <component v-else :is="Component" :key="route.fullPath" />
     </template>
   </RouterView>
-  <FrameLayout v-if="getCanEmbedIFramePage" />
+  <!-- v-if="getCanEmbedIFramePage" -->
+  <FrameLayout />
 </template>
 
 <script>
-import { computed, defineComponent, unref } from 'vue';
-
+import { computed, defineComponent, ref } from 'vue';
 import FrameLayout from '@/layouts/iframe/index.vue';
-
-import { useRootSetting } from '@/hooks/setting/useRootSetting';
-
-import { useTransitionSetting } from '@/hooks/setting/useTransitionSetting';
-// import { useMultipleTabSetting } from '@/hooks/setting/useMultipleTabSetting';
+import { useAppStore } from '@/store/modules/app';
 
 export default defineComponent({
   name: 'PageLayout',
   components: { FrameLayout },
   setup() {
-    // const { getShowMultipleTab } = useMultipleTabSetting();
+    const appStore = useAppStore();
+    const openCache = ref(true);
 
-    const { getOpenKeepAlive, getCanEmbedIFramePage } = useRootSetting();
-
-    const { getBasicTransition, getEnableTransition } = useTransitionSetting();
-
-    // const openCache = computed(() => unref(getOpenKeepAlive) && unref(getShowMultipleTab));
-    const openCache = computed(() => unref(getOpenKeepAlive));
+    const getCaches = computed(() => {
+      console.log( appStore.getCachedList)
+      return appStore.getCachedList;
+    });
 
     return {
+      getCaches,
       openCache,
-      getEnableTransition,
-      getBasicTransition,
-      getCanEmbedIFramePage,
     };
   },
 });

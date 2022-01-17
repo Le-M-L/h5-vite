@@ -28,7 +28,7 @@
             <template v-slot:error>
               <img
                 style="width: 100%; height: 100%"
-                src="../../../assets/images/pic_nopic.png"
+                src="/src/assets/images/pic_nopic.png"
                 alt=""
               />
             </template>
@@ -52,11 +52,12 @@ import { ref, unref, onMounted, reactive, computed } from 'vue';
 import { PullRefresh, List, Cell, Image, Loading } from 'vant';
 import { getListData, getOnlineDetail } from '@/api/sys/api';
 import { useDebounceFn } from '@vueuse/core';
-import { handleItem } from './hooks/useTable';
 import { useRouter } from 'vue-router';
 import { deepMerge } from '@/utils';
 import { useOnlineStoreWithOut } from '@/store/modules/online';
+import { useTableParam } from './hooks/useTableParam';
 export default {
+  name: 'OnlineFormErpList',
   components: { PullRefresh, List, Cell, Image, Loading },
   props: {
     code: {
@@ -76,6 +77,14 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    main: {
+      type: Object,
+      default: () => ({}),
+    },
+    immediate:{
+        type:Boolean,
+        default:true
+    }
   },
   emits: ['register'],
   setup(props, { emit }) {
@@ -92,27 +101,42 @@ export default {
     const total = ref(0);
     const router = useRouter();
     const onlineStore = useOnlineStoreWithOut();
-    
+    // 参数获取
+    const { getQueryParam, initDependQueryParam } = useTableParam({
+      main:props.main
+    });
+
     const getProps = computed(() => {
       return { ...props, ...unref(propsRef) };
-    })
+    });
 
     // 获取行配置
     const getColumns = computed(() => {
-      return  getProps.value.columns
-    })
+      return getProps.value.columns;
+    });
 
     // 获取字典数据配置
     const getDictOptions = computed(() => {
-      return  getProps.value.dictOptions
-    })
+      return getProps.value.dictOptions;
+    });
 
     const listParams = computed(() => {
       return {
         ...unref(form),
         ...unref(extraParams),
+        ...unref(getQueryParam),
       };
     });
+
+    const handleItem = (item, columns, dictOptions) => {
+      if (columns.customRender) {
+        let currentData = dictOptions[columns.customRender]?.find(
+          (items) => items.value == item[columns.dataIndex],
+        );
+        return currentData?.text;
+      }
+      return item[columns.dataIndex];
+    };
 
     // 加载触发方法
     const onLoad = useDebounceFn((params = {}) => {
@@ -122,6 +146,10 @@ export default {
         form.pageNo = 0;
         refreshing.value = false;
       }
+      if (false == initDependQueryParam()) {
+        return false;
+      }
+
       loading.value = true;
       form.pageNo++;
       getListData(unref(getProps).code, {
@@ -162,7 +190,7 @@ export default {
 
     // 点击列表触发
     const handleClick = (item) => {
-      onlineStore.setRowData(item)
+      onlineStore.setRowData(item);
       // id 固定传参
       router.push(`/online/detail/${unref(getProps).code}/${item.id}`);
       // getOnlineDetail(unref(getProps).code,item.id)
@@ -197,7 +225,7 @@ export default {
       handleClick,
       handleItem,
       getColumns,
-      getDictOptions
+      getDictOptions,
     };
   },
 };

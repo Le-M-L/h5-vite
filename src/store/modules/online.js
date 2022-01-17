@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { Persistent } from '@/utils/cache/persistent';
-import { ONLINE_CFG_KEY } from '@/enums/cacheEnum';
+import { ONLINE_CFG_KEY, ONLINE_ROW_KEY } from '@/enums/cacheEnum';
 import {
   getOnlineFormItem,
   getOnlineDetail,
@@ -31,6 +31,8 @@ export const useOnlineStore = defineStore({
       // erp 子数据 信息
       sunInfo: {},
     },
+    // 在线表单开发 行数据
+    rowData: Persistent.getLocal(ONLINE_ROW_KEY)
   }),
   getters: {
     // 获取在线表单配置
@@ -40,6 +42,9 @@ export const useOnlineStore = defineStore({
     // 获取在线表单开发 code
     getOnlineCode() {
       return this.getOnline.code;
+    },
+    getDetailData(){
+      return this.rowData;
     },
     // 获取在线表单开发 表单配置
     getOnlineFormSchema() {
@@ -55,6 +60,11 @@ export const useOnlineStore = defineStore({
     }
   },
   actions: {
+    // 设置在线表单开发 行数据
+    setRowData(data){
+      this.rowData = data;
+      Persistent.setLocal(ONLINE_ROW_KEY, this.rowData)
+    },
     // 设置表单开发配置
     setOnlineCfg(config) {
       this.onlineConfig = deepMerge(this.onlineConfig || {}, config);
@@ -70,8 +80,8 @@ export const useOnlineStore = defineStore({
       return data;
     },
     // 在线表单 查询配置
-    async setOnlineQueryColumns(code) {
-      let result = await getQueryColumns(code);
+    async setOnlineQueryColumns(code,params) {
+      let result = await getQueryColumns(code,params);
       return result;
     },
     // 设置在线表单开发 单表列表配置

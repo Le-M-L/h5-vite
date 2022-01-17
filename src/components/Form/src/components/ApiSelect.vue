@@ -171,7 +171,6 @@ export default {
         label: null,
       };
     });
-    console.log(getAttrs.value)
 
     const handleClear = () => {
       emit('change', '');
