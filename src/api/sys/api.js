@@ -72,3 +72,8 @@ export const getPopupQuery = (code, params) => {
 export const getPopupAllColumns = (code, params) => {
   return defHttp.get({ url: `/online/cgreport/api/getColumnsAndData${code}`, params });
 };
+
+// 获取部门对应的名称
+export const getSysDepart = (params) => {
+  return defHttp.get({ url: `/sys/sysDepart/getDepartList`, params });
+};

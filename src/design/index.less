@@ -37,3 +37,31 @@ svg,
 span {
   outline: none !important;
 }
+
+.base-add {
+  position: fixed;
+  right: 0;
+  bottom: 90px;
+  width: 64px;
+  height: 64px;
+  background: url('/src/assets/images/list_icon_add.png') no-repeat center center;
+  background-size: 100% 100%;
+}
+
+// 提交按钮外部盒子样式
+.base-btn-wrap{
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: @btnWrapHeight;
+  padding: 8px 16px;
+  background: #fff;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 12%), 0 0 6px rgb(0 0 0 / 4%);
+  display: flex;
+}
+
+// 提交按钮对应占位样式
+.base-btn-wrap-placeholder{
+  height: @btnWrapHeight;
+}

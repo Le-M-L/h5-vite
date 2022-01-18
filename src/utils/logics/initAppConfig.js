@@ -17,7 +17,6 @@ export function initAppConfigStore() {
     const appStore = useAppStore();
     const onlineStore = useOnlineStoreWithOut();
     // 读取本地缓存
-    console.log(Persistent.getLocal('dd'),'----------------------6666')
     let projCfg = Persistent.getLocal(PROJ_CFG_KEY);
     let onlineCfg = Persistent.getLocal(ONLINE_CFG_KEY);
     // 使用缓存覆盖项目最初配置

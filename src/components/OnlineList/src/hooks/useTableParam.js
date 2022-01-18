@@ -1,12 +1,12 @@
 import { ref, reactive, unref, computed } from 'vue';
-import { useOnlineStoreWithOut } from '@/store/modules/online';
+import { useAppStoreWithOut } from '@/store/modules/app';
 
 // 获取表格请求参数
-export const useTableParam = ({ main }) => {
+export function useTableParam({ main, immediate = true }) {
   const queryParam = ref({});
   const isorter = reactive({ column: 'id', order: 'desc' });
-  const onlineStore = useOnlineStoreWithOut();
-  const getRowData = computed(() => onlineStore.getDetailData);
+  const appStore = useAppStoreWithOut();
+  const getRowData = computed(() => appStore.getRowData);
   
   const getQueryParam = computed(() => unref(queryParam));
 
@@ -31,8 +31,9 @@ export const useTableParam = ({ main }) => {
     return true;
   }
 
+  immediate && initDependQueryParam()
+
   return {
-    initDependQueryParam,
     getQueryParam,
   };
 };

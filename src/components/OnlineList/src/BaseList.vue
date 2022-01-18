@@ -15,7 +15,7 @@
     >
       <Cell
         class="custom-list-item"
-        @click="handleClick(item)"
+        @click="onRowClick(item)"
         v-for="(item, i) in listData"
         :key="i"
       >
@@ -55,8 +55,6 @@ import { useDebounceFn } from '@vueuse/core';
 import { handleItem } from './hooks/useTable';
 import { useRouter } from 'vue-router';
 import { deepMerge } from '@/utils';
-import { useOnlineStoreWithOut } from '@/store/modules/online';
-import { useDataSource } from './hooks/useDataSource';
 export default {
   components: { PullRefresh, List, Cell, Image, Loading },
   props: {
@@ -77,8 +75,12 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    params: {
+      type: Object,
+      default: () => ({}),
+    },
   },
-  emits: ['register'],
+  emits: ['register', 'row-click'],
   setup(props, { emit }) {
     const form = reactive({
       pageNo: 0,
@@ -92,7 +94,6 @@ export default {
     const listData = ref([]); // listData 数据列表
     const total = ref(0);
     const router = useRouter();
-    const onlineStore = useOnlineStoreWithOut();
 
     const getProps = computed(() => {
       return { ...props, ...unref(propsRef) };
@@ -112,10 +113,9 @@ export default {
       return {
         ...unref(form),
         ...unref(extraParams),
+        ...props.params,
       };
     });
-
-    const {} = useDataSource(getProps, { listData });
 
     // 加载触发方法
     const onLoad = useDebounceFn((params = {}) => {
@@ -164,15 +164,7 @@ export default {
     };
 
     // 点击列表触发
-    const handleClick = (item) => {
-      onlineStore.setRowData(item);
-      // id 固定传参
-      router.push(`/online/detail/${unref(getProps).code}/${item.id}`);
-      // getOnlineDetail(unref(getProps).code,item.id)
-      //   .then(res => {
-      //     console.log(res)
-      //   })
-    };
+    const onRowClick = (item) => emit('row-click', item);
 
     async function setProps(tableProps) {
       propsRef.value = deepMerge(unref(propsRef) || {}, tableProps);
@@ -197,7 +189,7 @@ export default {
       listData,
       refreshing,
       onRefresh,
-      handleClick,
+      onRowClick,
       handleItem,
       getColumns,
       getDictOptions,

@@ -25,8 +25,10 @@ export const APP_SESSION_CACHE_KEY = 'COMMON__SESSION__KEY__';
 export const ONLINE_CFG_KEY = 'ONLINE_CFG_KEY';
 //按钮权限 key
 export const BUTTON_AUTH_KEY = 'BUTTON_AUTH_KEY';
-// 在线表单 行数据 key
-export const ONLINE_ROW_KEY = 'ONLINE_ROW_KEY'; 
+// 行数据 key
+export const ROW_KEY = 'ROW_KEY'; 
+// 系统部门 key 
+export const SYS_DEPART = 'SYS_DEPART'; 
 
 export const CacheTypeEnum = {
   SESSION: 0,

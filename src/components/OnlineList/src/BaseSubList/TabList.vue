@@ -1,19 +1,28 @@
 <template>
-  <BaseList :code="code" :main="main" :columns="columns" :dictOptions="dictOptions" />
+  <!-- <BaseListHeader :queryColumns="queryColumns" :dictOptions="dictOptions" /> -->
+  <BaseList
+    :code="code"
+    :main="main"
+    :columns="columns"
+    :dictOptions="dictOptions"
+    :params="getQueryParam"
+    @row-click="onRowClick"
+  />
 </template>
 
 <script>
 import { ref, unref, computed, onMounted, toRefs, reactive } from 'vue';
-import { useOnlineStoreWithOut } from '@/store/modules/online';
 import { PullRefresh } from 'vant';
 import BaseList from '../BaseList.vue';
-import { useMessage } from '@/hooks/web/useMessage';
+import BaseListHeader from '../BaseListHeader.vue';
 import { useColumns } from '../hooks/useColumns';
-import { useTableParam } from "./hooks/useTableParam"
+import { useTableParam } from '../hooks/useTableParam';
+import { useRouter } from "vue-router"
 export default {
   components: {
     PullRefresh,
     BaseList,
+    BaseListHeader,
   },
   props: {
     main: {
@@ -22,18 +31,19 @@ export default {
     },
   },
   setup(props, { expose }) {
-    const onlineStore = useOnlineStoreWithOut();
     const refreshing = ref(false);
     const loading = ref(false);
+    const router = useRouter()
     const { code } = toRefs(props.main);
 
-    const {initDependQueryParam, getQueryParam } = useTableParam({main:props.main})
-
-    const { dictOptions, columns, rawColumns, getOnlineQueryColumns } = useColumns({
+    const { getQueryParam } = useTableParam({ main: props.main,immediate:true });
+    const { dictOptions, columns, rawColumns, queryColumns } = useColumns({
       code: unref(code),
       main: props.main,
       immediate: false,
+      queryImmediate: true,
     });
+
     // relationType
     // checkboxFlag 多选
     // cgButtonList // 当前按钮
@@ -42,9 +52,6 @@ export default {
     // columns 表单列配置
 
     // 获取查询配置
-    getOnlineQueryColumns().then((res) => {
-      console.log(res);
-    });
 
     const total = ref(0);
     const list = ref([]);
@@ -56,7 +63,9 @@ export default {
       loading.value = true;
     };
 
-    const loadData = () => {};
+    const onRowClick = (item) => {
+       router.push(`/online/detail/${unref(code)}/${item.id}`);
+    };
 
     onMounted(() => {
       // getListData(unref(code), {
@@ -74,6 +83,9 @@ export default {
       columns,
       dictOptions,
       code,
+      onRowClick,
+      getQueryParam,
+      queryColumns,
     };
   },
 };

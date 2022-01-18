@@ -1,17 +1,18 @@
 <template>
   <Field
     v-bind="getAttrs"
-    :class="{ isDisabled: state }"
+    :class="{ isDisabled: getText }"
     @error-item="handleItem"
-    v-model="state"
+    v-model="getText"
   />
 </template>
 
 <script>
-import { computed, unref, watch } from 'vue';
+import { computed, unref, watch, watchEffect } from 'vue';
 import { Field } from 'vant';
 import { get, omit } from 'lodash';
 import { useRuleFormItem } from '@/hooks/component/useFormItem';
+import { useAppStoreWithOut } from '@/store/modules/app';
 export default {
   name: 'InputWidget',
   inheritAttrs: false,
@@ -25,7 +26,7 @@ export default {
   setup(props, { attrs }) {
     const [state] = useRuleFormItem(props);
     const inputProps = computed(() => get(attrs, 'inputProps'));
-
+    const appStore = useAppStoreWithOut();
     const getAttrs = computed(() => {
       return {
         ...omit(attrs, 'inputProps'),
@@ -33,20 +34,18 @@ export default {
         label: null,
       };
     });
+    const getText = computed(() => {
+      return unref(inputProps).name == 'sys_org_code'
+        ? appStore.sysDepart.get(unref(state))
+        : unref(state);
+    });
 
     const handleItem = (e) => {
       console.log(e);
     };
 
-    watch(
-      () => state.value,
-      (val) => {
-        console.log(val);
-      },
-    );
-
     return {
-      state,
+      getText,
       getAttrs,
       handleItem,
     };

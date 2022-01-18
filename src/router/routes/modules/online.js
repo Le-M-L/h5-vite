@@ -53,7 +53,7 @@ const baseForm = {
       meta: {
         readonly: true,
         ignoreKeepAlive: true,
-        currentActiveMenu: '/online/form/:code',
+        // currentActiveMenu: '/online/form/:code',
       },
       component: () => import('@/components/OnLineForm/src/index.vue'),
     },

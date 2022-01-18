@@ -24,7 +24,6 @@ export default defineComponent({
     const openCache = ref(true);
 
     const getCaches = computed(() => {
-      console.log( appStore.getCachedList)
       return appStore.getCachedList;
     });
 

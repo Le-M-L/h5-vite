@@ -1,12 +1,11 @@
 import { defineStore } from 'pinia';
 import { store } from '@/store';
 import { Persistent } from '@/utils/cache/persistent';
-import { APP_DARK_MODE_KEY_, PROJ_CFG_KEY } from '@/enums/cacheEnum';
+import { ROW_KEY, PROJ_CFG_KEY, SYS_DEPART } from '@/enums/cacheEnum';
 import { deepMerge } from '@/utils';
 import { resetRouter } from '@/router';
 import { getRawRoute } from '@/utils';
-
-let timeId;
+import { getSysDepart } from '@/api/sys/api';
 export const useAppStore = defineStore({
   id: 'app',
   state: () => ({
@@ -16,6 +15,10 @@ export const useAppStore = defineStore({
     projectConfig: Persistent.getLocal(PROJ_CFG_KEY),
     // 缓存路由
     cacheList: new Set(),
+    // 行数据
+    rowData: Persistent.getLocal(ROW_KEY) || {},
+    // 系统部门
+    sysDepart: Persistent.getLocal(SYS_DEPART),
   }),
   getters: {
     // 获取 loading 状态
@@ -29,6 +32,14 @@ export const useAppStore = defineStore({
     // 获取缓存的列表
     getCachedList() {
       return Array.from(this.cacheList);
+    },
+    // 获取行数据
+    getRowData() {
+      return this.rowData;
+    },
+    // 获取当前页 title
+    getPageTitle() {
+      console.log(this)
     },
   },
   actions: {
@@ -50,7 +61,18 @@ export const useAppStore = defineStore({
       resetRouter();
       Persistent.clearAll();
     },
-
+    // 用于储存行数据
+    async setRowData(data) {
+      this.rowData = data;
+      Persistent.setLocal(ROW_KEY, this.rowData);
+    },
+    // 设置系统部门
+    async setSysDepart() {
+      let departMap = new Map();
+      await getSysDepart().then(res => res.forEach(item => departMap.set(item.orgCode, item.departName)))
+      this.sysDepart = departMap;
+      Persistent.setLocal(SYS_DEPART, this.sysDepart);
+    },
     // 设置缓存
     addCache(route) {
       const item = getRawRoute(route);

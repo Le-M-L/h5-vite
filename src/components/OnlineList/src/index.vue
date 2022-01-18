@@ -13,11 +13,11 @@
     :code="getCode"
     :rawColumns="rawColumns"
     :columns="columns"
-    :queryColumns="queryColumns"
     :dictOptions="dictOptions"
+    @row-click="onRowClick"
   />
 
-  <div class="baseAdd" @click="handleAdd"></div>
+  <div class="base-add" @click="handleAdd"></div>
 </template>
 
 <script>
@@ -26,10 +26,9 @@ import BaseList from './BaseList.vue';
 import BaseListHeader from './BaseListHeader.vue';
 import { useTable } from './hooks/useTable';
 import { useRoute, useRouter } from 'vue-router';
-import { useOnlineStoreWithOut } from '@/store/modules/online';
 import DNavbar from '@/components/DNavbar.vue';
 import { useColumns } from './hooks/useColumns';
-
+import { useAppStoreWithOut } from '@/store/modules/app';
 export default {
   name: 'CgformListPage',
   inheritAttrs: false,
@@ -48,10 +47,7 @@ export default {
     const route = useRoute();
     const router = useRouter();
     const { code } = route.params;
-    const { isErp } = route.meta;
-    // 在线开发 全局状态
-    const onlineStore = useOnlineStoreWithOut();
-    const queryColumns = ref([]); // 查询 配置
+    const appStore = useAppStoreWithOut();
     // 注册table
     const [register, { onReset }] = useTable();
 
@@ -66,17 +62,11 @@ export default {
       router.push(`/online/form/${unref(getCode)}`);
     };
 
-    const { dictOptions, columns, rawColumns, getOnlineQueryColumns } = useColumns({
+    const { dictOptions, columns, rawColumns, queryColumns } = useColumns({
       code: getCode.value,
+      queryImmediate: true,
+      cacheMain:true
     });
-
-    // 获取列表配置
-
-    // 获取查询配置
-    getOnlineQueryColumns().then((res) => {
-      queryColumns.value = res;
-    });
-
     // 查询
     const handleSearch = (val) => {
       onReset({
@@ -84,9 +74,10 @@ export default {
       });
     };
 
-    onMounted(() => {
-      onlineStore.setOnlineCfg({ code: unref(getCode) });
-    });
+    const onRowClick = (item) => {
+      appStore.setRowData(item);
+      router.push(`/online/detail/${code}/${item.id}`);
+    };
 
     return {
       register,
@@ -98,6 +89,7 @@ export default {
       handleAdd,
       getCode,
       handleSearch,
+      onRowClick,
     };
   },
 };
@@ -108,14 +100,5 @@ export default {
   font-weight: 500;
   color: #333;
   font-size: 18px;
-}
-.baseAdd {
-  position: fixed;
-  right: 0;
-  bottom: 90px;
-  width: 64px;
-  height: 64px;
-  background: url('../../../assets/images/list_icon_add.png') no-repeat center center;
-  background-size: 100% 100%;
 }
 </style> 

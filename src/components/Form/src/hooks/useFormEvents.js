@@ -1,4 +1,4 @@
-import { unref, toRaw, nextTick } from 'vue';
+import { ref, unref, toRaw, nextTick } from 'vue';
 import { isArray, isFunction, isObject, isString } from '@/utils/is';
 import { dateItemType, handleInputNumberValue } from '../helper';
 import { dateUtil } from '@/utils/dateUtil';
@@ -16,7 +16,9 @@ export function useFormEvents({
   schemaRef,
   handleFormValues,
 }) {
-  /**
+  const resolve = ref();
+
+  /** resetFields()
    * @description: 重置表单
    */
   async function resetFields() {
@@ -35,7 +37,8 @@ export function useFormEvents({
   }
 
   /**
-   * @description: set form value
+   * setFieldsValue({xx:xx})
+   * @description: 设置表单 value 值 
    */
 
   async function setFieldsValue(values) {
@@ -79,7 +82,8 @@ export function useFormEvents({
     validate(validKeys).catch((_) => {});
   }
 
-  /**
+  /** 
+   * removeSchemaByFiled('id_card11')
    * @description: 根据字段名进行删除
    */
   async function removeSchemaByFiled(fields) {
@@ -112,7 +116,15 @@ export function useFormEvents({
   }
 
   /**
-   * @description 插入某个字段之后，如果不是插入最后一个字段
+   * 
+   * appendSchemaByField({
+        field: 'id_card11',
+        component: 'Input',
+        label: '666',
+        show: true,
+        itemProps: {},
+      });
+   * @description 插入某个字段之后，如果不是则插入最后一个字段
    */
   async function appendSchemaByField(schema, prefixField, first = false) {
     const schemaList = cloneDeep(unref(getSchema));
@@ -150,7 +162,12 @@ export function useFormEvents({
   }
 
   /**
-   * @description 更新Schema
+   * 
+   * updateSchema({
+        field: 'id_card',
+        label: '666',
+      });
+   * @description 更新Schema 更新数据
    */
   async function updateSchema(data) {
     let updateData = [];
@@ -181,6 +198,7 @@ export function useFormEvents({
     schemaRef.value = uniqBy(schema, 'field');
   }
   /**
+   * 获取数据 getFieldsValue()
    * @description 获取字段内容 value
    */
   function getFieldsValue() {
@@ -213,9 +231,14 @@ export function useFormEvents({
   async function validate(nameList) {
     return unref(formElRef)?.validate(nameList);
   }
-
-  async function submit() {
-    return unref(formElRef)?.submit();
+  /** 
+   * 表单提交 
+   */
+  function submit() {
+    return new Promise(async (r, j) => {
+      await unref(formElRef)?.submit();
+      resolve.value = r;
+    });
   }
 
   /**
@@ -229,7 +252,7 @@ export function useFormEvents({
       if (isString(name)) {
         const schemaItem = schemaList.find((schema) => schema.field === name);
         schemaItem.isError = false;
-      }else{
+      } else {
         schemaList.forEach((item) => (item.isError = false));
       }
       schemaRef.value = schemaList;
@@ -247,6 +270,7 @@ export function useFormEvents({
 
   /**
    * @description: 表单提交
+   * @returns : formModel 
    */
   async function handleSubmit(e) {
     e && e.preventDefault();
@@ -258,7 +282,7 @@ export function useFormEvents({
     const formEl = unref(formElRef);
     if (!formEl) return;
     try {
-      await submit();
+      return await submit();
     } catch (error) {
       throw new Error(error);
     }
@@ -276,5 +300,6 @@ export function useFormEvents({
     resetFields,
     setFieldsValue,
     scrollToField,
+    resolve,
   };
 }

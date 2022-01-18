@@ -123,7 +123,8 @@ export default {
       updateSchema,
       appendSchemaByField,
       removeSchemaByFiled,
-      clearValidate
+      clearValidate,
+      resolve,
     } = useFormEvents({
       emit,
       getProps,
@@ -143,6 +144,7 @@ export default {
         validateFields([key]).catch((_) => {});
       }
     }
+
     // form 的操作
     const formActionType = {
       getFieldsValue,
@@ -154,7 +156,7 @@ export default {
       updateSchema,
       appendSchemaByField,
       removeSchemaByFiled,
-      clearValidate
+      clearValidate,
     };
 
     onMounted(() => {
@@ -187,6 +189,7 @@ export default {
     // 表单提交的回调
     function onSubmit(val) {
       const res = handleFormValues(unref(formModel));
+      resolve.value(res);
       emit('submit', res);
     }
 
