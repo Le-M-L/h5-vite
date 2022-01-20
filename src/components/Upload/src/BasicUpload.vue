@@ -108,6 +108,9 @@ export default {
 
     // 删除的回调
     const beforeDelete = (file) => {
+      if(getBindValue.value.disabled){
+        return false
+      }
       nextTick(() => {
         emit('change', getFileData());
       });

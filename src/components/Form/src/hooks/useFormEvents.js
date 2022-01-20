@@ -36,6 +36,24 @@ export function useFormEvents({
     submitOnReset && handleSubmit();
   }
 
+  // 可修改
+  async function revisability(){
+    const schemaList = cloneDeep(unref(getSchema));
+    schemaList.forEach(item => {
+      item.itemProps.readonly = item.componentProps.disabled;
+    })
+    updateSchema(schemaList)
+  }
+
+  // 设置只读
+  async function setReadonly(){
+    const schemaList = cloneDeep(unref(getSchema));
+    schemaList.forEach(item => {
+      item.itemProps.readonly = true;
+    })
+    updateSchema(schemaList)
+  }
+
   /**
    * setFieldsValue({xx:xx})
    * @description: 设置表单 value 值 
@@ -300,6 +318,8 @@ export function useFormEvents({
     resetFields,
     setFieldsValue,
     scrollToField,
+    revisability,
+    setReadonly,
     resolve,
   };
 }

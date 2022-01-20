@@ -1,11 +1,12 @@
 <template>
   <div>
     <Field
+      v-bind="getAttrs"
       readonly
       placeholder="请选择所在地区"
       v-model="fieldValue"
-      @click="show = true"
-      v-bind="getAttrs"
+     :class="{ isDisabled: fieldValue }"
+      @click="!getAttrs.readonly ? show = true:null"
     />
     <Popup v-model:show="show" round position="bottom">
       <Area title="请选择所在地区" :value="state" :area-list="options"  @confirm="confirm" />

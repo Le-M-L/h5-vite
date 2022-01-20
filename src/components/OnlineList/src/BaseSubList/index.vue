@@ -1,5 +1,5 @@
 <template>
-  <DNavbar :title="title" @search="handleSearch" />
+  <DNavbar :title="title" @click="handleSearch" btnFlag="list" />
   <template v-if="subList.length > 1">
     <Tabs v-model:active="active" :ellipsis="false" animated @click-tab="onClickTab">
       <Tab v-for="item in subList" :key="item.id" :title="getTitle(item.description)">

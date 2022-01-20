@@ -1,29 +1,33 @@
 <template>
-  <CheckboxGroup v-model="state" @change="handleChange" v-bind="getAttrs">
-    <template v-for="item in getOptions" :key="`${item.value}`">
-      <Checkbox :name="item.value" :disabled="item.disabled">
-        {{ item.label }}
-        <!-- 自定义图标 -->
-        <!-- <template #icon="props">
+  <Field v-bind="getAttrs" readonly>
+    <template #input>
+      <CheckboxGroup v-bind="getBindValue" v-model="check" @change="handleChange">
+        <template v-for="item in getOptions" :key="`${item.value}`">
+          <Checkbox :name="item.value" :disabled="item.disabled">
+            {{ item.label }}
+            <!-- 自定义图标 -->
+            <!-- <template #icon="props">
          
         </template> -->
-      </Checkbox>
+          </Checkbox>
+        </template>
+      </CheckboxGroup>
     </template>
-  </CheckboxGroup>
+  </Field>
 </template>
 
 <script>
 import { computed, ref, watchEffect, watch, unref } from 'vue';
-import { Checkbox, CheckboxGroup } from 'vant';
-import { isFunction } from '@/utils/is';
+import { Checkbox, CheckboxGroup, Field } from 'vant';
+import { isFunction, isString } from '@/utils/is';
 import { get, omit } from 'lodash-es';
 import { useRuleFormItem } from '@/hooks/component/useFormItem';
-
 export default {
   name: 'ApiCheckboxGroup',
   components: {
     CheckboxGroup,
     Checkbox,
+    Field,
   },
   props: {
     api: {
@@ -35,7 +39,7 @@ export default {
       default: () => ({}),
     },
     modelValue: {
-      type: Array,
+      type: [Array, String],
       default: () => [],
     },
     numberToString: {
@@ -57,25 +61,37 @@ export default {
       type: Boolean,
       default: true,
     },
+    options: {
+      type: Object,
+      default: () => [],
+    },
   },
   emits: ['options-change', 'change'],
   setup(props, { emit, attrs }) {
     const options = ref([]);
-    const emitData = ref([]);
     const loading = ref(false);
     const isFirstLoad = ref(true);
     const [state] = useRuleFormItem(props);
+    const check = ref([]);
+    // 获取 field 的属性
     const getAttrs = computed(() => {
       return {
-        ...omit(attrs,'inputProps'),
         ...get(attrs, 'inputProps'),
         label: null,
       };
     });
 
+    const getBindValue = computed(() => {
+      return {
+        direction: 'horizontal',
+        ...omit(attrs, 'inputProps'),
+        disabled:getAttrs.value.readonly,
+        // readonly:getAttrs.value.readonly
+      };
+    });
+
     const getOptions = computed(() => {
       const { labelField, valueField, numberToString } = props;
-
       return unref(options).reduce((prev, next) => {
         if (next) {
           const value = next[valueField];
@@ -93,15 +109,15 @@ export default {
       props.immediate && fetch();
     });
 
-    watch(
-      () => props.params,
-      () => {
-        !unref(isFirstLoad) && fetch();
-      },
-      { deep: true },
-    );
+    watchEffect(() => {
+      check.value = unref(state) && isString(unref(state)) ? unref(state).split(',') : [];
+    });
 
     async function fetch() {
+      if (props.options && props.options.length) {
+        options.value = props.options;
+        return;
+      }
       const api = props.api;
       if (!api || !isFunction(api)) return;
       options.value = [];
@@ -128,11 +144,10 @@ export default {
       emit('options-change', unref(getOptions));
     }
 
-    function handleChange(_, ...args) {
-      console.log(_, args);
-      emitData.value = args;
+    function handleChange(arr) {
+      emit('change', arr.join());
     }
-    return { state, getOptions, getAttrs, loading, handleChange };
+    return { check, getOptions, getAttrs, getBindValue, loading, handleChange };
   },
 };
 </script>

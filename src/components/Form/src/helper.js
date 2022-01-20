@@ -1,6 +1,5 @@
 import { dateUtil } from '@/utils/dateUtil';
-import { isNumber, isObject } from '@/utils/is';
-import { queryDepartTreeList } from '@/api/sys/api';
+import { isNumber, isObject, isString, isArray } from '@/utils/is';
 /**
  * @description: 生成placeholder
  */
@@ -149,6 +148,12 @@ export function formatMode(schemasItem, items) {
       schemasItem.componentProps.labelField = 'text';
       schemasItem.componentProps.valueField = 'value';
       break;
+    case 'checkbox':
+      schemasItem.component = 'ApiCheckboxGroup';
+      schemasItem.componentProps.options = items.enum;
+      schemasItem.componentProps.labelField = 'text';
+      schemasItem.componentProps.valueField = 'value';
+    break;
     case 'rate':
       schemasItem.component = 'Rate';
       break;

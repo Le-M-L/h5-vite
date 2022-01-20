@@ -1,7 +1,12 @@
 <template>
-  <Field v-bind="getAttrs" readonly @click="show = true">
+  <Field v-bind="getAttrs" readonly>
     <template #input>
-      <RadioGroup v-bind="getBindValue"  v-model="state" @change="handleChange" direction="horizontal" >
+      <RadioGroup
+        v-bind="getBindValue"
+        v-model="state"
+        @change="handleChange"
+        direction="horizontal"
+      >
         <template v-for="item in getOptions" :key="`${item.value}`">
           <Radio :name="item.value" :disabled="item.disabled">
             {{ item.label }}
@@ -63,7 +68,7 @@ export default {
     },
     options: {
       type: Object,
-      default: () => ({}),
+      default: () => [],
     },
   },
   emits: ['options-change', 'change'],
@@ -78,12 +83,15 @@ export default {
     const getAttrs = computed(() => {
       return {
         ...get(attrs, 'inputProps'),
-        label:null
+        label: null,
       };
     });
 
     const getBindValue = computed(() => {
-      return omit(attrs, 'inputProps');
+      return {
+        ...omit(attrs, 'inputProps'),
+        disabled: getAttrs.value.readonly,
+      };
     });
 
     const getOptions = computed(() => {
@@ -106,13 +114,13 @@ export default {
       props.immediate && fetch();
     });
 
-    watch(
-      () => props.params,
-      () => {
-        !unref(isFirstLoad) && fetch();
-      },
-      { deep: true },
-    );
+    // watch(
+    //   () => props.params,
+    //   () => {
+    //     !unref(isFirstLoad) && fetch();
+    //   },
+    //   { deep: true },
+    // );
 
     async function fetch() {
       if (props.options && props.options.length) {

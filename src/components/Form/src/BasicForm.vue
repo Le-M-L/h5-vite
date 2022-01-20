@@ -124,6 +124,8 @@ export default {
       appendSchemaByField,
       removeSchemaByFiled,
       clearValidate,
+      revisability,
+      setReadonly,
       resolve,
     } = useFormEvents({
       emit,
@@ -157,6 +159,8 @@ export default {
       appendSchemaByField,
       removeSchemaByFiled,
       clearValidate,
+      revisability,
+      setReadonly
     };
 
     onMounted(() => {
@@ -231,7 +235,7 @@ export default {
     }
     .van-field__control {
       color: #333333;
-      -webkit-text-fill-color: #999;
+      // -webkit-text-fill-color: #999;
     }
     .isDisabled {
       .van-field__control {

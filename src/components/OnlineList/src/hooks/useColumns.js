@@ -42,7 +42,7 @@ export function useColumns({
   async function getOnlineQueryColumns(params) {
     queryColumn.value = await getQueryColumns(code, params);
   }
-console.log(getSubListRef)
+
   // 获取列表配置
   async function getColumns() {
     if (isErp) {

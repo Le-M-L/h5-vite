@@ -3,7 +3,7 @@ import { checkStatus } from './checkStatus';
 import { useMessage } from '@/hooks/web/useMessage';
 import { useErrorLogStoreWithOut } from '@/store/modules/errorLog';
 import { useUserStoreWithOut } from '@/store/modules/user';
-import { joinTimestamp, formatRequestDate } from './helper';
+import { joinTimestamp, formatRequestDate, objectConvertToQuery } from './helper';
 import { setObjToUrlParams, deepMerge } from '@/utils';
 import { isString } from '@/utils/is';
 import { getToken } from '@/utils/auth';
@@ -228,6 +228,7 @@ function createAxios(opt) {
 }
 
 export const defHttp = createAxios();
+export const objectToQuery = objectConvertToQuery;;
 
 // other api url
 // export const otherHttp = createAxios({

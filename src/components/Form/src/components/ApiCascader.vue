@@ -1,11 +1,13 @@
 <template>
   <div>
     <Field
+     v-bind="getAttrs"
       is-link
       readonly
       placeholder="请选择所在地区"
       v-model="fieldValue"
-      @click="show = true"
+      :class="{ isDisabled: fieldValue }"
+      @click="!getAttrs.readonly ? show = true:null"
     />
     <Popup v-model:show="show" round position="bottom">
       <Cascader
@@ -22,6 +24,7 @@
 </template>
 
 <script>
+// 户籍地
 import { computed, ref, watchEffect, watch, unref } from 'vue';
 import { Cascader, Popup, Field } from 'vant';
 import { isFunction } from '@/utils/is';
@@ -154,23 +157,33 @@ export default {
       emit('change', values.join());
     }
 
+        // 获取 field 的属性
+    const getAttrs = computed(() => {
+      return {
+        ...get(attrs, 'inputProps'),
+        label: null,
+      };
+    });
+    console.log(getAttrs.value)
+
     // 点击关闭按钮时触发
     function handleClose() {}
 
     return {
       state,
       show,
-      attrs,
       fieldValue,
       loading,
       options,
       handleFinish,
       handleClose,
       handleChange,
+      getAttrs
     };
   },
 };
 </script>
 
 <style>
+
 </style>

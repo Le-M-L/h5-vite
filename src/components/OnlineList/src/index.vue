@@ -1,5 +1,5 @@
 <template>
-  <DNavbar @search="handleSearch" />
+  <DNavbar @click="handleClick" btnFlag="list" />
 
   <BaseListHeader
     v-if="queryColumns.length"
@@ -15,6 +15,7 @@
     :columns="columns"
     :dictOptions="dictOptions"
     @row-click="onRowClick"
+    :navHeader="!!queryColumns.length"
   />
 
   <div class="base-add" @click="handleAdd"></div>
@@ -48,35 +49,31 @@ export default {
     const router = useRouter();
     const { code } = route.params;
     const appStore = useAppStoreWithOut();
-    // 注册table
-    const [register, { onReset }] = useTable();
 
     const getCode = computed(() => props.code || code);
 
-    const handleChange = (values) => {
-      onReset(values);
-    };
-
-    // 添加
-    const handleAdd = () => {
-      router.push(`/online/form/${unref(getCode)}`);
-    };
+    // 注册table
+    const [register, { onReset }] = useTable();
 
     const { dictOptions, columns, rawColumns, queryColumns } = useColumns({
       code: getCode.value,
       queryImmediate: true,
-      cacheMain:true
+      cacheMain: true,
     });
+
+    const handleChange = (values) => onReset(values);
+
+    // 添加
+    const handleAdd = () => router.push(`/online/form/${unref(getCode)}`);
+
     // 查询
-    const handleSearch = (val) => {
-      onReset({
-        title: val,
-      });
+    const handleClick = () => {
+      router.push(`/online/search/${unref(getCode)}`)
     };
 
     const onRowClick = (item) => {
       appStore.setRowData(item);
-      router.push(`/online/detail/${code}/${item.id}`);
+      router.push(`/online/detail/${code}/${item.id}/true`);
     };
 
     return {
@@ -88,7 +85,7 @@ export default {
       queryColumns,
       handleAdd,
       getCode,
-      handleSearch,
+      handleClick,
       onRowClick,
     };
   },

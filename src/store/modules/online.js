@@ -40,7 +40,6 @@ export const useOnlineStore = defineStore({
     // 获取在线表单 主列表 title
     getOnlineMainTitle(){
       let title =  this.getOnlineMain.description?.split('-') || [];
-      console.log(this.getOnlineMain)
       return title[title.length -1];
     }
   },

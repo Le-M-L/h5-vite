@@ -1,4 +1,4 @@
-import { defHttp } from '@/utils/http/axios';
+import { defHttp, objectToQuery } from '@/utils/http/axios';
 
 // 权限管理
 // 获取用户权限 和 菜单
@@ -51,6 +51,12 @@ export const getOnlineFormItem = (code, params) => {
 // 在线表单 详情 接口
 export const getOnlineDetail = (code, id, params) => {
   return defHttp.get({ url: `/online/cgform/api/form/${code}/${id}`, params });
+};
+
+// tableType == 1 为单 否者为多
+// 在线表单开发 保存 接口  返回值为当前保存的ID
+export const saveOnlineData = (code, tabletype, params) => {
+  return defHttp.post({ url: `/online/cgform/api/form/${code}?tabletype=${tabletype}`, params });
 };
 
 // 弹窗列表 列表配置获取

@@ -1,7 +1,7 @@
 <template>
- <div class="van-cell van-field" >
+  <div class="van-cell van-field">
     <BasicUpload @change="handleChange" :initData="initData" v-bind="getBindValue" />
- </div>
+  </div>
 </template>
 
 <script>
@@ -28,21 +28,19 @@ export default {
     const getAttrs = computed(() => {
       return {
         ...get(attrs, 'inputProps'),
-        label:null
+        label: null,
       };
     });
 
-    const initData = computed(() => props.modelValue)
-    
+    const initData = computed(() => props.modelValue);
 
     const getBindValue = computed(() => {
       return {
         ...omit(attrs, ['inputProps', 'modelValue']),
+        disabled: getAttrs.value.readonly,
       };
     });
-    console.log(getBindValue)
     const handleChange = (val) => {
-      console.log(val)
       emit('change', val.join());
     };
     return { state, initData, getAttrs, getBindValue, handleChange };

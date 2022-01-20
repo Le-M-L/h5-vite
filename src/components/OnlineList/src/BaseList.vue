@@ -1,9 +1,5 @@
 <template>
-  <PullRefresh
-    style="overflow-y: scroll; height: calc(100% - 102px)"
-    v-model="refreshing"
-    @refresh="onRefresh"
-  >
+  <PullRefresh v-model="refreshing" @refresh="onRefresh" :style="getRefreshStyle">
     <List
       v-model="loading"
       :finished="finished"
@@ -50,18 +46,20 @@
 <script>
 import { ref, unref, onMounted, reactive, computed } from 'vue';
 import { PullRefresh, List, Cell, Image, Loading } from 'vant';
-import { getListData, getOnlineDetail } from '@/api/sys/api';
+import { getListData } from '@/api/sys/api';
 import { useDebounceFn } from '@vueuse/core';
 import { handleItem } from './hooks/useTable';
-import { useRouter } from 'vue-router';
 import { deepMerge } from '@/utils';
 export default {
+  inheritAttrs:false,
   components: { PullRefresh, List, Cell, Image, Loading },
   props: {
+    // code
     code: {
       type: String,
       default: '',
     },
+    // 行总配置
     rawColumns: {
       type: Array,
       default: () => [],
@@ -71,14 +69,21 @@ export default {
       type: Array,
       default: () => [],
     },
+    // 字典回显数据
     dictOptions: {
       type: Object,
       default: () => ({}),
     },
+    // 请求额外参数
     params: {
       type: Object,
       default: () => ({}),
     },
+    // nav 是否显示
+    navHeader:{
+      type:Boolean,
+      default:false
+    }
   },
   emits: ['register', 'row-click'],
   setup(props, { emit }) {
@@ -93,7 +98,6 @@ export default {
     const refreshing = ref(false); // 下拉刷新
     const listData = ref([]); // listData 数据列表
     const total = ref(0);
-    const router = useRouter();
 
     const getProps = computed(() => {
       return { ...props, ...unref(propsRef) };
@@ -114,6 +118,13 @@ export default {
         ...unref(form),
         ...unref(extraParams),
         ...props.params,
+      };
+    });
+
+    const getRefreshStyle = computed(() => {
+      return {
+        'overflow-y': 'scroll',
+        height: `calc(100vh - ${props.navHeader ? '102px' :'46px'})`,
       };
     });
 
@@ -193,6 +204,7 @@ export default {
       handleItem,
       getColumns,
       getDictOptions,
+      getRefreshStyle,
     };
   },
 };

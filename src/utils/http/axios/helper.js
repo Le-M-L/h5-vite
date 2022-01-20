@@ -58,3 +58,19 @@ export function formatRequestDate(params) {
     }
   }
 }
+// 将请求对象转换为 query格式
+export function objectConvertToQuery(payload){
+  let queryStr = '?', i = Object.keys(payload).length
+  if (!payload) {
+      queryStr = ''
+  }
+  Object.keys(payload).forEach((key, index) => {
+      if ( i === (index + 1)) {
+          queryStr += (key + '=' + payload[key])
+      } else {
+          queryStr += (key + '=' + payload[key] + '&')
+      }
+  })
+  return queryStr
+}
+

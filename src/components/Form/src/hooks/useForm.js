@@ -48,7 +48,16 @@ export function useForm(props) {
         await form.resetFields();
       });
     },
-
+    // 可修改
+    revisability: async () => {
+      const form = await getForm();
+      form.revisability();
+    },
+    // 设置只读
+    setReadonly: async () => {
+      const form = await getForm();
+      form.setReadonly();
+    },
     submit: async () => {
       const form = await getForm();
       return form.submit();

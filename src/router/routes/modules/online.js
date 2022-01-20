@@ -13,7 +13,7 @@ const baseForm = {
       name: 'CgformListPage',
       meta: {
         isErp: false,
-        ignoreKeepAlive: true,
+        // ignoreKeepAlive: true,
       },
       component: () => import('@/components/OnlineList/src/index.vue'),
     },
@@ -22,7 +22,7 @@ const baseForm = {
       path: 'cgformErpSubList/:code',
       name: 'CgformErpSubList',
       meta: {
-        ignoreKeepAlive: true,
+        // ignoreKeepAlive: true,
       },
       component: () => import('@/components/OnlineList/src/BaseSubList/index.vue'),
     },
@@ -32,7 +32,7 @@ const baseForm = {
       name: 'OnLineForm',
       component: () => import('@/components/OnLineForm/src/index.vue'),
       meta: {
-        ignoreKeepAlive: true,
+        // ignoreKeepAlive: true,
       },
     },
     {
@@ -41,21 +41,32 @@ const baseForm = {
       name: 'CgformErpListPage',
       meta: {
         isErp: true,
-        ignoreKeepAlive: true,
-        currentActiveMenu: '/online/cgformList/:code',
+        // ignoreKeepAlive: true,
+        // currentActiveMenu: '/online/cgformList/:code',
       },
       component: () => import('@/components/OnlineList/src/index.vue'),
     },
     {
       // 在线表单开发 详情
-      path: 'detail/:code/:id',
+      path: 'detail/:code/:id/:flag',
       name: 'OnLineFormDetail',
       meta: {
         readonly: true,
-        ignoreKeepAlive: true,
+        // ignoreKeepAlive: true,
         // currentActiveMenu: '/online/form/:code',
       },
       component: () => import('@/components/OnLineForm/src/index.vue'),
+    },
+    {
+      // 在线表单开发 查询
+      path: 'search/:code',
+      name: 'OnLineFormSearch',
+      meta: {
+        readonly: true,
+        // ignoreKeepAlive: true,
+        // currentActiveMenu: '/online/form/:code',
+      },
+      component: () => import('@/components/OnlineList/src/BaseSearch.vue'),
     },
   ],
 };

@@ -3,25 +3,33 @@
     left-text="返回"
     left-arrow
     @click-left="onClickLeft"
-    @click-right="onClickRight"
     fixed
     placeholder
     safe-area-inset-top
   >
     <template #title>
-      <span v-if="!search" class="nav-bar-title">{{ navTitle }}</span>
-      <Search
-        v-else
+      <!-- <Search
         style="width: 65vw; padding-left: 12px"
-        v-model:modelValue="value"
+        v-model:modelValue="searchValue"
         left-icon=""
         clearable
         placeholder="请输入搜索关键词"
-      />
+      /> -->
+      <slot name="title">
+        <span class="nav-bar-title">{{ navTitle }}</span>
+      </slot>
     </template>
     <template #right>
-      <Icon v-if="!search" name="search" color="#666666" size="20" />
-      <span v-else style="color: #2f54eb" @click="handleSearch">搜索</span>
+      <slot name="right">
+        <Icon
+          v-if="btnFlag == 'list'"
+          name="search"
+          color="#666666"
+          size="20"
+          @click="handleClick"
+        />
+        <span v-else style="color: #2f54eb" @click="handleClick">{{ btnText }}</span>
+      </slot>
     </template>
   </NavBar>
 </template>
@@ -32,6 +40,7 @@ import { NavBar, Icon, Search } from 'vant';
 import { useRoute, useRouter } from 'vue-router';
 import { useOnlineStoreWithOut } from '@/store/modules/online';
 export default {
+  name: 'DNavbar',
   components: {
     NavBar,
     Icon,
@@ -42,31 +51,30 @@ export default {
       type: String,
       default: '',
     },
-    search: {
-      type: Boolean,
-      default: false,
+    btnFlag: {
+      type: String,
+      default: 'search',
+    },
+    btnText: {
+      type: String,
+      default: '搜索',
     },
   },
-  emits: ['click-left', 'click-right', 'search'],
+  emits: ['click-left', 'click-right', 'click'],
   setup(props, { emit }) {
-    const route = useRoute();
     const router = useRouter();
-    const value = ref('');
+    const searchValue = ref('');
     const onlineStore = useOnlineStoreWithOut();
-    const navTitle = computed(() => props.title ||  onlineStore.getOnlineMainTitle);
+    const navTitle = computed(() => props.title || onlineStore.getOnlineMainTitle);
     // 点击左边返回触发
     const onClickLeft = () => router.back();
-    const onClickRight = () => emit('click-right');
-    const handleSearch = () => {
-      emit('search', value.value);
-    };
+    const handleClick = () => emit('click', { value: searchValue.value, flag: props.btnFlag });
 
     return {
       onClickLeft,
-      onClickRight,
-      handleSearch,
+      handleClick,
       navTitle,
-      value,
+      searchValue,
     };
   },
 };

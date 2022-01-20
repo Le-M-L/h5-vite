@@ -2,12 +2,13 @@
 <script>
 import { toRefs } from 'vue';
 import { createAppProviderContext } from './useAppContext';
+import { prefixCls } from '@/settings/designSetting';
 
 const props = {
   /**
    * class style prefix
    */
-  prefixCls: { type: String, default: 'DD' },
+  prefixCls: { type: String, default: prefixCls },
 };
 export default {
   name: 'AppProvider',
