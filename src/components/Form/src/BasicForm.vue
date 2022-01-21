@@ -192,6 +192,7 @@ export default {
 
     // 表单提交的回调
     function onSubmit(val) {
+      console.log(formModel)
       const res = handleFormValues(unref(formModel));
       resolve.value(res);
       emit('submit', res);

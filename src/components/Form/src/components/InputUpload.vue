@@ -1,6 +1,7 @@
 <template>
+  <Field v-bind="getAttrs" style="display: none" v-model="state"  readonly  />
   <div class="van-cell van-field">
-    <BasicUpload @change="handleChange" :initData="initData" v-bind="getBindValue" />
+    <BasicUpload style="margin-top:8px;" @change="handleChange" :initData="initData" v-bind="getBindValue" />
   </div>
 </template>
 
@@ -31,7 +32,6 @@ export default {
         label: null,
       };
     });
-
     const initData = computed(() => props.modelValue);
 
     const getBindValue = computed(() => {

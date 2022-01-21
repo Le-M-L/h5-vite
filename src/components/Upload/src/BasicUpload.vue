@@ -49,6 +49,7 @@ export default {
       };
       return omit(value, ['initData', 'maxSize', 'api']);
     });
+    console.log(getBindValue.value)
 
     watch(
       () => props.initData,
@@ -103,7 +104,7 @@ export default {
     function getFileData() {
       return unref(fileListRef)
         .filter(({ status }) => status === UploadResultStatus.SUCCESS)
-        .map(({ responseData }) => responseData.message);
+        .map(({ responseData }) => responseData.fileAccessPath);
     }
 
     // 删除的回调
@@ -143,7 +144,7 @@ export default {
           createMessage.fail(`${data.message}`)
         }
         item.status = data.code == 500 ? UploadResultStatus.ERROR : UploadResultStatus.SUCCESS;
-        item.responseData = data;
+        item.responseData = data.result;
         return {
           success: true,
           error: null,

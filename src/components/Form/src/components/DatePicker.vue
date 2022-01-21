@@ -5,10 +5,15 @@
     disabled
     :class="{ isDisabled: state }"
     @clear="handleClear"
-    @click="!getAttrs.readonly ? show = true:null"
+    @click="!getAttrs.readonly ? (show = true) : null"
   />
   <Popup v-model:show="show" round position="bottom">
-    <DatetimePicker v-bind="getBindValue" @confirm="handleConfirm" @cancel="handleCancel" />
+    <DatetimePicker
+      v-bind="getBindValue"
+      v-model="valueRef"
+      @confirm="handleConfirm"
+      @cancel="handleCancel"
+    />
   </Popup>
 </template>
 
@@ -73,33 +78,43 @@ export default {
       let bindValue = {
         type: 'date',
         ...omit(attrs, 'inputProps'),
-        ...props,
-        modelValue: unref(state) ? new Date(unref(state)) : new Date(),
+        ...omit(props, 'modelValue'),
       };
       return bindValue;
     });
 
+    const valueRef = computed(() => {
+      if (getBindValue.value.type == 'time') {
+        let myDate = new Date();
+        return unref(state) ? unref(state) : `${myDate.getHours()}:${myDate.getMinutes()}`
+      }
+      return unref(state) ? new Date(unref(state)) : new Date();
+    });
+
     const handleConfirm = (date) => {
       show.value = false;
-      emit('change', dateUtil(date).format(props.format));
+      if (getBindValue.value.type == 'time') {
+        emit('change',date);
+      } else {
+        emit('change', dateUtil(date).format(props.format));
+      }
     };
 
     const handleCancel = () => {
       show.value = false;
     };
 
-    const handleClear = () => {
-
-    }
+    const handleClear = () => {};
 
     return {
       show,
       state,
+      valueRef,
       getBindValue,
       handleConfirm,
       handleCancel,
       getAttrs,
-      handleClear
+      handleClear,
     };
   },
 };

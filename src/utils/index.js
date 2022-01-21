@@ -113,13 +113,13 @@ export function initFileListArr(val) {
     let url = isObject(val[a]) ? getFileAccessHttpUrl(val[a].url) : getFileAccessHttpUrl(val[a]);
     fileList.push({
       uid: buildUUID(),
-      name: isObject(val[a]) ? val[a].message: val[a],
+      name: isObject(val[a]) ? val[a].fileAccessPath: val[a],
       status: UploadResultStatus.SUCCESS,
       url: url,
-      message:isObject(val[a]) ? val[a].message: val[a],
+      fileAccessPath:isObject(val[a]) ? val[a].fileAccessPath: val[a],
       responseData: {
         status: true,
-        message: isObject(val[a]) ? val[a].message: val[a],
+        fileAccessPath: isObject(val[a]) ? val[a].fileAccessPath: val[a],
       },
     });
   }

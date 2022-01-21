@@ -22,6 +22,7 @@ export default {
     const [state] = useRuleFormItem(props);
     const getAttrs = computed(() => {
       return {
+        autosize:true,
         ...attrs,
         ...get(attrs,'inputProps'),
         inputProps:null,

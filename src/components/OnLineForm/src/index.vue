@@ -61,9 +61,10 @@ export default {
     const handleSubmit = async () => {
       if (!id) {
         let data = await submit();
-        save(data).then((res) => {
-          createMessage.success('保存成功');
-        });
+        console.log(data)
+        // save(data).then((res) => {
+        //   createMessage.success('保存成功');
+        // });
       } else if (onlineStore.getOnlineSubList?.length) {
         // 在线表单子集
         router.push(`/online/cgformErpSubList/${id}`);

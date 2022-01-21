@@ -83,3 +83,18 @@ export const getPopupAllColumns = (code, params) => {
 export const getSysDepart = (params) => {
   return defHttp.get({ url: `/sys/sysDepart/getDepartList`, params });
 };
+
+// 通过部门查找对应下面的人
+export const getDepartByUser  = (params) => {
+  return new Promise(async (r) => {
+    let data =await defHttp.get({ url: `/sys/user/queryUserComponentData`, params })
+    r(data.records)
+  });
+}
+
+// 根据id 获取选中人的信息
+// isReturnNativeResponse: true 直接返回结果
+export const getMultiUser = (params) => {
+  return defHttp.get({ url: `/sys/user/getMultiUser`, params },{ isReturnNativeResponse: true },);
+  
+}

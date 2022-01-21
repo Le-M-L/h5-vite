@@ -49,7 +49,6 @@
       const itemLabelWidthProp = useItemLabelWidth(schema, formProps);
       const getValues = computed(() => {
         const { allDefaultValues, formModel, schema } = props;
-
         const { mergeDynamicData } = props.formProps;
         return {
           field: schema.field,
@@ -274,7 +273,6 @@
             if (propsData[eventKey]) {
               propsData[eventKey](...args);
             }
-
             const target = e ? e.target : null;
 
             const value =  target? target.value : (isSelect && isObject(e) ? e.value : e);

@@ -94,10 +94,10 @@ export const formatSchemas = (schema = [], require = [], readonly) => {
       minimum: items.minimum, // 最小数
       dbPointLength: items.dbPointLength, // 精度
       type: items.type,
-      orgFields:items.orgFields, // popup  传给后台的数据字段
-      destFields:items.destFields, // 表单接收的字段
-      popupMulti:items.popupMulti,// popup 是否能多选
-      isError:false,
+      orgFields: items.orgFields, // popup  传给后台的数据字段
+      destFields: items.destFields, // 表单接收的字段
+      popupMulti: items.popupMulti, // popup 是否能多选
+      isError: false,
       componentProps: {
         maxlength: items.maxLength,
         ...(items.ui?.widgetattrs || {}),
@@ -112,7 +112,7 @@ export const formatSchemas = (schema = [], require = [], readonly) => {
     return schemasItem;
   });
   fromSchemas.sort((a, b) => a.order - b.order);
-  console.log(fromSchemas)
+  console.log(fromSchemas);
   return fromSchemas;
 };
 
@@ -153,7 +153,7 @@ export function formatMode(schemasItem, items) {
       schemasItem.componentProps.options = items.enum;
       schemasItem.componentProps.labelField = 'text';
       schemasItem.componentProps.valueField = 'value';
-    break;
+      break;
     case 'rate':
       schemasItem.component = 'Rate';
       break;
@@ -170,16 +170,22 @@ export function formatMode(schemasItem, items) {
       schemasItem.component = 'ListSelect';
       break;
     case 'sel_depart': // 系统部门
-      schemasItem.component = 'DepartSelect';
+      // schemasItem.component = 'DepartSelect';
       break;
     case 'hidden': // 隐藏
+      break;
+    case 'time': // 时间选择
+      schemasItem.component = 'DatePicker';
+      schemasItem.itemProps.isLink = true;
+      schemasItem.componentProps.type = 'time';
       break;
     case 'date': // 日期选择
       schemasItem.component = 'DatePicker';
       schemasItem.itemProps.isLink = true;
       break;
-    case 'datetime': // 日期选择
+    case 'datetime': // 日期时间选择
       schemasItem.component = 'DatePicker';
+      schemasItem.itemProps.isLink = true;
       schemasItem.componentProps.type = 'datetime';
       schemasItem.componentProps.format = 'YYYY-MM-DD HH:mm';
       break;
@@ -187,10 +193,21 @@ export function formatMode(schemasItem, items) {
       schemasItem.component = 'ListSelect';
       break;
     case 'list': // 下拉框
+      schemasItem.component = 'ApiSelect';
       schemasItem.componentProps.options = items.enum;
       schemasItem.componentProps.labelField = 'text';
       schemasItem.componentProps.valueField = 'value';
-      schemasItem.component = 'ApiSelect';
+      break;
+    case 'list_multi': // 下拉多选
+      break;
+    case 'sel_search': // 下拉搜索
+      break;
+    case 'sel_user': //  用户选择
+      schemasItem.component = 'DepartByUser';
+      break;
+    case 'cat_tree': // 分类字典树
+      schemasItem.component = 'classifyTree';
+
       break;
     case 'number': // 数字类型
       schemasItem.component = 'InputNumber';

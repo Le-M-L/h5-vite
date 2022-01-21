@@ -4,10 +4,12 @@
     <div class="previewItem" v-for="(item, i) in fileListRef" :key="i">
       <img src="./attachment_fill.png" alt="" />
       <div class="previewItem-content">
-        <div>{{ item.name }}</div>
+        <div class="previewItem-content-name">{{ item.name }}</div>
         <div class="previewItem-content-size">1.6MB</div>
       </div>
-      <div class="previewItem-right"><Icon @click="handleClear(item,i)" name="clear" size="16" color="#999" /> </div>
+      <div class="previewItem-right"
+        ><Icon @click="handleClear(item, i)" name="clear" size="16" color="#999" />
+      </div>
     </div>
   </div>
 </template>
@@ -38,11 +40,10 @@ export default {
   },
   emits: ['change', 'delete'],
   setup(props, { emit, attrs }) {
-    console.log(props);
     //   是否正在上传
     const isUploadingRef = ref(false);
     const fileListRef = ref([]);
-    const inputRef = ref(null)
+    const inputRef = ref(null);
 
     const { accept, helpText, maxCount, maxSize } = toRefs(props);
     const { getAccept } = useUploadType({
@@ -66,7 +67,9 @@ export default {
       () => props.modelValue,
       (value = []) => {
         // 如果存在上传失败的文件  会自动清空
-        fileListRef.value = isArray(unref(value)) ? initFileListArr(unref(value)) :initFileListArr(unref(value).split(','));
+        fileListRef.value = isArray(unref(value))
+          ? initFileListArr(unref(value))
+          : initFileListArr(unref(value).split(','));
       },
       { immediate: true },
     );
@@ -75,7 +78,7 @@ export default {
     function getFileData() {
       return unref(fileListRef)
         .filter(({ status }) => status === UploadResultStatus.SUCCESS)
-        .map(({ responseData }) => responseData.message);
+        .map(({ responseData }) => responseData.fileAccessPath);
     }
 
     const beforeDelete = (file) => {
@@ -97,18 +100,18 @@ export default {
     }
 
     const handleClick = () => {
-        let Input = document.createElement('input');
-        Input.type = 'file';
-        Input.accept = props.accept;
-        Input.capture = props.capture;
-        Input.multiple = props.multiple;
-        Input.disabled = props.disabled;
-        Input.onchange = handleChange
-        Input.click();
+      let Input = document.createElement('input');
+      Input.type = 'file';
+      Input.accept = props.accept;
+      Input.capture = props.capture;
+      Input.multiple = props.multiple;
+      Input.disabled = props.disabled;
+      Input.onchange = handleChange;
+      Input.click();
     };
 
     async function handleChange({ target }) {
-        let files = target.files;
+      let files = target.files;
       if (!files.length) return;
       let count = fileListRef.value.length + files.length;
       // 限制文件上传数量
@@ -125,7 +128,7 @@ export default {
       target.remove();
 
       // 将数据回传给父级
-      emit('change',getFileData().join())
+      emit('change', getFileData().join());
     }
 
     // 文件上传前调用
@@ -161,7 +164,6 @@ export default {
       fileListRef.value = fileListRef.value.filter(
         ({ status }) => status === UploadResultStatus.SUCCESS,
       );
-      console.log(fileListRef.value);
     }
 
     // 开始上传
@@ -209,9 +211,10 @@ export default {
             item.percent = complete;
           },
         );
+        data.fileAccessPath = data.message;
         item.status = UploadResultStatus.SUCCESS;
         item.responseData = data;
-        item.url = getFileAccessHttpUrl(data.message);
+        item.url = getFileAccessHttpUrl(data.fileAccessPath);
         item.name = item.file.name;
         return {
           success: true,
@@ -227,10 +230,10 @@ export default {
     }
 
     // 清空
-    const handleClear = (item,i) => {
-       fileListRef.value.splice(i,1)
-       beforeDelete()
-    }
+    const handleClear = (item, i) => {
+      fileListRef.value.splice(i, 1);
+      beforeDelete();
+    };
 
     return {
       afterRead,
@@ -241,7 +244,7 @@ export default {
       handleClick,
       handleChange,
       inputRef,
-      handleClear
+      handleClear,
     };
   },
 };
@@ -255,7 +258,7 @@ export default {
     font-size: 16px;
   }
   .previewItem {
-    margin-top:4px;
+    margin-top: 8px;
     height: 52px;
     width: 100%;
     padding: 6px 9px;
@@ -269,26 +272,31 @@ export default {
       margin-right: 8px;
     }
     &-content {
+      width: calc(100% - 65px);
       color: #333333;
       display: flex;
       flex-direction: column;
       height: 100%;
       justify-content: space-around;
       flex: 1;
+      &-name{
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
       &-size {
         color: #999;
         font-size: 12px;
       }
     }
     &-right {
-      padding-right: 12px;
       display: flex;
       align-items: center;
+      padding-right: 12px;
     }
   }
-  .previewItem + .previewItem{
-      margin-top:12px;
-
+  .previewItem + .previewItem {
+    margin-top: 12px;
   }
 }
 </style>
