@@ -245,7 +245,7 @@ export default {
     &::after {
       display: none;
     }
-    ::v-deep .van-cell__title {
+    ::v-deep(.van-cell__title) {
       display: flex;
     }
     &-img {
