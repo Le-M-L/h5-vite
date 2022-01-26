@@ -5,8 +5,6 @@ import vueJsx from '@vitejs/plugin-vue-jsx';
 import legacy from '@vitejs/plugin-legacy';
 // setup 扩展
 import vueSetupExtend from 'vite-plugin-vue-setup-extend';
-// css库
-import WindiCSS from 'vite-plugin-windicss';
 // 针对 index.html，提供压缩和基于 ejs 模板功能的 vite 插件。
 import { configHtmlPlugin } from './html';
 // 代码压缩
@@ -25,7 +23,6 @@ import { configHmrPlugin } from './hmr';
 export function createVitePlugins(viteEnv, isBuild) {
   const {
     VITE_USE_IMAGEMIN,
-    VITE_USE_MOCK,
     VITE_LEGACY,
     VITE_BUILD_COMPRESS,
     VITE_BUILD_COMPRESS_DELETE_ORIGIN_FILE,
@@ -38,8 +35,6 @@ export function createVitePlugins(viteEnv, isBuild) {
     vueJsx(),
     // support name
     vueSetupExtend(),
-    // vite-plugin-windicss
-    WindiCSS(),
   ];
 
   // 是否兼容低版本浏览器
