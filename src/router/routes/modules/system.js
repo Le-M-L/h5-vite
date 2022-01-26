@@ -10,7 +10,7 @@ const baseForm = {
     // {
     //   path: '/sys/home',
     //   name: 'HomePage',
-    //   component: () => import('@/pages/sys/home/index.vue'),
+    //   component: () => import('@/views/sys/home/index.vue'),
     //   meta: {
     //     title: '主页面',
     //   },
@@ -18,7 +18,7 @@ const baseForm = {
     {
       path: '/sys/setting',
       name: 'SettingPage',
-      component: () => import('@/pages/sys/setting/index.vue'),
+      component: () => import('@/views/sys/setting/index.vue'),
       meta: {
         title: '个人页',
       },

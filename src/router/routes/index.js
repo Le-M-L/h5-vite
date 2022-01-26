@@ -25,7 +25,7 @@ export const RootRoute = {
 export const LoginRoute = {
   path: '/login',
   name: 'Login',
-  component: () => import('@/pages/sys/login/Login.vue'),
+  component: () => import('@/views/sys/login/Login.vue'),
   meta: {
     title: '登录页',
   },

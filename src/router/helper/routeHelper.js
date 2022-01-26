@@ -3,7 +3,7 @@ import { cloneDeep, omit } from 'lodash-es';
 import { warn } from '@/utils/log';
 import { createRouter, createWebHashHistory } from 'vue-router';
 
-const IFRAME = () => import('@/pages/sys/iframe/FrameBlank.vue');
+const IFRAME = () => import('@/views/sys/iframe/FrameBlank.vue');
 
 const LayoutMap = new Map();
 
@@ -12,20 +12,20 @@ LayoutMap.set('IFRAME', IFRAME);
 LayoutMap.set('PAGE_LAYOUT', PAGE_LAYOUT);
 
 let dynamicViewsModules;
-let onlineFrom = ['/online/cgformList','/online/cgformErpList']
+let onlineFrom = ['/online/cgformList', '/online/cgformErpList'];
 // 动态引入
 function asyncImportRoute(routes) {
-  dynamicViewsModules = dynamicViewsModules || import.meta.glob('../../pages/**/*.{vue,tsx}');
+  dynamicViewsModules = dynamicViewsModules || import.meta.glob('../../views/**/*.{vue,tsx}');
   if (!routes) return;
   routes.forEach((item) => {
     if (!item.component && item.meta?.frameSrc) {
       item.component = 'IFRAME';
     }
-    if(item.component == 'layouts/RouteView'){
+    if (item.component == 'layouts/RouteView') {
       item.component = 'PAGE_LAYOUT';
     }
     const { component, name, children, path, id } = item;
-    let pathFlag = onlineFrom.some(i => path.startsWith(i));
+    let pathFlag = onlineFrom.some((i) => path.startsWith(i));
     // 删除不需要的路由
     item.meta.ignoreRoute = item.meta?.ignoreRoute ?? pathFlag;
     item.meta.id = id;
@@ -35,13 +35,12 @@ function asyncImportRoute(routes) {
         // iframe
         item.component = layoutFound;
       } else {
-        item.component =  dynamicImport(dynamicViewsModules, component);
+        item.component = dynamicImport(dynamicViewsModules, component);
       }
     } else if (name) {
       item.component = getParentLayout();
     }
     children && asyncImportRoute(children);
-
   });
 }
 
@@ -49,7 +48,7 @@ function asyncImportRoute(routes) {
 function dynamicImport(dynamicViewsModules, component) {
   const keys = Object.keys(dynamicViewsModules);
   const matchKeys = keys.filter((key) => {
-    const k = key.replace('../../pages', '');
+    const k = key.replace('../../views', '');
     const startFlag = component.startsWith('/');
     const endFlag = component.endsWith('.vue') || component.endsWith('.jsx');
     const startIndex = startFlag ? 0 : 1;
@@ -61,11 +60,11 @@ function dynamicImport(dynamicViewsModules, component) {
     return dynamicViewsModules[matchKey];
   } else if (matchKeys?.length > 1) {
     warn(
-      'Please do not create `.vue` and `.JSX` files with the same file name in the same hierarchical directory under the pages folder. This will cause dynamic introduction failure',
+      '请不要创建.vue和.jsx视图文件夹下的相同层次目录中具有相同文件名的JSX文件,这将导致动态引入失败',
     );
     return;
   } else {
-    warn('在src/pages/下找不到`' + component + '.vue` 或 `' + component + '.jsx`, 请自行创建!');
+    warn('在src/views/下找不到`' + component + '.vue` 或 `' + component + '.jsx`, 请自行创建!');
     return EXCEPTION_COMPONENT;
   }
 }
@@ -90,7 +89,7 @@ export function transformObjToRoute(routeList) {
     } else {
       warn('请正确配置路由：' + route?.name + '的component属性');
     }
-   
+
     route.children && asyncImportRoute(route.children);
   });
   return routeList;

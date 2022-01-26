@@ -36,7 +36,7 @@ export const REDIRECT_ROUTE = {
     {
       path: '/redirect/:path(.*)',
       name: REDIRECT_NAME,
-      component: () => import('@/pages/sys/redirect/index.vue'),
+      component: () => import('@/views/sys/redirect/index.vue'),
       meta: {
         title: REDIRECT_NAME,
         hideBreadcrumb: true,
@@ -57,7 +57,7 @@ export const ERROR_LOG_ROUTE = {
     {
       path: 'list',
       name: PAGE_NOT_FOUND_NAME,
-      component: () => import('@/pages/sys/error-log/index.vue'),
+      component: () => import('@/views/sys/error-log/index.vue'),
       meta: {
         title: '错误日志列表',
         hideBreadcrumb: true,
