@@ -79,7 +79,7 @@ export default {
   setup(props, { emit, attrs }) {
     const picker = ref(null);
     const loading = ref(false);
-    const isFirstLoad = ref(true);
+    // const isFirstLoad = ref(true);
     const options = ref([]);
     const show = ref(false);
     const defaultIndex = ref();
@@ -115,13 +115,13 @@ export default {
       props.immediate && (await fetch());
     });
 
-    watch(
-      () => props.params,
-      () => {
-        !unref(isFirstLoad) && fetch();
-      },
-      { deep: true },
-    );
+    // watch(
+    //   () => props.params,
+    //   () => {
+    //     !unref(isFirstLoad) && fetch();
+    //   },
+    //   { deep: true },
+    // );
 
     async function fetch() {
       if (props.options && props.options.length) {

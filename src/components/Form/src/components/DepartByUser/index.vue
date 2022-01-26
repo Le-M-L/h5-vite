@@ -1,5 +1,5 @@
 <template>
-  <Field v-bind="getAttrs" is-link v-model="getText" @click="show = true" readonly />
+  <Field v-bind="getAttrs" is-link v-model="checkField" @click="show = true" readonly />
   <Popup
     class="select-depart"
     v-model:show="show"
@@ -9,14 +9,13 @@
     @opened="scroll"
   >
     <div v-if="isFlexd" class="selectPerch"></div>
-      <div class="departCheck" style="color: rgb(41, 121, 255);" >
-        <span>选择部门</span>
-        <div></div>
-
-      </div>
+    <div class="departCheck" style="color: rgb(41, 121, 255)">
+      <span>选择部门</span>
+      <div></div>
+    </div>
     <div class="select-depart-title" :class="{ isFlexd: isFlexd }">
       <span @click="handelClick('close')">关闭</span>
-      <span style="color: rgb(41, 121, 255);" @click="handleShow">确定</span>
+      <span style="color: rgb(41, 121, 255)" @click="handleShow">确定</span>
     </div>
     <LyTree
       :ready="ready"
@@ -30,9 +29,9 @@
     />
     <div class="flxedClass">
       <span>已选部门：{{ label }}</span>
-      <span style="color: rgb(41, 121, 255);" >选择用户</span>
+      <span style="color: rgb(41, 121, 255)">选择用户</span>
     </div>
-    <List @register="register" v-model="state" v-model:field="checkField" @row-click="rowClick" @change="handleChange" />
+    <List @register="register" v-model="state" v-model:field="checkField" @row-click="rowClick" />
   </Popup>
 </template>
 
@@ -86,8 +85,8 @@ export default {
     const [state] = useRuleFormItem(props);
     const isFlexd = ref(false);
     const label = ref('');
-    const checkArr = ref([]);
-    const checkField = ref('')
+    const checkField = ref('');
+    console.log(props)
 
     const [register, { handlePopup, setProps, onReset }] = useList({
       api: getDepartByUser,
@@ -119,8 +118,24 @@ export default {
         },
       ],
       multi: true,
-
     });
+
+    watch(
+      () => state.value,
+      (val) => {
+        console.log(state);
+        if (val) {
+          getMultiUser({ id: val }).then(({ data }) => {
+            checkField.value = data.map((item) => item.realname).join('');
+          });
+        } else {
+          checkField.value = '';
+        }
+      },
+      {
+        immediate: true,
+      },
+    );
 
     // 获取 field 的属性
     const getAttrs = computed(() => {
@@ -128,14 +143,6 @@ export default {
         ...get(attrs, 'inputProps'),
         label: null,
       };
-    });
-
-    const handleClear = () => {
-      emit('change', '');
-    };
-    const getText = computed(() => {
-      console.log( unref(state))
-     return  unref(state)
     });
 
     const getBindValue = computed(() => {
@@ -164,22 +171,9 @@ export default {
     };
 
     // 行数据
-    const rowClick = (items, { checkArr, checkStr }) => {
-      console.log(checkStr)
-      // getMultiUser({id:checkStr})
-      // .then(({data}) => {
-      //   let ids = []
-      //  let realname = data.map(item => {
-      //    ids.push(item.id)
-      //    return item.realname
-      //  });
-        emit('change',checkStr);
-      // })
+    const rowClick = (items, { checkIds }) => {
+      emit('change', checkIds);
     };
-
-    const handleChange = (val) => {
-      
-    }
 
     queryDepartTreeList().then((res) => {
       treeData.value = res;
@@ -198,7 +192,6 @@ export default {
       handleNodeExpand,
       handleNodeClick,
       handelClick,
-      getText,
       show,
       ready,
       treeData,
@@ -248,7 +241,6 @@ export default {
   z-index: 1;
   box-shadow: 0 2px 4px rgb(0 0 0 / 12%), 0 0 6px rgb(0 0 0 / 4%);
 }
-.departCheck{
-
+.departCheck {
 }
 </style>

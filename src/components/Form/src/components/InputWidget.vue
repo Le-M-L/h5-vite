@@ -38,7 +38,7 @@ export default {
 
     const text = computed(() =>
       unref(inputProps).name == 'sys_org_code'
-        ? appStore.sysDepart.get(unref(state))
+        ? appStore.sysDepart[unref(state)]
         : unref(state),
     );
 

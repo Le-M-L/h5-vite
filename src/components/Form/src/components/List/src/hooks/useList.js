@@ -32,6 +32,10 @@ export function useList(props) {
       const instance = await getInstance();
       instance.handlePopup();
     },
+    handleClose: async () => {
+      const instance = await getInstance();
+      instance.handleClose();
+    },
     setProps: async (props) => {
       const instance = await getInstance();
       instance.setProps(props);
@@ -39,6 +43,10 @@ export function useList(props) {
     onReset:  async (params) => {
       const instance = await getInstance();
       instance?.onReset(params);
+    },
+    setCheckArr:async (arr) => {
+      const instance = await getInstance();
+      instance.setCheckArr(arr);
     },
   };
 

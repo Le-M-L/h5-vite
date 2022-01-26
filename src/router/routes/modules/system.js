@@ -7,14 +7,14 @@ const baseForm = {
   component: PAGE_LAYOUT,
   meta: {},
   children: [
-    {
-      path: '/sys/home',
-      name: 'HomePage',
-      component: () => import('@/pages/sys/home/index.vue'),
-      meta: {
-        title: '主页面',
-      },
-    },
+    // {
+    //   path: '/sys/home',
+    //   name: 'HomePage',
+    //   component: () => import('@/pages/sys/home/index.vue'),
+    //   meta: {
+    //     title: '主页面',
+    //   },
+    // },
     {
       path: '/sys/setting',
       name: 'SettingPage',

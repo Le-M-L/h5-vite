@@ -20,7 +20,7 @@ export default {
   setup() {
     const value = ref('');
     const form = reactive({
-      username: 'admin',
+      username: 'lml',
       password: encryptBySha1('dingdang123456?') ,
     });
     const { prefixCls } = useDesign('login');

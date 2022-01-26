@@ -58,7 +58,9 @@ export const getOnlineDetail = (code, id, params) => {
 export const saveOnlineData = (code, tabletype, params) => {
   return defHttp.post({ url: `/online/cgform/api/form/${code}?tabletype=${tabletype}`, params });
 };
-
+export const updateOnlineData = (code, tabletype, params) => {
+  return defHttp.put({ url: `/online/cgform/api/form/${code}?tabletype=${tabletype}`, params });
+}
 // 弹窗列表 列表配置获取
 export const getPopupColumns = (code, params) => {
   return defHttp.get({ url: `/online/cgreport/api/getRpColumns/${code}`, params });

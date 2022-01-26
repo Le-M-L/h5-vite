@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { store } from '@/store';
 import { Persistent } from '@/utils/cache/persistent';
-import { ROW_KEY, PROJ_CFG_KEY, SYS_DEPART } from '@/enums/cacheEnum';
+import { ROW_KEY, PROJ_CFG_KEY, SYS_DEPART, SEARCH_RECORD } from '@/enums/cacheEnum';
 import { deepMerge } from '@/utils';
 import { resetRouter } from '@/router';
 import { getRawRoute } from '@/utils';
@@ -18,7 +18,9 @@ export const useAppStore = defineStore({
     // 行数据
     rowData: Persistent.getLocal(ROW_KEY) || {},
     // 系统部门
-    sysDepart: Persistent.getLocal(SYS_DEPART),
+    sysDepart: Persistent.getLocal(SYS_DEPART) || {},
+    // 查询记录
+    searchRecord: Persistent.getLocal(SEARCH_RECORD) || {},
   }),
   getters: {
     // 获取 loading 状态
@@ -37,12 +39,33 @@ export const useAppStore = defineStore({
     getRowData() {
       return this.rowData;
     },
-    // 获取当前页 title
-    getPageTitle() {
-      console.log(this)
+    // 获取查询结果
+    getSearchRecord() {
+      return this.searchRecord;
     },
   },
   actions: {
+    // 设置查询记录
+    setSearchRecord({ code, value, flag }) {
+      let record = this.searchRecord;
+      switch (flag) {
+        case 'add':
+          if (Reflect.has(record, code)) {
+            record[code] =  Array.from(new Set([...record[code],value])); 
+          } else {
+            record[code] = [value];
+          }
+          break;
+        case 'clearAll':
+          record[code] = []
+          break;
+        default:
+          break;
+      }
+      console.log(record)
+      this.searchRecord = record;
+      Persistent.setLocal(SEARCH_RECORD, this.searchRecord);
+    },
     // 设置页面加载状态
     setPageLoading(loading) {
       this.pageLoading = loading;
@@ -68,8 +91,10 @@ export const useAppStore = defineStore({
     },
     // 设置系统部门
     async setSysDepart() {
-      let departMap = new Map();
-      await getSysDepart().then(res => res.forEach(item => departMap.set(item.orgCode, item.departName)))
+      let departMap = {};
+      await getSysDepart().then((res) =>
+        res.forEach((item) => (departMap[item.orgCode] = item.departName)),
+      );
       this.sysDepart = departMap;
       Persistent.setLocal(SYS_DEPART, this.sysDepart);
     },

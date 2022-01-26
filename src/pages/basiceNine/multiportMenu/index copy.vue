@@ -252,7 +252,7 @@ export default {
       },
       {
         field: 'map',
-        component: 'GaodeMap',
+        component: 'CustomMap',
         label: '地图',
         componentProps:{
           onChange:(e)=>{

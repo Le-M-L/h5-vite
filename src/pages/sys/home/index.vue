@@ -2,7 +2,7 @@
   <div :class="prefixCls">
     <div :class="`${prefixCls}-top`">
       <div :class="`${prefixCls}-top-header`">
-        <div :class="`${prefixCls}-top-header-left`" >
+        <div :class="`${prefixCls}-top-header-left`">
           <div>{{ helloTip }}</div>
           <div></div>
         </div>
@@ -48,29 +48,30 @@
       </div>
     </div>
     <!-- 系统提醒结束 -->
-    <div :class="`${prefixCls}-content`">
-      <div :class="`${prefixCls}-content-title`">信息采集</div>
+    <div :class="`${prefixCls}-content`" v-for="item in menu" :key="item.iid" >
+      <div :class="`${prefixCls}-content-title`">{{item.title}}</div>
       <div :class="`${prefixCls}-content-matrix`">
-        <div :class="`${prefixCls}-content-cont`" v-for="i in 6">
+        <div :class="`${prefixCls}-content-cont`" @click="go(items)" v-for="items in item.children || []" :key="items.id" >
           <div>
             <img :src="'/src/assets/commonImg/home_icon_dwcs@2x.png'" alt="" />
-            <div>事件上报</div>
+            <div>{{items.title}}</div>
           </div>
         </div>
       </div>
     </div>
-    
   </div>
 
   <DTabbar />
 </template>
 
 <script>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
+import { useRouter } from "vue-router"
 import DTabbar from '@/components/DTabbar.vue';
 import { useDesign } from '@/hooks/web/useDesign';
 import { Button, Row, Col } from 'vant';
 import { useUserStoreWithOut } from '@/store/modules/user';
+import { usePermissionStoreWithOut } from '@/store/modules/permission';
 import avatar from '../../../assets/images/avatar.png';
 import pic_nopic from '../../../assets/images/pic_nopic@2x.png';
 import { dateUtil } from '@/utils/dateUtil';
@@ -81,8 +82,10 @@ export default {
   setup() {
     const { prefixCls } = useDesign('home');
     const userStore = useUserStoreWithOut();
+    const permissionStore = usePermissionStoreWithOut();
     const msgCount = ref(0);
     const msgContent = ref([]);
+    const router = useRouter()
 
     // 登录人名字
     const helloTip = computed(() => {
@@ -97,17 +100,25 @@ export default {
       }
       return text + userStore.getUserInfo.realname;
     });
+
+    const menu = computed(() => permissionStore.getCurrentMenu);
     // 头像
     const avatarPic = computed(
       () =>
         (userStore.getUserInfo.avatar && getFileAccessHttpUrl(userStore.getUserInfo.avatar)) ||
         avatar,
     );
+
     // 更多
     const handleShowMore = () => {};
 
     // 消息详情
     const handleShowDetail = () => {};
+
+    // 路由跳转
+    const go = (items) =>{
+      router.push(items.path)
+    }
 
     // 获取用户消息
     getUserMsg({ pageNo: 1, pageSize: 2, msgCategory: 2 }).then((res) => {
@@ -129,6 +140,8 @@ export default {
       msgContent,
       avatar,
       pic_nopic,
+      menu,
+      go
     };
   },
 };
@@ -152,8 +165,8 @@ export default {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      &-left{
-          flex: 1;
+      &-left {
+        flex: 1;
       }
       &-avatar {
         width: 72px;

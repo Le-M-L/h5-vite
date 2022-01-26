@@ -16,8 +16,8 @@ import { ref, unref, computed } from 'vue';
 import { Tab, Tabs, NavBar, Icon, Search } from 'vant';
 import { useOnlineStoreWithOut } from '@/store/modules/online';
 import TabList from './TabList.vue';
-import DNavbar from '@/components/DNavbar.vue'; 
-import { useRouter } from "vue-router"
+import { DNavbar } from '@/components/DNavbar';
+import { useRouter } from 'vue-router';
 // erp 子集列表
 export default {
   name: 'CgformErpSubList',
@@ -34,7 +34,7 @@ export default {
     const onlineStore = useOnlineStoreWithOut();
     const active = ref(0);
     const title = ref('记录');
-    const router = useRouter()
+    const router = useRouter();
     const subList = computed(() => onlineStore.getOnlineSubList);
     // 当前选中
     const currentSub = computed(() => subList.value[active.value]);
@@ -46,16 +46,19 @@ export default {
     const onClickRight = () => {};
     // 新增
     const handleAdd = (data) => {
-       router.push(`/online/form/${unref(currentSub).code}`);
-    }
+      onlineStore.setOnlineCfg({ sunMain:unref(currentSub) })
+      router.push(`/online/subForm/${unref(currentSub).code}`);
+    };
+
     const handleSearch = (val) => {
-      console.log(val);
+       router.push(`/online/search/${unref(currentSub).code}?type=subForm`);
     };
 
     // 设置第一个title
     if (unref(subList).length > 0) {
       title.value = getTitle(unref(subList)[0].description);
     }
+
     // 点击切换title
     const onClickTab = (data) => {
       title.value = data.title;

@@ -9,8 +9,6 @@ import vueSetupExtend from 'vite-plugin-vue-setup-extend';
 import WindiCSS from 'vite-plugin-windicss';
 // 针对 index.html，提供压缩和基于 ejs 模板功能的 vite 插件。
 import { configHtmlPlugin } from './html';
-// mock 模拟数据
-import { configMockPlugin } from './mock';
 // 代码压缩
 import { configCompressPlugin } from './compress';
 // 按需引入样式
@@ -55,9 +53,6 @@ export function createVitePlugins(viteEnv, isBuild) {
 
   // vite-plugin-svg-icons
   vitePlugins.push(configSvgIconsPlugin(isBuild));
-
-  // vite-plugin-mock
-  VITE_USE_MOCK && vitePlugins.push(configMockPlugin(isBuild));
 
   // vite-plugin-style-import
   vitePlugins.push(configStyleImportPlugin(isBuild));

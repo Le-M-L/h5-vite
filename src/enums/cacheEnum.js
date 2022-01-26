@@ -29,6 +29,8 @@ export const BUTTON_AUTH_KEY = 'BUTTON_AUTH_KEY';
 export const ROW_KEY = 'ROW_KEY'; 
 // 系统部门 key 
 export const SYS_DEPART = 'SYS_DEPART'; 
+// 搜索记录
+export const SEARCH_RECORD = 'SEARCH_RECORD'; 
 
 export const CacheTypeEnum = {
   SESSION: 0,

@@ -2,10 +2,12 @@
 
 import { DSelect } from '@/components/DSelect';
 import { DCalendar } from '@/components/DCalendar';
+import { DatePicker } from '@/components/DatePicker';
 const componentMap = new Map();
 
 componentMap.set('DSelect', DSelect);
 componentMap.set('DCalendar', DCalendar);
+componentMap.set('DatePicker', DatePicker);
 
 
 

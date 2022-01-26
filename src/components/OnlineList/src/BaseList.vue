@@ -9,50 +9,57 @@
       :immediate-check="false"
       class="custom-list"
     >
-      <Cell
-        class="custom-list-item"
-        @click="onRowClick(item)"
-        v-for="(item, i) in listData"
-        :key="i"
-      >
-        <template #title>
-          <!-- 左边图片 -->
-          <Image class="custom-list-item-img" src="../">
-            <template v-slot:loading>
-              <Loading type="spinner" size="20" />
-            </template>
-            <template v-slot:error>
-              <img
-                style="width: 100%; height: 100%"
-                src="../../../assets/images/pic_nopic.png"
-                alt=""
-              />
-            </template>
-          </Image>
-          <!-- 右边内容 -->
-          <div class="custom-list-item-content">
-            <div v-for="(items, i) in getColumns" :key="i">
-              <div v-for="child in items.children" :key="child.dataIndex">
-                <span v-text="handleItem(item, child, dictOptions)"></span>
+      <SwipeCell v-for="(item, i) in listData" :key="i">
+        <Cell class="custom-list-item" @click="onRowClick(item)">
+          <template #title>
+            <!-- 左边图片 -->
+            <Image class="custom-list-item-img" src="../">
+              <template v-slot:loading>
+                <Loading type="spinner" size="20" />
+              </template>
+              <template v-slot:error>
+                <img
+                  style="width: 100%; height: 100%"
+                  src="../../../assets/images/pic_nopic.png"
+                  alt=""
+                />
+              </template>
+            </Image>
+            <!-- 右边内容 -->
+            <div class="custom-list-item-content">
+              <div v-for="(items, i) in getColumns" :key="i">
+                <div v-for="child in items.children" :key="child.dataIndex">
+                  <span v-text="handleItem(item, child, dictOptions)"></span>
+                </div>
               </div>
             </div>
-          </div>
+          </template>
+        </Cell>
+        <template #right>
+          <van-button
+            @click="handleBtn(item)"
+            v-for="btn in getBtnColumns"
+            :key="btn.code"
+            square
+            v-bind="btn"
+            class="custom-list-btn"
+          />
         </template>
-      </Cell>
+      </SwipeCell>
     </List>
   </PullRefresh>
 </template>
 
 <script>
 import { ref, unref, onMounted, reactive, computed } from 'vue';
-import { PullRefresh, List, Cell, Image, Loading } from 'vant';
+import { PullRefresh, List, Cell, Image, Loading, SwipeCell } from 'vant';
 import { getListData } from '@/api/sys/api';
 import { useDebounceFn } from '@vueuse/core';
 import { handleItem } from './hooks/useTable';
 import { deepMerge } from '@/utils';
 export default {
-  inheritAttrs:false,
-  components: { PullRefresh, List, Cell, Image, Loading },
+  inheritAttrs: false,
+  components: { PullRefresh, List, Cell, Image, Loading, SwipeCell },
   props: {
     // code
     code: {
@@ -74,18 +81,23 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    // 按钮配置
+    btnColumns: {
+      type: Array,
+      default: () => [],
+    },
     // 请求额外参数
     params: {
       type: Object,
       default: () => ({}),
     },
     // nav 是否显示
-    navHeader:{
-      type:Boolean,
-      default:false
-    }
+    existNav: {
+      type: Boolean,
+      default: false,
+    },
   },
-  emits: ['register', 'row-click'],
+  emits: ['register', 'row-click', 'row-click-btn'],
   setup(props, { emit }) {
     const form = reactive({
       pageNo: 0,
@@ -99,6 +111,7 @@ export default {
     const listData = ref([]); // listData 数据列表
     const total = ref(0);
 
+    // 获取props
     const getProps = computed(() => {
       return { ...props, ...unref(propsRef) };
     });
@@ -113,6 +126,11 @@ export default {
       return getProps.value.dictOptions;
     });
 
+    const getBtnColumns = computed(() => {
+      return getProps.value.btnColumns;
+    })
+
+    // 列表查询参数
     const listParams = computed(() => {
       return {
         ...unref(form),
@@ -121,10 +139,11 @@ export default {
       };
     });
 
+    // 刷新样式
     const getRefreshStyle = computed(() => {
       return {
         'overflow-y': 'scroll',
-        height: `calc(100vh - ${props.navHeader ? '102px' :'46px'})`,
+        height: `calc(100vh - ${props.existNav ? '102px' : '46px'})`,
       };
     });
 
@@ -177,10 +196,15 @@ export default {
     // 点击列表触发
     const onRowClick = (item) => emit('row-click', item);
 
+    // props 设置
     async function setProps(tableProps) {
       propsRef.value = deepMerge(unref(propsRef) || {}, tableProps);
     }
 
+    // 点击按钮操作
+    const handleBtn = (item) => emit('row-click-btn', item);
+
+    // 对外导出的方法
     const actionType = {
       onReset,
       setProps,
@@ -203,8 +227,10 @@ export default {
       onRowClick,
       handleItem,
       getColumns,
+      handleBtn,
       getDictOptions,
       getRefreshStyle,
+      getBtnColumns
     };
   },
 };
@@ -273,5 +299,8 @@ export default {
       }
     }
   }
+}
+.custom-list-btn {
+  height: 100%;
 }
 </style>

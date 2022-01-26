@@ -1,4 +1,4 @@
-import { ref, unref, computed, watchEffect } from 'vue';
+import { ref, unref, computed, watch } from 'vue';
 import { getListColumns, getErpColumns, getQueryColumns } from '@/api/sys/api';
 import { useRoute } from 'vue-router';
 import { useOnlineStoreWithOut } from '@/store/modules/online';
@@ -16,28 +16,81 @@ export function useColumns({
   const subListRef = ref([]);
   const queryColumn = ref([]);
   const onlineStore = useOnlineStoreWithOut();
+  // const listConfig = ref([]); // 列表指定展示字段配置
+  // const queryConfig = ref([]); // 指定查询展示字段配置
 
-  // 行配置
-  const columns = computed(() => {
-    return [
-      {
-        children: getMainRef.value.columns?.slice(0, 2),
-      },
-      {
-        children: getMainRef.value.columns?.slice(2, 4),
-      },
-    ];
-  });
   // 总配置
   const getMainRef = computed(() => unref(main) || unref(mainRef));
   // 获取子集 配置
   const getSubListRef = computed(() => subListRef);
   // 行总配置
   const rawColumns = computed(() => unref(getMainRef).rawColumns);
-  // 获取查询配置
-  const queryColumns = computed(() => unref(queryColumn));
+
   // 字典数据
   const dictOptions = computed(() => unref(getMainRef).dictOptions);
+  // js增强 列表字段配置 和 查询字段配置
+  const enhanceJs = computed(() => {
+    let Obj = eval('(' + unref(getMainRef).enhanceJs + ')');
+    const { listConfig = [], queryConfig = [] } = (Obj && new Obj().getAppConfig?.()) || {};
+    return {
+      listConfig,
+      queryConfig,
+    };
+  });
+
+  // 行配置
+  const columns = computed(() => {
+    let list = [];
+    let columns = getMainRef.value.columns || [];
+    let listConfig = enhanceJs.value.listConfig;
+    for (let i = 0; i < listConfig.length; i++) {
+      let items = columns.find((item) => item.dataIndex == listConfig[i].field);
+      list.push(items || {});
+    }
+
+    return [
+      {
+        children: list?.slice(0, 2),
+      },
+      {
+        children: list?.slice(2, 4),
+      },
+    ];
+  });
+
+  // 按钮配置
+  const btnColumns = computed(() => {
+    let columns = unref(getMainRef).hideColumns || [];
+    if (columns.includes('delete')) {
+      return [
+        {
+          code: 'delete',
+          type: 'danger',
+          text: '删除',
+        },
+      ];
+    }
+    return [];
+  });
+
+  // 查询配置
+  const queryColumns = computed(() => {
+    let queryConfig = enhanceJs.value.queryConfig;
+    let list = [];
+    let columns = unref(queryColumn) || [];
+    for (let i = 0; i < queryConfig.length; i++) {
+      let items = columns.find((item) => item.field == queryConfig[i].field);
+      items && list.push(items);
+    }
+    return list;
+  });
+
+  // 搜索字段配置
+  const searchColumns = computed(() => {
+    let queryConfig = enhanceJs.value.queryConfig;
+    return queryConfig.find(item => item.sign == 'search') || {}
+  })
+
   // 查询参数配置
   async function getOnlineQueryColumns(params) {
     queryColumn.value = await getQueryColumns(code, params);
@@ -67,7 +120,10 @@ export function useColumns({
     columns,
     rawColumns,
     queryColumns,
+    searchColumns,
     getMainRef,
-    getSubListRef
+    getSubListRef,
+    enhanceJs,
+    btnColumns,
   };
 }

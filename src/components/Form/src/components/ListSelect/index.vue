@@ -8,7 +8,7 @@
     @click="handlePopup"
   />
 
-  <List @register="register" @row-click="handleClick" />
+  <List v-model="state" @register="register" @row-click="handleClick" />
 </template>
 
 <script>
@@ -54,6 +54,7 @@ export default {
       };
     });
 
+    // 获取选中的值
     function getCheckParams(checkArr) {
       // let field = getBindValue.value?.formValues.field;
       let schema = getBindValue.value?.formValues.schema;
@@ -83,7 +84,9 @@ export default {
       };
     }
 
-    const handleClick = (item, {checkArr}) => {
+    // const getState = computed(() => )
+
+    const handleClick = (item, { checkArr, checkIds }) => {
       let { params } = getCheckParams(checkArr);
       emit('change', null, {
         ...params,

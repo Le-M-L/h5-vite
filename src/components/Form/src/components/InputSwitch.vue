@@ -1,7 +1,7 @@
 <template>
   <Field v-bind="getAttrs" readonly>
     <template #input>
-      <Switch v-bind="getBindValue" v-model="state" size="20" />
+      <Switch v-bind="getBindValue" v-model="getValue" @change="handleChange" size="20" />
     </template>
   </Field>
 </template>
@@ -24,27 +24,35 @@ export default {
       default: null,
     },
     modelValue: {
-      type: Boolean,
-      default: false,
+      type: String,
+      default: '',
     },
   },
   emits: ['change'],
-  setup(props, { attrs }) {
+  setup(props, { attrs, emit }) {
     const [state] = useRuleFormItem(props);
 
     // 获取 field 的属性
     const getAttrs = computed(() => {
       return {
         ...get(attrs, 'inputProps'),
-        label:null
+        label: null,
+      };
+    });
+    const getBindValue = computed(() => {
+      return {
+        ...omit(attrs, 'inputProps'),
+        disabled:getAttrs.value.readonly
       };
     });
 
-    const getBindValue = computed(() => {
-      return omit(attrs, 'inputProps');
-    });
+    const getValue = computed(() => (state.value == 'Y' ? true : false));
 
-    return { state, getAttrs, getBindValue };
+    const handleChange = (val) => {
+      emit('change', val ? 'Y' : 'N');
+    };
+
+    return { getValue, getAttrs, getBindValue, handleChange };
   },
 };
 </script>

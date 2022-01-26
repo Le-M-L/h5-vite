@@ -1,5 +1,5 @@
 <template>
-  <div>redirect</div>
+  <div>路由重定向</div>
 </template>
 
 <script>

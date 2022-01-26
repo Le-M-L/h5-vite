@@ -11,7 +11,6 @@ export function getAllParentPath(treeData, path) {
 function joinParentPath(menus, parentPath = '') {
   for (let index = 0; index < menus.length; index++) {
     const menu = menus[index];
-    // https://next.router.vuejs.org/guide/essentials/nested-routes.html
     // 请注意，以/开头的嵌套路径将被视为根路径。
     // 这允许您在不必使用嵌套URL的情况下利用组件嵌套。
     if (!(menu.path.startsWith('/') || isUrl(menu.path))) {

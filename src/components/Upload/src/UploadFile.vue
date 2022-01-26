@@ -1,13 +1,13 @@
 <template>
   <div class="baseFile">
-    <span @click="handleClick">添加附件</span>
+    <span v-if="!getBindValue.disabled" @click="handleClick">添加附件</span>
     <div class="previewItem" v-for="(item, i) in fileListRef" :key="i">
       <img src="./attachment_fill.png" alt="" />
       <div class="previewItem-content">
         <div class="previewItem-content-name">{{ item.name }}</div>
         <div class="previewItem-content-size">1.6MB</div>
       </div>
-      <div class="previewItem-right"
+      <div class="previewItem-right" v-if="!getBindValue.disabled"
         ><Icon @click="handleClear(item, i)" name="clear" size="16" color="#999" />
       </div>
     </div>
@@ -67,9 +67,11 @@ export default {
       () => props.modelValue,
       (value = []) => {
         // 如果存在上传失败的文件  会自动清空
-        fileListRef.value = isArray(unref(value))
-          ? initFileListArr(unref(value))
-          : initFileListArr(unref(value).split(','));
+        if (value) {
+          fileListRef.value = isArray(unref(value))
+            ? initFileListArr(unref(value))
+            : initFileListArr(unref(value).split(','));
+        }
       },
       { immediate: true },
     );
@@ -279,7 +281,7 @@ export default {
       height: 100%;
       justify-content: space-around;
       flex: 1;
-      &-name{
+      &-name {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;

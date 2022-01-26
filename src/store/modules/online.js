@@ -21,7 +21,7 @@ export const useOnlineStore = defineStore({
       // 当前列表 主信息
       main: {},
       // erp 子数据 信息
-      sunInfo: {},
+      sunMain: {},
     },
   }),
   getters: {
@@ -33,9 +33,13 @@ export const useOnlineStore = defineStore({
     getOnlineSubList() {
       return this.getOnline.subList;
     },
-    // 获取在线表单 主列表配置
+    // 获取在线表单 主列表信息
     getOnlineMain() {
       return this.getOnline.main;
+    },
+    // 获取在线表单 子列表信息
+    getOnlineSunMain() {
+      return this.getOnline.sunMain;
     },
     // 获取在线表单 主列表 title
     getOnlineMainTitle(){

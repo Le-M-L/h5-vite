@@ -2,7 +2,7 @@
   <div v-if="getSchema.length" class="base-list-header">
     <div class="base-list-header-content">
       <div
-        v-for="item in getSchema.slice(0,2)"
+        v-for="item in getSchema.slice(0, 2)"
         :style="item.sign == 'center' ? 'flex:1;justify-content: center;' : ''"
         :key="item.field"
         class="base-list-header-content-item"
@@ -25,7 +25,7 @@
     <div class="base-list-header-line"></div>
   </div>
   <div v-if="getSchema.length" class="base-list-header-placeholder"></div>
-  <div v-else style="height:15px" ></div>
+  <div v-else style="height: 15px"></div>
 </template>
 
 <script>
@@ -59,10 +59,10 @@ export default {
     },
     // 多个日期参数使用
     // 示例 [field,['start','end','YYYY-MM-DD']]
-    fieldMapToTime:{
-      type:Array,
-      default: () => [['name',['startTime','endTimeKey']]]
-    }
+    fieldMapToTime: {
+      type: Array,
+      default: () => [['name', ['startTime', 'endTimeKey']]],
+    },
   },
   emits: ['change'],
   setup(props, { emit }) {
@@ -75,15 +75,14 @@ export default {
     // 查询配置
     const getSchema = computed(() => {
       const schemas = unref(schemaRef) || props.queryColumns;
-      console.log(schemas)
       return formatSchemas(schemas, props.dictOptions);
     });
 
     const { handleFormValues } = useTableValues({ getProps, getSchema, formModel });
 
-    const handleChange = (e,items) => {
-      let formData = handleFormValues(formModel,items);
-      emit('change',formData)
+    const handleChange = (e, items) => {
+      let formData = handleFormValues(formModel, items);
+      emit('change', formData);
     };
 
     onMounted(() => {
@@ -128,7 +127,7 @@ export default {
       }
       &:nth-child(1) {
         display: flex;
-        flex: 2;
+        flex: 1;
       }
       &:nth-child(2) {
         flex: 1;

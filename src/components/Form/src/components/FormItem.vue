@@ -49,6 +49,7 @@
       const itemLabelWidthProp = useItemLabelWidth(schema, formProps);
       const getValues = computed(() => {
         const { allDefaultValues, formModel, schema } = props;
+        // console.log(formModel)
         const { mergeDynamicData } = props.formProps;
         return {
           field: schema.field,
@@ -357,7 +358,7 @@
       }
 
       function renderItem() {
-        const { itemProps :{readonly}, slot, render, required, field, suffix, component, label } = props.schema;
+        const { itemProps:{readonly} = {}, slot, render, required, field, suffix, component, label } = props.schema;
         const { labelCol, wrapperCol } = unref(itemLabelWidthProp);
         const { colon } = props.formProps;
         if (component === 'Divider') {

@@ -1,12 +1,15 @@
 <template>
-  <Field
-    v-bind="getAttrs"
-    v-model="state"
-    disabled
-    :class="{ isDisabled: state }"
-    @clear="handleClear"
-    @click="!getAttrs.readonly ? (show = true) : null"
-  />
+  <span @click="!getAttrs.readonly ? (show = true) : null">
+    <slot name="text" :data="state">
+      <Field
+        v-bind="getAttrs"
+        v-model="state"
+        disabled
+        :class="{ isDisabled: state }"
+        @clear="handleClear"
+      />
+    </slot>
+  </span>
   <Popup v-model:show="show" round position="bottom">
     <DatetimePicker
       v-bind="getBindValue"
@@ -86,7 +89,7 @@ export default {
     const valueRef = computed(() => {
       if (getBindValue.value.type == 'time') {
         let myDate = new Date();
-        return unref(state) ? unref(state) : `${myDate.getHours()}:${myDate.getMinutes()}`
+        return unref(state) ? unref(state) : `${myDate.getHours()}:${myDate.getMinutes()}`;
       }
       return unref(state) ? new Date(unref(state)) : new Date();
     });
@@ -94,7 +97,7 @@ export default {
     const handleConfirm = (date) => {
       show.value = false;
       if (getBindValue.value.type == 'time') {
-        emit('change',date);
+        emit('change', date);
       } else {
         emit('change', dateUtil(date).format(props.format));
       }

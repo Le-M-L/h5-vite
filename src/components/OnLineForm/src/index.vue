@@ -2,23 +2,20 @@
   <DNavbar :title="title" :btn-text="navBtnText" :btn-flag="btnFlag" @click="handleClick" />
   <div style="height: 12px"></div>
   <BasicForm @register="register" :schemas="getFormSchema"> </BasicForm>
-  <div class="base-btn-wrap" v-if="btnShow">
-    <Button type="primary" block @click="handleSubmit">
-      {{ btnText }}
-    </Button>
-  </div>
-  <div class="base-btn-wrap-placeholder"></div>
+  <slot name="btn">
+    <BtnWrap v-if="btnShow" placeholder @click="handleSubmit" :text="btnText" />
+  </slot>
 </template>
 
 <script>
 import { computed, unref, ref, onMounted } from 'vue';
-import DNavbar from '@/components/DNavbar.vue';
+import { DNavbar } from '@/components/DNavbar';
 import { BasicForm, useForm } from '@/components/Form';
 import { useRoute, useRouter } from 'vue-router';
 import { useOnlineStoreWithOut } from '@/store/modules/online';
 import { Button } from 'vant';
 import { useColumns } from './hooks/useColumns';
-import { saveOnlineData } from '@/api/sys/api';
+import { saveOnlineData, updateOnlineData } from '@/api/sys/api';
 import { useMessage } from '@/hooks/web/useMessage';
 export default {
   name: 'OnLineForm',
@@ -29,16 +26,27 @@ export default {
       type: Array,
       default: () => [],
     },
+    // 是否存在记录
     isRecord: {
       type: Boolean,
-      default: false,
+      default: true,
+    },
+    // 按钮是否显示
+    flag: {
+      type: Boolean,
+      default: true,
+    },
+    // 额外的保存参数
+    params: {
+      type: Object,
+      default: () => {},
     },
   },
   setup(props) {
     const route = useRoute();
     const router = useRouter();
     const onlineStore = useOnlineStoreWithOut();
-    const { code, id, flag } = route.params;
+    const { code, id } = route.params;
     const { createMessage } = useMessage();
     const navBtnText = ref('编辑');
     const title = ref('详情');
@@ -54,18 +62,16 @@ export default {
     // 按钮文字
     const btnText = computed(() => (id && onlineStore.getOnlineSubList?.length ? '记录' : '提交'));
     // 按钮显示
-    const btnShow = computed(
-      () => (id && onlineStore.getOnlineSubList?.length && flag == 'true') || !id,
-    );
-
+    const btnShow = computed(() => props.flag);
+  console.log('-----------------------------',btnShow.value)
     const handleSubmit = async () => {
       if (!id) {
         let data = await submit();
-        console.log(data)
-        // save(data).then((res) => {
-        //   createMessage.success('保存成功');
-        // });
-      } else if (onlineStore.getOnlineSubList?.length) {
+        save({ ...data, ...props.params }).then((res) => {
+          createMessage.success('保存成功');
+          router.back();
+        });
+      } else if (onlineStore.getOnlineSubList?.length && props.isRecord) {
         // 在线表单子集
         router.push(`/online/cgformErpSubList/${id}`);
       }
@@ -82,7 +88,7 @@ export default {
           break;
         case 'save':
           let data = await submit();
-          save(data).then((res) => {
+          update({ ...data, id }).then((res) => {
             setReadonly();
             title.value = '详情';
             navBtnText.value = '编辑';
@@ -95,11 +101,17 @@ export default {
       }
     };
 
+    // 保存接口
     function save(data) {
       return saveOnlineData(unref(code), unref(getFormHead).tableType, data);
     }
 
-    id ? (title.value = '详情') : (title.value = '新增',navBtnText.value='');
+    // 修改接口
+    function update(data) {
+      return updateOnlineData(unref(code), unref(getFormHead).tableType, data);
+    }
+
+    id ? (title.value = '详情') : ((title.value = '新增'), (navBtnText.value = ''));
 
     return {
       getFormSchema,

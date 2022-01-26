@@ -1,4 +1,4 @@
-import { getParentLayout, LAYOUT, EXCEPTION_COMPONENT, ONLINE_FORM } from '@/router/constant';
+import { getParentLayout, LAYOUT, EXCEPTION_COMPONENT, PAGE_LAYOUT } from '@/router/constant';
 import { cloneDeep, omit } from 'lodash-es';
 import { warn } from '@/utils/log';
 import { createRouter, createWebHashHistory } from 'vue-router';
@@ -9,6 +9,7 @@ const LayoutMap = new Map();
 
 LayoutMap.set('LAYOUT', LAYOUT);
 LayoutMap.set('IFRAME', IFRAME);
+LayoutMap.set('PAGE_LAYOUT', PAGE_LAYOUT);
 
 let dynamicViewsModules;
 let onlineFrom = ['/online/cgformList','/online/cgformErpList']
@@ -20,10 +21,14 @@ function asyncImportRoute(routes) {
     if (!item.component && item.meta?.frameSrc) {
       item.component = 'IFRAME';
     }
-    const { component, name, children, path } = item;
+    if(item.component == 'layouts/RouteView'){
+      item.component = 'PAGE_LAYOUT';
+    }
+    const { component, name, children, path, id } = item;
     let pathFlag = onlineFrom.some(i => path.startsWith(i));
     // 删除不需要的路由
     item.meta.ignoreRoute = item.meta?.ignoreRoute ?? pathFlag;
+    item.meta.id = id;
     if (component) {
       const layoutFound = LayoutMap.get(component.toUpperCase());
       if (layoutFound) {

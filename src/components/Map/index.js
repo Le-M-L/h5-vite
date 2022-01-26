@@ -1,4 +1,4 @@
 import { withInstall } from '@/utils';
-import gaodeMap from './src/gaodeMap.vue';
+import customMap from './src/index.vue';
 
-export const GaodeMap = withInstall(gaodeMap);
+export const CustomMap = withInstall(customMap);

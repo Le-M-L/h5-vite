@@ -15,7 +15,8 @@ export function createPlaceholderMessage(component, label = '') {
     component.includes('Cascader') ||
     component.includes('Checkbox') ||
     component.includes('Radio') ||
-    component.includes('Switch')
+    component.includes('Switch') ||
+    component.includes('CustomMap')
   ) {
     return `请选择${label}`;
   }
@@ -108,11 +109,20 @@ export const formatSchemas = (schema = [], require = [], readonly) => {
         readonly: readonly || items.ui?.widgetattrs?.disabled, // 只读
       },
     };
+    // 地图
+    if(key == 'address_info'){
+      items.view = 'map'
+    }
     formatMode(schemasItem, items);
     return schemasItem;
   });
   fromSchemas.sort((a, b) => a.order - b.order);
   console.log(fromSchemas);
+  // fromSchemas.push({
+  //   label:'测试地图',
+  //   field:'ddd',
+  //   component:'CustomMap',
+  // })
   return fromSchemas;
 };
 
@@ -131,6 +141,10 @@ export function formatMode(schemasItem, items) {
     case 'string':
       schemasItem.component = 'Input';
       break;
+    case 'map': // 地图
+    console.log()
+      schemasItem.component = 'CustomMap';
+    break;
     case 'text': // 文本输入框
       schemasItem.component = 'Input';
       break;
@@ -199,16 +213,22 @@ export function formatMode(schemasItem, items) {
       schemasItem.componentProps.valueField = 'value';
       break;
     case 'list_multi': // 下拉多选
+      schemasItem.component = 'ApiSelectMulti';
+      schemasItem.componentProps.options = items.enum;
+      schemasItem.componentProps.labelField = 'text';
+      schemasItem.componentProps.valueField = 'value';
       break;
     case 'sel_search': // 下拉搜索
       break;
     case 'sel_user': //  用户选择
       schemasItem.component = 'DepartByUser';
+      // schemasItem.defaultValue = '1456540805273161730,1456870518801813506';
+      
       break;
-    case 'cat_tree': // 分类字典树
-      schemasItem.component = 'classifyTree';
+    // case 'cat_tree': // 分类字典树
+    //   schemasItem.component = 'classifyTree';
 
-      break;
+    //   break;
     case 'number': // 数字类型
       schemasItem.component = 'InputNumber';
       break;

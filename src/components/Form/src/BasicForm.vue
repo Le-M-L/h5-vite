@@ -245,10 +245,10 @@ export default {
     }
   }
   &-item {
-    padding: 8px 0 12px;
+    padding: 8px 0;
     margin-bottom: 1px;
     .van-cell.van-field {
-      padding: 4px @formItemPd 0;
+      padding: 4px @formItemPd 4px;
     }
     &-label {
       font-size: 14px;

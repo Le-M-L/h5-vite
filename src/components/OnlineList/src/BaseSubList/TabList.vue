@@ -50,7 +50,7 @@ export default {
     };
 
     const onRowClick = (item) => {
-       router.push(`/online/detail/${unref(code)}/${item.id}/false`);
+       router.push(`/online/subDetail/${unref(code)}/${item.id}`);
     };
 
     return {

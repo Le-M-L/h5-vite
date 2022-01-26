@@ -3,7 +3,7 @@
 
   <BaseListHeader
     v-if="queryColumns.length"
-    @change="handleChange"
+    @change="onReset"
     :queryColumns="queryColumns"
     :dictOptions="dictOptions"
     :code="getCode"
@@ -13,9 +13,10 @@
     :code="getCode"
     :rawColumns="rawColumns"
     :columns="columns"
+    :btnColumns="btnColumns"
     :dictOptions="dictOptions"
     @row-click="onRowClick"
-    :navHeader="!!queryColumns.length"
+    :existNav="!!queryColumns.length"
   />
 
   <div class="base-add" @click="handleAdd"></div>
@@ -27,7 +28,7 @@ import BaseList from './BaseList.vue';
 import BaseListHeader from './BaseListHeader.vue';
 import { useTable } from './hooks/useTable';
 import { useRoute, useRouter } from 'vue-router';
-import DNavbar from '@/components/DNavbar.vue';
+import { DNavbar } from '@/components/DNavbar';
 import { useColumns } from './hooks/useColumns';
 import { useAppStoreWithOut } from '@/store/modules/app';
 export default {
@@ -55,32 +56,32 @@ export default {
     // 注册table
     const [register, { onReset }] = useTable();
 
-    const { dictOptions, columns, rawColumns, queryColumns } = useColumns({
+    // 获取列表配置
+    const { dictOptions, columns, rawColumns, queryColumns, btnColumns } = useColumns({
       code: getCode.value,
       queryImmediate: true,
       cacheMain: true,
     });
-
-    const handleChange = (values) => onReset(values);
 
     // 添加
     const handleAdd = () => router.push(`/online/form/${unref(getCode)}`);
 
     // 查询
     const handleClick = () => {
-      router.push(`/online/search/${unref(getCode)}`)
+      router.push(`/online/search/${unref(getCode)}`);
     };
 
     const onRowClick = (item) => {
       appStore.setRowData(item);
-      router.push(`/online/detail/${code}/${item.id}/true`);
+      router.push(`/online/detail/${code}/${item.id}`);
     };
 
     return {
       register,
-      handleChange,
+      onReset,
       dictOptions,
       rawColumns,
+      btnColumns,
       columns,
       queryColumns,
       handleAdd,

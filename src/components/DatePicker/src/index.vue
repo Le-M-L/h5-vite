@@ -1,5 +1,9 @@
 <template>
-  <DatePicker v-bind="getBindValue" @change="handleChange" />
+  <DatePicker v-bind="getBindValue" @change="handleChange">
+    <template #[item]="data" v-for="item in Object.keys($slots)">
+      <slot :name="item" v-bind="data || {}"></slot>
+    </template>
+  </DatePicker>
 </template>
 
 <script>
@@ -14,11 +18,11 @@ export default {
     },
   },
   components: { DatePicker },
-  emits: ['update:modelValue','change'],
+  emits: ['update:modelValue', 'change'],
   setup(props, { emit, attrs }) {
     const handleChange = (val) => {
       emit('update:modelValue', val);
-      emit('change',val)
+      emit('change', val);
     };
     const getBindValue = computed(() => {
       return {
@@ -26,7 +30,7 @@ export default {
         modelValue: props.modelValue,
       };
     });
-    console.log(getBindValue.value)
+    console.log(getBindValue.value);
     return {
       handleChange,
       getBindValue,

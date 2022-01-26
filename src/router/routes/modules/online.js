@@ -36,6 +36,15 @@ const baseForm = {
       },
     },
     {
+      // 在线开发 一对多子表单
+      path: 'subForm/:code',
+      name: 'OnLineSubForm',
+      component: () => import('@/components/OnlineList/src/BaseSubList/subForm.vue'),
+      meta: {
+        // ignoreKeepAlive: true,
+      },
+    },
+    {
       // 在线表单开发 一对多
       path: 'cgformErpList/:code',
       name: 'CgformErpListPage',
@@ -48,7 +57,7 @@ const baseForm = {
     },
     {
       // 在线表单开发 详情
-      path: 'detail/:code/:id/:flag',
+      path: 'detail/:code/:id',
       name: 'OnLineFormDetail',
       meta: {
         readonly: true,
@@ -56,6 +65,17 @@ const baseForm = {
         // currentActiveMenu: '/online/form/:code',
       },
       component: () => import('@/components/OnLineForm/src/index.vue'),
+    },
+    {
+      // 在线表单开发 子详情
+      path: 'subDetail/:code/:id',
+      name: 'OnLineSubFormDetail',
+      meta: {
+        readonly: true,
+        // ignoreKeepAlive: true,
+        // currentActiveMenu: '/online/form/:code',
+      },
+      component: () => import('@/components/OnlineList/src/BaseSubList/SubFormDetail.vue'),
     },
     {
       // 在线表单开发 查询

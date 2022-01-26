@@ -4,7 +4,7 @@ import { store } from '@/store';
 import { useUserStore } from './user';
 import { useAppStoreWithOut } from './app';
 import { ERROR_LOG_ROUTE, PAGE_NOT_FOUND_ROUTE } from '@/router/routes/basic';
-import { queryPermissionsByUserApp } from '@/api/sys/api';
+import { queryPermissionsByUser } from '@/api/sys/api';
 import { useMessage } from '@/hooks/web/useMessage';
 import { transformRouteToMenu } from '@/router/helper/menuHelper';
 import { transformObjToRoute, flatMultiLevelRoutes } from '@/router/helper/routeHelper';
@@ -24,10 +24,13 @@ export const usePermissionStore = defineStore({
     backMenuList: [],
     // 菜单列表
     frontMenuList: [],
+    // 按钮权限
     buttonAuth: {
       allAuth: [],
       auth: [],
     },
+    // 当前菜单对应的id
+    currentId:''
   }),
   getters: {
     // 按钮权限列表
@@ -42,7 +45,7 @@ export const usePermissionStore = defineStore({
     getFrontMenuList() {
       return this.frontMenuList;
     },
-    // 获取最后彩蛋更新时间
+    // 获取最后菜单更新时间
     getLastBuildMenuTime() {
       return this.lastBuildMenuTime;
     },
@@ -52,16 +55,32 @@ export const usePermissionStore = defineStore({
     },
     // 获取所有权限按钮
     getAllAuth() {
-      return this.buttonAuth.allAuth
+      return this.buttonAuth.allAuth;
     },
     // 获取按钮权限
-    getAuth(){
-      return this.buttonAuth.auth
+    getAuth() {
+      return this.buttonAuth.auth;
+    },
+    // 获取底部导航栏数据
+    getTabbarList(){
+     return this.backMenuList[0].children?.map((item) => ({
+        ...item,
+        children: null,
+      }));
+    },
+    // 获取当前页面对应的菜单
+    getCurrentMenu(){
+     return this.backMenuList[0].children.find(item => item.id == this.currentId)?.children || [];
     }
   },
   actions: {
     setPermCodeList(codeList) {
       this.permCodeList = codeList;
+    },
+    // 设置当前页面菜单ID
+    setCurrentId(id){
+      this.currentId = id;
+      localStorage.setItem('currentId',this.currentId)
     },
     // 设置后台菜单列表
     setBackMenuList(list) {
@@ -134,20 +153,15 @@ export const usePermissionStore = defineStore({
         // 获取菜单
         // 用户按钮权限  auth
         // 系统按钮权限  allAuth
-        let {
-          allAuth,
-          auth,
-          menu: { children = [] },
-        } = await queryPermissionsByUserApp();
-        routeList = children;
+        let { allAuth, auth, menu } = await queryPermissionsByUser();
+        routeList = menu.filter((item) => item.component == 'sys/home/index');
         const newAllAuth = allAuth.filter(
           (item) => item.action && item.action.indexOf('mobile:') === 0,
         );
         const newAuth = auth.filter((item) => item.action && item.action.indexOf('mobile:') === 0);
         this.setButtonAuth({ allAuth: newAllAuth, auth: newAuth });
         // 设置部门 sys_org_code
-        appStore.setSysDepart()
-
+        appStore.setSysDepart();
       } catch (error) {
         console.error(error);
       }
@@ -156,7 +170,7 @@ export const usePermissionStore = defineStore({
 
       // 后台路由到菜单结构
       const backMenuList = transformRouteToMenu(routeList);
-      
+
       this.setBackMenuList(backMenuList);
 
       // 删除需要忽略掉路由
@@ -166,7 +180,6 @@ export const usePermissionStore = defineStore({
       // 将多级路由转换为二级路由
       routeList = flatMultiLevelRoutes(routeList);
       routes = [PAGE_NOT_FOUND_ROUTE, ...routeList];
-    
 
       routes.push(ERROR_LOG_ROUTE);
       //   patchHomeAffix(routes);

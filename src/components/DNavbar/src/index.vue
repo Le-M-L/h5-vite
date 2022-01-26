@@ -8,13 +8,6 @@
     safe-area-inset-top
   >
     <template #title>
-      <!-- <Search
-        style="width: 65vw; padding-left: 12px"
-        v-model:modelValue="searchValue"
-        left-icon=""
-        clearable
-        placeholder="请输入搜索关键词"
-      /> -->
       <slot name="title">
         <span class="nav-bar-title">{{ navTitle }}</span>
       </slot>
@@ -63,18 +56,16 @@ export default {
   emits: ['click-left', 'click-right', 'click'],
   setup(props, { emit }) {
     const router = useRouter();
-    const searchValue = ref('');
     const onlineStore = useOnlineStoreWithOut();
     const navTitle = computed(() => props.title || onlineStore.getOnlineMainTitle);
     // 点击左边返回触发
     const onClickLeft = () => router.back();
-    const handleClick = () => emit('click', { value: searchValue.value, flag: props.btnFlag });
+    const handleClick = () => emit('click', { flag: props.btnFlag });
 
     return {
       onClickLeft,
       handleClick,
       navTitle,
-      searchValue,
     };
   },
 };

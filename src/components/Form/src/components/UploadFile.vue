@@ -37,6 +37,7 @@ export default {
     const getBindValue = computed(() => {
       return {
         ...omit(attrs, 'inputProps'),
+        disabled: getAttrs.value.readonly,
       };
     });
     const getText = computed(() => {
