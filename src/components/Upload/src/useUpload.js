@@ -8,7 +8,7 @@ export function useUploadType({ acceptRef, helpTextRef, maxCountRef, maxSizeRef 
     if (accept && isString(accept)) {
       return accept.replace(/\./gm, '').split(',');
     }
-    return [];
+    return ['jpg','jpeg','png','gif'];
   });
 
   const getStringAccept = computed(() => {

@@ -257,7 +257,7 @@
         const inputProps = {
             name:field,
             colon:colon,
-            label:renderLabelHelpMessage(),
+            // label:renderLabelHelpMessage(),
             rules:handleRules(),
             labelCol:labelCol,
             wrapperCol:wrapperCol,

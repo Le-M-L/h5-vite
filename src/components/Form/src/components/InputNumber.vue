@@ -24,7 +24,6 @@ export default {
       return {
         ...get(attrs,'inputProps'),
         ...omit(attrs,'inputProps'),
-        label:null
       }
     })
     return { state, getAttrs };

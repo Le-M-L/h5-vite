@@ -29,7 +29,6 @@ export default {
     const getAttrs = computed(() => {
       return {
         ...get(attrs, 'inputProps'),
-        label: null,
       };
     });
     const initData = computed(() => props.modelValue);

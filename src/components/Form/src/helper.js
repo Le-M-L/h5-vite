@@ -142,7 +142,6 @@ export function formatMode(schemasItem, items) {
       schemasItem.component = 'Input';
       break;
     case 'map': // 地图
-    console.log()
       schemasItem.component = 'CustomMap';
     break;
     case 'text': // 文本输入框
@@ -162,13 +161,13 @@ export function formatMode(schemasItem, items) {
       schemasItem.componentProps.labelField = 'text';
       schemasItem.componentProps.valueField = 'value';
       break;
-    case 'checkbox':
+    case 'checkbox': // 多选
       schemasItem.component = 'ApiCheckboxGroup';
       schemasItem.componentProps.options = items.enum;
       schemasItem.componentProps.labelField = 'text';
       schemasItem.componentProps.valueField = 'value';
       break;
-    case 'rate':
+    case 'rate': // 评分
       schemasItem.component = 'Rate';
       break;
     case 'switch': // switch 切换

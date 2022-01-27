@@ -4,7 +4,7 @@
       <Field
         v-bind="getAttrs"
         v-model="state"
-        disabled
+        readonly
         :class="{ isDisabled: state }"
         @clear="handleClear"
       />
@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { ref, computed, unref, watch } from 'vue';
+import { ref, computed, unref, watch, watchEffect } from 'vue';
 import { DatetimePicker, Popup, Field } from 'vant';
 import { useRuleFormItem } from '@/hooks/component/useFormItem';
 import { dateUtil } from '@/utils/dateUtil';
@@ -39,10 +39,10 @@ export default {
       type: [Array, String],
     },
     // 日期格式
-    format: {
-      type: String,
-      default: 'YYYY-MM-DD',
-    },
+    // format: {
+    //   type: String,
+    //   default: 'YYYY-MM-DD',
+    // },
     // 日期选项格式化
     formatter: {
       type: Function,
@@ -70,34 +70,58 @@ export default {
     const show = ref(false);
     // 嵌入表单中，只需使用钩子绑定来执行表单验证
     const [state] = useRuleFormItem(props);
+    const valueRef = ref();
     // 获取 field 的属性
     const getAttrs = computed(() => {
       return {
         ...get(attrs, 'inputProps'),
-        label: null,
       };
     });
+    const format = computed(() => {
+      let format = 'YYYY-MM-DD'
+      if(!attrs.type || attrs.type == 'date'){
+        format = 'YYYY-MM-DD'
+      }else if(attrs.type == 'datetime'){
+        format = 'YYYY-MM-DD HH:mm'
+      }
+
+      return attrs.format || format
+    })
     const getBindValue = computed(() => {
       let bindValue = {
-        type: 'date',
-        ...omit(attrs, 'inputProps'),
+        type: attrs.type ? attrs.type: 'date',
+        ...omit(attrs, ['inputProps','format']),
         ...omit(props, 'modelValue'),
+        format: unref(format)
       };
       return bindValue;
     });
 
-    const valueRef = computed(() => {
+    watchEffect(() => {
       if (getBindValue.value.type == 'time') {
         let myDate = new Date();
-        return unref(state) ? unref(state) : `${myDate.getHours()}:${myDate.getMinutes()}`;
+        valueRef.value = unref(state)
+          ? unref(state)
+          : `${myDate.getHours()}:${myDate.getMinutes()}`;
+      } else {
+        valueRef.value = unref(state) ? new Date(unref(state)) : new Date();
       }
-      return unref(state) ? new Date(unref(state)) : new Date();
     });
+
+    // const valueRef = computed(() => {
+    //   if (getBindValue.value.type == 'time') {
+    //     let myDate = new Date();
+    //     return unref(state) ? unref(state) : `${myDate.getHours()}:${myDate.getMinutes()}`;
+    //   }
+    //   return unref(state) ? new Date(unref(state)) : new Date();
+    // });
 
     const handleConfirm = (date) => {
       show.value = false;
       if (getBindValue.value.type == 'time') {
         emit('change', date);
+      } else if (getBindValue.value.type == 'datetime') {
+        emit('change', dateUtil(date).format(props.format || 'YYYY-MM-DD HH:mm'));
       } else {
         emit('change', dateUtil(date).format(props.format));
       }

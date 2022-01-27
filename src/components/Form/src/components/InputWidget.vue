@@ -32,7 +32,6 @@ export default {
       return {
         ...omit(attrs, 'inputProps'),
         ...unref(inputProps),
-        label: null,
       };
     });
 

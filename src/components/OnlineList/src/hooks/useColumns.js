@@ -61,7 +61,7 @@ export function useColumns({
   // 按钮配置
   const btnColumns = computed(() => {
     let columns = unref(getMainRef).hideColumns || [];
-    if (columns.includes('delete')) {
+    if (!columns.includes('delete')) {
       return [
         {
           code: 'delete',

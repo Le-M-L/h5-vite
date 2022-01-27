@@ -3,8 +3,8 @@
     <slot name="text" :data="getText">
       <Field
         v-bind="getAttrs"
+        readonly
         is-link
-        disabled
         :class="{ isDisabled: getText }"
         v-model="getText"
         @clear="handleClear"
@@ -40,40 +40,44 @@ export default {
     Popup,
   },
   props: {
+    // 接口
     api: {
       type: Function,
       default: null,
     },
-    modelValue: {
-      type: [Array, Object, String, Number],
-    },
-    numberToString: {
-      type: Boolean,
-    },
-    resultField: {
-      type: String,
-      default: 'result',
-    },
-    labelField: {
-      type: String,
-      default: 'text',
-    },
-    valueField: {
-      type: String,
-      default: 'value',
-    },
-    childrenField: {
-      type: String,
-      default: 'children',
-    },
-    immediate: {
-      type: Boolean,
-      default: true,
-    },
+    // 自定义下拉数据  优先使用 后使用api
     options: {
       type: Array,
       default: () => [],
     },
+    modelValue: {
+      type: [Array, Object, String, Number],
+    },
+    // 数字转字符串
+    numberToString: {
+      type: Boolean,
+    },
+    // 接口返回取的值
+    resultField: {
+      type: String,
+      default: 'result',
+    },
+    // 自定义 label 字段
+    labelField: {
+      type: String,
+      default: 'text',
+    },
+    // 自定义 value 字段
+    valueField: {
+      type: String,
+      default: 'value',
+    },
+    // 是否立即执行请求
+    immediate: {
+      type: Boolean,
+      default: true,
+    },
+
   },
   emits: ['change', 'register'],
   setup(props, { emit, attrs }) {
@@ -157,6 +161,7 @@ export default {
       show.value = false;
       emit('change', ...args);
       await nextTick();
+      // 用于查询的回调
       unref(innerPropsRef)?.callback?.(...args);
     };
 
@@ -168,7 +173,6 @@ export default {
     const getAttrs = computed(() => {
       return {
         ...get(attrs, 'inputProps'),
-        label: null,
       };
     });
 
