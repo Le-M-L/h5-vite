@@ -1,7 +1,12 @@
 <template>
-  <Field v-bind="getAttrs" style="display: none" v-model="state"  readonly  />
+  <Field v-bind="getAttrs" style="display: none" v-model="getValue" readonly />
   <div class="van-cell van-field">
-    <BasicUpload style="margin-top:8px;" @change="handleChange" :initData="initData" v-bind="getBindValue" />
+    <BasicUpload
+      style="margin-top: 8px"
+      @change="handleChange"
+      :initData="initData"
+      v-bind="getBindValue"
+    />
   </div>
 </template>
 
@@ -11,6 +16,7 @@ import { Field } from 'vant';
 import { useRuleFormItem } from '@/hooks/component/useFormItem';
 import { get, omit } from 'lodash';
 import { BasicUpload } from '@/components/Upload';
+import { isArray } from "@/utils/is"
 export default {
   name: 'InputNumber',
   inheritAttrs: false,
@@ -31,8 +37,10 @@ export default {
         ...get(attrs, 'inputProps'),
       };
     });
+    const getValue = computed(() => {
+        return isArray(unref(state)) ? unref(state).join():unref(state)
+    })
     const initData = computed(() => props.modelValue);
-
     const getBindValue = computed(() => {
       return {
         ...omit(attrs, ['inputProps', 'modelValue']),
@@ -42,7 +50,7 @@ export default {
     const handleChange = (val) => {
       emit('change', val.join());
     };
-    return { state, initData, getAttrs, getBindValue, handleChange };
+    return { getValue, initData, getAttrs, getBindValue, handleChange };
   },
 };
 </script>

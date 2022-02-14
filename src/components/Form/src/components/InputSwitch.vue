@@ -24,8 +24,8 @@ export default {
       default: null,
     },
     modelValue: {
-      type: String,
-      default: '',
+      type: Boolean,
+      default: false,
     },
   },
   emits: ['change'],
