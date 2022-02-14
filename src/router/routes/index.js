@@ -6,7 +6,6 @@ const routeModuleList = [];
 Object.keys(modules).forEach((key) => {
   const mod = modules[key].default || {};
   const modList = Array.isArray(mod) ? [...mod] : [mod];
-  console.log(modList)
   routeModuleList.push(...modList);
 });
 

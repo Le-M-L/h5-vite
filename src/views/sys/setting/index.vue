@@ -1,40 +1,14 @@
 <template>
-  <DSelect v-model="value" :api="api" :options="options" :inputProps="{ label: 'test' }" />
+  <BasicUpload v-model="value" @change="handleChange" :initData="list" />
 </template>
 
 <script setup >
-import { ref, watch } from 'vue';
-import { DSelect } from '@/components/DSelect';
-const value = ref('1');
-const api = () => {
-  setTimeout(() => {
-    r([
-      {
-        text: '测试22',
-        value: '1',
-      },
-      {
-        text: '测试33',
-        value: '2',
-      },
-    ]);
-  }, 2000);
-};
-const options = ref([
-  {
-    text: '测试',
-    value: '1',
-  },
-  {
-    text: '测试1',
-    value: '2',
-  },
-]);
+import { ref } from "vue"
+import { BasicUpload } from '@/components/Upload';
 
-watch(
-  () => value.value,
-  (val) => {
-    console.log(val);
-  },
-);
+const value = ref([]);
+const list = ['http://test.xmock.top/file/2022-02-14/1644835378881.png'];
+const handleChange = (data) => {
+  console.log(value.value, data);
+};
 </script>

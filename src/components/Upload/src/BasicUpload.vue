@@ -49,7 +49,6 @@ export default {
       };
       return omit(value, ['initData', 'maxSize', 'api']);
     });
-    console.log(getBindValue.value)
 
     watch(
       () => props.initData,

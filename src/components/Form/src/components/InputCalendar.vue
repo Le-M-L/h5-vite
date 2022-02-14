@@ -4,14 +4,14 @@
       <Field
         v-bind="getAttrs"
         is-link
-        disabled
+        readonly
         :class="{ isDisabled: fieldValue }"
         @clear="handleClear"
         v-model="fieldValue"
       />
     </slot>
   </span>
-  <Calendar v-bind="getBindValue" v-model:show="show" @confirm="onConfirm" />
+  <Calendar v-bind="getBindValue"  v-model:show="show" @confirm="onConfirm" />
 </template>
 
 <script>
@@ -62,6 +62,7 @@ export default {
       }
       let bindValue = {
         type: props.type,
+        minDate: new Date(2010, 0, 1),
         ...omit(unref(innerPropsRef), ['callback']),
         ...omit(attrs, ['inputProps', 'modelValue']),
         defaultDate: (props.type == 'single' && defaultDate?.[0]) || defaultDate, // 默认选中的日期

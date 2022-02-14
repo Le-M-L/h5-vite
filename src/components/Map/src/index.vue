@@ -1,5 +1,12 @@
 <template>
-  <Field v-bind="getAttrs" is-link  @clear="handleClear" @click="!getAttrs.readonly ? (show = true) : null" v-model="state" />
+  <Field
+    v-bind="getAttrs"
+    is-link
+    readonly
+    @clear="handleClear"
+    @click="!getAttrs.readonly ? (show = true) : null"
+    v-model="state"
+  />
 
   <Popup v-model:show="show" round @opened="opened" :style="{ height: '80%' }" position="bottom">
     <div class="baseMap">
@@ -51,6 +58,10 @@ export default {
       type: String,
       default: '浙江',
     },
+    formData: {
+      type: Object,
+      default: null,
+    },
   },
   emits: ['change'],
   setup(props, { emit, attrs }) {
@@ -77,20 +88,15 @@ export default {
     const getAttrs = computed(() => {
       return {
         ...get(attrs, 'inputProps'),
-        label: null,
       };
     });
 
-    console.log(attrs)
-
-
     async function initMap() {
-      const { formValues: { model } = {} } = attrs;
-      const { lngField, latField } = props;
+      const { lngField, latField, formData } = props;
       const mapEl = unref(wrapRef);
       if (!mapEl) return;
       const center =
-        (model[lngField] && model[latField] && [model[lngField], model[latField]]) ||
+        (formData[lngField] && formData[latField] && [formData[lngField], formData[latField]]) ||
         props.position;
       // 高德地图初始化
       // initGaodeMap({ center, mapEl, address, lnglat, addressList });
@@ -98,8 +104,8 @@ export default {
     }
 
     const getText = computed(() => {
-      return ''
-    })
+      return '';
+    });
 
     const opened = () => {
       address.value = state.value;
@@ -125,12 +131,12 @@ export default {
 
     // 清除
     const handleClear = () => {
-        emit('change', '', {
+      emit('change', '', {
         [props.lngField]: '',
         [props.latField]: '',
         flag: 'map',
       });
-    }
+    };
 
     return {
       getAttrs,
@@ -143,7 +149,7 @@ export default {
       state,
       getText,
       handleSave,
-      handleClear
+      handleClear,
     };
   },
 };

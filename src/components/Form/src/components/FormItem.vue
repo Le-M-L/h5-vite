@@ -306,6 +306,10 @@
         }
         propsData.codeField = field;
         propsData.formValues = unref(getValues);
+        // 地图将model 单独使用
+        if(component === 'CustomMap'){
+          propsData.formData = unref(getValues).model
+        }
 
         const bindValue = {
           [valueField || 'modelValue']: props.formModel[field],

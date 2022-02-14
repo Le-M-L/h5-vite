@@ -5,6 +5,7 @@
       <img src="./attachment_fill.png" alt="" />
       <div class="previewItem-content">
         <div class="previewItem-content-name">{{ item.name }}</div>
+        <!-- 目前接口没返这个数据 -->
         <div class="previewItem-content-size">1.6MB</div>
       </div>
       <div class="previewItem-right" v-if="!getBindValue.disabled"

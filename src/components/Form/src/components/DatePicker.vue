@@ -121,9 +121,9 @@ export default {
       if (getBindValue.value.type == 'time') {
         emit('change', date);
       } else if (getBindValue.value.type == 'datetime') {
-        emit('change', dateUtil(date).format(props.format || 'YYYY-MM-DD HH:mm'));
+        emit('change', dateUtil(date).format(unref(format) || 'YYYY-MM-DD HH:mm'));
       } else {
-        emit('change', dateUtil(date).format(props.format));
+        emit('change', dateUtil(date).format(unref(format)));
       }
     };
 
